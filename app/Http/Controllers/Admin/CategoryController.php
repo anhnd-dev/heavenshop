@@ -31,7 +31,7 @@ class CategoryController extends BaseAdminController
     /**
      * Danh sách cha
      */
-    public function select(Request $request)
+    public function selectCategory(Request $request)
     {
         return response()->json(
             $this->categoryService->select(

@@ -28,6 +28,7 @@
             this.initDataTable();
             this.bind();
             this.bindCrud();
+            this.bindModalReset();
         },
 
         // =========================
@@ -432,8 +433,6 @@
                 window.productConfig.routes.store,
 
                 () => {
-                    this.resetAddForm();
-
                     this.reload();
                 },
 
@@ -760,17 +759,126 @@
         // =========================
         // RESET FORM
         // =========================
-        resetAddForm() {
-            $(this.el.addForm)[0].reset();
+        resetForm(type = "add") {
+            const isAdd = type === "add";
 
-            this.addDescEditor.setData("");
-            this.addContentEditor.setData("");
+            const form = isAdd ? this.el.addForm : this.el.editForm;
 
-            $(this.el.addVariantWrapper).html("");
+            const variantWrapper = isAdd
+                ? this.el.addVariantWrapper
+                : this.el.editVariantWrapper;
 
-            this.addVariantIndex = 0;
+            const variantBtn = isAdd
+                ? this.el.addVariantBtn
+                : this.el.editVariantBtn;
 
-            $(this.el.addVariantBtn).trigger("click");
+            const descEditor = isAdd ? this.addDescEditor : this.editDescEditor;
+
+            const contentEditor = isAdd
+                ? this.addContentEditor
+                : this.editContentEditor;
+
+            // =========================
+            // NATIVE RESET
+            // =========================
+            $(form)[0].reset();
+
+            // =========================
+            // PRODUCT ID
+            // =========================
+            $("#product_id").val("");
+
+            // =========================
+            // INPUT
+            // =========================
+            $(`#${type}_name`).val("");
+
+            $(`#${type}_slug`).val("");
+
+            // =========================
+            // SELECT2
+            // =========================
+            $(`#${type}_category_id`).val("").trigger("change");
+
+            $(`#${type}_brand_id`).val("").trigger("change");
+
+            $(`#${type}_is_active`).val("1").trigger("change");
+
+            // =========================
+            // CHECKBOX
+            // =========================
+            $(`#${type}_is_featured`).prop("checked", false);
+
+            // =========================
+            // CKEDITOR
+            // =========================
+            descEditor?.setData("");
+
+            contentEditor?.setData("");
+
+            // =========================
+            // TAGSINPUT
+            // =========================
+            const $tags = $(`#${type}_tags`);
+
+            if ($tags.length) {
+                try {
+                    $tags.tagsinput("removeAll");
+                } catch (e) {
+                    $tags.val("");
+                }
+            }
+
+            // =========================
+            // IMAGE INPUT
+            // =========================
+            $(`#${type}_image`).val("");
+
+            // =========================
+            // IMAGE PREVIEW
+            // =========================
+            $(`#${type}_image_preview`)
+                .attr("src", window.productConfig.assets.defaultImage)
+                .addClass("d-none");
+
+            // =========================
+            // REMOVE VARIANTS
+            // =========================
+            $("#removed_variants").val("[]");
+
+            // =========================
+            // RESET VARIANTS
+            // =========================
+            $(variantWrapper).html("");
+
+            if (isAdd) {
+                this.addVariantIndex = 0;
+            } else {
+                this.editVariantIndex = 0;
+            }
+
+            // add default variant
+            $(variantBtn).trigger("click");
+
+            // =========================
+            // VALIDATION
+            // =========================
+            $(form).find(".is-invalid").removeClass("is-invalid");
+
+            $(form).find(".invalid-feedback").remove();
+        },
+
+        // =========================
+        // MODAL RESET
+        // =========================
+        bindModalReset() {
+            $(this.el.addModal).on("hidden.bs.modal", () => {
+                this.resetForm("add");
+            });
+
+            $(this.el.editModal).on("hidden.bs.modal", () => {
+                this.resetForm("edit");
+            });
         },
 
         // =========================

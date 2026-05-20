@@ -19,6 +19,7 @@
             this.initDataTable();
             this.bind();
             this.bindCrud();
+            this.bindModalReset();
         },
 
         // =========================
@@ -324,6 +325,21 @@
         },
 
         // =========================
+        // RESET
+        // =========================
+        bindModalReset() {
+            // Add modal
+            $("#addBlogModal").on("hidden.bs.modal", () => {
+                this.resetBlogForm("add");
+            });
+
+            // Edit modal
+            $("#editBlogModal").on("hidden.bs.modal", () => {
+                this.resetBlogForm("edit");
+            });
+        },
+
+        // =========================
         // LOAD EDIT
         // =========================
         loadEdit(id) {
@@ -392,6 +408,36 @@
                     this.reload();
                 }
             });
+        },
+
+        // =========================
+        // RESET FORM
+        // =========================
+        resetBlogForm(prefix = "add") {
+            const form = $(`#${prefix}_blog_form`);
+
+            // reset native form
+            form[0].reset();
+
+            // clear input
+            $(`#${prefix}_title`).val("");
+            $(`#${prefix}_slug`).val("");
+            $(`#${prefix}_description`).val("");
+            $(`#${prefix}_content`).val("");
+
+            // reset select2 tags
+            form.find('select[name="tags[]"]').val(null).trigger("change");
+
+            // reset category
+            $(`#${prefix}_category_id`).val("").trigger("change");
+
+            // reset dropify
+            const drEvent = form.find(".dropify").data("dropify");
+
+            if (drEvent) {
+                drEvent.resetPreview();
+                drEvent.clearElement();
+            }
         },
 
         // =========================

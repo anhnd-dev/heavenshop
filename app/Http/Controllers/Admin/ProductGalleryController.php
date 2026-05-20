@@ -34,7 +34,7 @@ class ProductGalleryController extends Controller
             );
 
         return view(
-            'admin.product.gallery.index',
+            'admin.pages.gallery.index',
             compact(
                 'product',
                 'galleries',

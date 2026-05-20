@@ -31,5 +31,7 @@
 </div>
 
 @if ($prefix === 'edit')
-    <div class="mb-4" id="image"></div>
+    <div class="mb-4">
+        <img id="{{ $prefix }}_image_preview" class="img-fluid" width="120">
+    </div>
 @endif

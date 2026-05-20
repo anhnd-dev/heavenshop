@@ -22,68 +22,117 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Sử dụng một truy vấn để lấy dữ liệu cho cả seo và logo_icon
-        $seoAndLogo = Frontend::whereIn('data_key', ['seo.data', 'logo_icon.data'])->get();
-
-        View::composer(['partials.seo', 'partials.header', 'partials.header_cart', 'admin.layouts.partials.header'], function ($view) use ($seoAndLogo) {
-            $data = $seoAndLogo->where('data_key', 'seo.data')->first();
-            $seo = $data ? json_decode($data->data_value) : null;
-
-            $data = $seoAndLogo->where('data_key', 'logo_icon.data')->first();
-            $logoIcon = $data ? json_decode($data->data_value) : null;
-
-            $view->with(compact('seo', 'logoIcon'));
-        });
-
-        // Lấy dữ liệu cho footer
-        $footerData = Frontend::whereIn('data_key', ['logo_icon.data', 'contact_us.content'])->get();
-
-        $socialIcons = Frontend::where('data_key', 'social_icon.element')
-            ->where('is_active', 1)
-            ->take(4)
-            ->get();
-
-        $categories = Category::where('type', 'product')->take(5)->get();
-
-        View::composer('partials.footer', function ($view) use ($footerData, $socialIcons, $categories) {
-            $logoIcon = $footerData->where('data_key', 'logo_icon.data')->first();
-            $logoIcon = $logoIcon ? json_decode($logoIcon->data_value) : null;
-
-            $contact = $footerData->where('data_key', 'contact_us.content')->first();
-            $contact = $contact ? json_decode($contact->data_value) : null;
-
-            $view->with(compact('logoIcon', 'contact', 'socialIcons', 'categories'));
-        });
-
-        View::composer('partials.social', function ($view) use ($socialIcons) {
-            $view->with(compact('socialIcons'));
-        });
-
+        /*
+    |--------------------------------------------------------------------------
+    | Header, SEO & Logo
+    |--------------------------------------------------------------------------
+    */
         View::composer(
             [
-                'partials.header',
+                'layouts.partials.seo',
+                'layouts.partials.header',
+                'layouts.partials.header_cart',
+                // 'admin.layouts.partials.header',
             ],
             function ($view) {
 
-                $menuCategories = Category::query()
+                $frontendData = Frontend::query()
+                    ->whereIn('data_key', [
+                        'seo.data',
+                        'logo_icon.data',
+                    ])
+                    ->get()
+                    ->keyBy('data_key');
 
-                    ->whereNull('parent_id')
+                $seo = optional($frontendData->get('seo.data'), function ($item) {
+                    return json_decode($item->data_value);
+                });
 
-                    ->where('type', 'product')
+                $logoIcon = optional($frontendData->get('logo_icon.data'), function ($item) {
+                    return json_decode($item->data_value);
+                });
 
-                    ->where('is_active', true)
-
-                    ->with('childrenRecursive')
-
-                    ->orderBy('name')
-
-                    ->get();
-
-                $view->with(
-                    'menuCategories',
-                    $menuCategories
-                );
+                $view->with(compact('seo', 'logoIcon'));
             }
         );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Footer
+    |--------------------------------------------------------------------------
+    */
+        View::composer('layouts.partials.footer', function ($view) {
+
+            $frontendData = Frontend::query()
+                ->whereIn('data_key', [
+                    'logo_icon.data',
+                    'contact_us.content',
+                ])
+                ->get()
+                ->keyBy('data_key');
+
+            $logoIcon = optional($frontendData->get('logo_icon.data'), function ($item) {
+                return json_decode($item->data_value);
+            });
+
+            $contact = optional($frontendData->get('contact_us.content'), function ($item) {
+                return json_decode($item->data_value);
+            });
+
+            $socialIcons = Frontend::query()
+                ->where('data_key', 'social_icon.element')
+                ->where('is_active', true)
+                ->latest()
+                ->take(4)
+                ->get();
+
+            $categories = Category::query()
+                ->where('type', 'product')
+                ->where('is_active', true)
+                ->take(5)
+                ->get();
+
+            $view->with(compact(
+                'logoIcon',
+                'contact',
+                'socialIcons',
+                'categories'
+            ));
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | Social Icons
+    |--------------------------------------------------------------------------
+    */
+        View::composer('layouts.partials.social', function ($view) {
+
+            $socialIcons = Frontend::query()
+                ->where('data_key', 'social_icon.element')
+                ->where('is_active', true)
+                ->latest()
+                ->take(4)
+                ->get();
+
+            $view->with(compact('socialIcons'));
+        });
+
+        /*
+    |--------------------------------------------------------------------------
+    | Menu Categories
+    |--------------------------------------------------------------------------
+    */
+        View::composer('layouts.partials.header', function ($view) {
+
+            $menuCategories = Category::query()
+                ->whereNull('parent_id')
+                ->where('type', 'product')
+                ->where('is_active', true)
+                ->with('childrenRecursive')
+                ->orderBy('name')
+                ->get();
+
+            $view->with(compact('menuCategories'));
+        });
     }
 }

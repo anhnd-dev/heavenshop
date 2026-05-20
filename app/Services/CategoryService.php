@@ -205,7 +205,6 @@ class CategoryService
         string $type,
         ?int $excludeId = null
     ) {
-
         return Category::query()
 
             ->where('type', $type)
@@ -223,8 +222,6 @@ class CategoryService
             )
 
             ->orderBy('level')
-
-            ->orderBy('name')
 
             ->get([
                 'id',

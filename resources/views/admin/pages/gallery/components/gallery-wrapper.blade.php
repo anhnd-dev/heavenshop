@@ -94,7 +94,10 @@
 
                 </div>
 
-                <div class="card-body" id="gallery-content"></div>
+                <div class="card-body" id="gallery-content">
+
+
+                </div>
 
             </div>
 

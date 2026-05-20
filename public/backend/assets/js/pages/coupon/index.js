@@ -16,6 +16,7 @@
             this.initDataTable();
             this.bind();
             this.bindCrud();
+            this.bindModalReset();
         },
 
         // =========================
@@ -299,6 +300,21 @@
         },
 
         // =========================
+        // RESET
+        // =========================
+        bindModalReset() {
+            // Add modal
+            $("#addCouponModal").on("hidden.bs.modal", () => {
+                this.resetAddForm();
+            });
+
+            // Edit modal
+            $("#editCouponModal").on("hidden.bs.modal", () => {
+                this.resetEditForm();
+            });
+        },
+
+        // =========================
         // LOAD EDIT
         // =========================
         loadEdit(id) {
@@ -386,6 +402,37 @@
             return `${d.getFullYear()}-${pad(
                 d.getMonth() + 1,
             )}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        },
+
+        // =========================
+        // RESET FORM
+        // =========================
+        resetAddForm() {
+            $("#add_coupon_form")[0].reset();
+
+            $("#code").val("");
+            $("#discount_type").val("").trigger("change");
+            $("#discount_value").val("");
+            $("#min_order_amount").val("");
+            $("#max_discount_amount").val("");
+            $("#quantity").val("");
+            $("#start_date").val("");
+            $("#end_date").val("");
+        },
+
+        resetEditForm() {
+            $("#edit_coupon_form")[0].reset();
+
+            $("#coupon_id").val("");
+
+            $("#update_code").val("");
+            $("#update_discount_type").val("").trigger("change");
+            $("#update_discount_value").val("");
+            $("#update_min_order_amount").val("");
+            $("#update_max_discount_amount").val("");
+            $("#update_quantity").val("");
+            $("#update_start_date").val("");
+            $("#update_end_date").val("");
         },
 
         // =========================

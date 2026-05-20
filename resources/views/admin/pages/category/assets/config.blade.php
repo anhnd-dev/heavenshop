@@ -16,6 +16,8 @@
             'forceDeleteAll' => route('admin.category.force.delete.all'),
     
             'changeStatus' => route('admin.category.change.status'),
+    
+            'select' => route('admin.category.select'),
         ],
     
         'assets' => [

@@ -107,6 +107,8 @@ class ShopController extends Controller
 
             ->where('is_active', true)
 
+            ->orderBy('name')
+
             ->firstOrFail();
 
         return view(

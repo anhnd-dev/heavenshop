@@ -40,7 +40,7 @@
             margin-top: 32px !important;
         }
 
-        .step a{
+        .step a {
             pointer-events: none;
             text-align: center;
             color: rgba(0, 0, 0, 0.5)
@@ -138,7 +138,7 @@
 
         #checkout-modal::-webkit-scrollbar {
             width: 8px;
-            background : transparent;
+            background: transparent;
             border-radius: 10px;
         }
 
@@ -149,8 +149,9 @@
         #checkout-modal::-webkit-scrollbar-thumb {
             background: #fff;
             border-radius: 10px;
-            width : 8px;
+            width: 8px;
         }
+
         #checkout-modal::-webkit-scrollbar-thumb:hover {
             background: #8F8F8F;
         }
@@ -163,7 +164,8 @@
 <body data-mobile-nav-style="classic">
 
     @if (!request()->routeIs('cart.index', 'checkout.index', 'payment.index'))
-        @include('partials.header')
+        @include('layouts.partials.header')
+
         @yield('content')
     @else
         @include('partials.header_cart')
@@ -202,7 +204,7 @@
 
     @include('partials.social')
 
-    @include('partials.scroll_to_top')
+    @include('layouts.partials.scroll_to_top')
 
     <script data-cfasync="false" src="{{ asset('frontend/js/email-decode.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('frontend/js/jquery.js') }}"></script>

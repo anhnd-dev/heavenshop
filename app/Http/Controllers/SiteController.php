@@ -29,6 +29,8 @@ class SiteController extends Controller
             ->latest()
             ->get();
 
+        // dd($categories);
+
 
         $brands = Brand::whereNull('deleted_at')->take(5)->get();
 

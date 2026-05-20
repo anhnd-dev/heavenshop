@@ -8,9 +8,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('partials.seo')
-
-    {{-- @vite(['resources/css/admin/app.css', 'resources/js/admin/app.js']) --}}
+    @include('layouts.partials.seo')
 
     <!-- START: Template CSS-->
     <link rel="stylesheet" href="{{ asset('backend/vendors/bootstrap/css/bootstrap.min.css') }}">

@@ -17,6 +17,7 @@
             this.initDataTable();
             this.bind();
             this.bindCrud();
+            this.bindModalReset();
         },
 
         // =========================
@@ -267,6 +268,21 @@
         },
 
         // =========================
+        // RESET
+        // =========================
+        bindModalReset() {
+            // Add modal
+            $("#addCategoryModal").on("hidden.bs.modal", () => {
+                this.resetAddForm();
+            });
+
+            // Edit modal
+            $("#editCategoryModal").on("hidden.bs.modal", () => {
+                this.resetEditForm();
+            });
+        },
+
+        // =========================
         // LOAD PARENT CATEGORY
         // =========================
         loadParents(type, target) {
@@ -298,13 +314,16 @@
                 `);
 
                 categories.forEach((item) => {
-                    const indent = "&nbsp;".repeat(item.level * 5);
+                    console.log(item.level);
+
+                    const indent = "└─ ".repeat(item.level);
+
                     $(target).append(`
                         <option
                             value="${item.id}"
                             data-slug="${item.slug}"
                         >
-                            ${indent}${item.name}
+                           ${indent}${item.name}
                         </option>
                     `);
                 });
@@ -393,6 +412,42 @@
 
             show.forEach((e) => $(e).show());
             hide.forEach((e) => $(e).hide());
+        },
+
+        // =========================
+        // RESET FORM
+        // =========================
+        resetAddForm() {
+            $("#add_category_form")[0].reset();
+
+            // reset select2
+            $("#add_type").val("").trigger("change");
+            $("#add_parent_id").val("").trigger("change");
+
+            // reset image preview
+            $("#add_image_preview").attr(
+                "src",
+                window.categoryConfig.assets.defaultImage,
+            );
+
+            // clear slug
+            $("#add_slug").val("");
+        },
+
+        resetEditForm() {
+            $("#edit_category_form")[0].reset();
+
+            $("#category_id").val("");
+
+            $("#edit_type").val("").trigger("change");
+            $("#edit_parent_id").val("").trigger("change");
+
+            $("#edit_image_preview").attr(
+                "src",
+                window.categoryConfig.assets.defaultImage,
+            );
+
+            $("#edit_slug").val("");
         },
 
         // =========================

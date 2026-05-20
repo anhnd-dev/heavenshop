@@ -17,6 +17,7 @@
             this.initDataTable();
             this.bind();
             this.bindCrud();
+            this.bindModalReset();
         },
 
         // =========================
@@ -225,6 +226,18 @@
             }
         },
 
+        bindModalReset() {
+            // Add modal
+            $("#addBrandModal").on("hidden.bs.modal", () => {
+                this.resetAddForm();
+            });
+
+            // Edit modal
+            $("#editBrandModal").on("hidden.bs.modal", () => {
+                this.resetEditForm();
+            });
+        },
+
         // =========================
         // EDIT LOAD
         // =========================
@@ -234,17 +247,16 @@
                 method: "GET",
                 data: { id },
             }).done((res) => {
+                const imageUrl = res.image
+                    ? `${window.brandConfig.assets.brand}/${res.image}`
+                    : window.brandConfig.assets.defaultImage;
+
                 $("#edit_name").val(res.name);
                 $("#edit_slug").val(res.slug);
 
-                $("#image").html(`
-                    <img src="/uploads/brand/${res.image}"
-                         class="img-thumbnail"
-                         width="100">
-                `);
+                $("#edit_image_preview").attr("src", imageUrl);
 
                 $("#brand_id").val(res.id);
-                $("#brand_image").val(res.image);
             });
         },
 
@@ -273,6 +285,34 @@
                     this.reload();
                 }
             });
+        },
+
+        // =========================
+        // RESET FORM
+        // =========================
+        resetAddForm() {
+            $("#add_brand_form")[0].reset();
+
+            // reset image preview
+            $("#add_image_preview").attr(
+                "src",
+                window.brandConfig.assets.defaultImage,
+            );
+
+            $("#add_slug").val("");
+        },
+
+        resetEditForm() {
+            $("#edit_brand_form")[0].reset();
+
+            $("#brand_id").val("");
+
+            $("#edit_image_preview").attr(
+                "src",
+                window.brandConfig.assets.defaultImage,
+            );
+
+            $("#edit_slug").val("");
         },
 
         // =========================

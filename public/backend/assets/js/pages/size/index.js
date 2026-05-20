@@ -16,6 +16,7 @@
             this.initDataTable();
             this.bind();
             this.bindCrud();
+            this.bindModalReset();
         },
 
         // =========================
@@ -211,6 +212,21 @@
         },
 
         // =========================
+        // RESET
+        // =========================
+        bindModalReset() {
+            // Add modal
+            $("#addSizeModal").on("hidden.bs.modal", () => {
+                this.resetAddForm();
+            });
+
+            // Edit modal
+            $("#editSizeModal").on("hidden.bs.modal", () => {
+                this.resetEditForm();
+            });
+        },
+
+        // =========================
         // LOAD EDIT
         // =========================
         loadEdit(id) {
@@ -253,6 +269,23 @@
                     this.reload();
                 }
             });
+        },
+
+        // =========================
+        // RESET FORM
+        // =========================
+        resetAddForm() {
+            $("#add_size_form")[0].reset();
+
+            $("#add_name").val("");
+        },
+
+        resetEditForm() {
+            $("#edit_size_form")[0].reset();
+
+            $("#size_id").val("");
+
+            $("#edit_name").val("");
         },
 
         // =========================
