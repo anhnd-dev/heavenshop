@@ -1,0 +1,55 @@
+@extends('layouts.base')
+
+@section('content')
+    <section class="top-space-margin half-section bg-gradient-very-light-gray">
+        <div class="container">
+            <div class="row align-items-center justify-content-center"
+                data-anime='{ "el": "childs", "translateY": [-15, 0], "opacity": [0,1], "duration": 300, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+                <div class="col-12 col-xl-8 col-lg-10 text-center position-relative page-title-extra-large">
+                    <h1 class="alt-font fw-600 text-dark-gray mb-10px">Magazine</h1>
+                </div>
+                <div class="col-12 breadcrumb breadcrumb-style-01 d-flex justify-content-center">
+                    <ul>
+                        <li><a href="{{ route('home') }}">Home</a></li>
+                        <li>Magazine</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pt-0 ps-7 pe-7 lg-ps-3 lg-pe-3 xs-px-0">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="blog-classic blog-wrapper grid-loading grid grid-4col xl-grid-4col lg-grid-3col md-grid-2col sm-grid-2col xs-grid-1col gutter-extra-large"
+                        data-anime='{ "el": "childs", "translateY": [-15, 0], "opacity": [0,1], "duration": 300, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+                        <li class="grid-sizer"></li>
+
+                        @foreach ($blogs as $blog)
+                            <li class="grid-item">
+                                <div class="card bg-transparent border-0 h-100">
+                                    <div class="blog-image position-relative overflow-hidden">
+                                        <a href="{{ route('blog.details', ['slug' => $blog->slug]) }}"><img
+                                                src="{{ asset('uploads/blog/' . $blog->image) }}" alt /></a>
+                                    </div>
+                                    <div class="card-body px-0 pt-30px pb-30px sm-pb-15px">
+                                        <span class="mb-5px d-block">By
+                                            <a href="#"
+                                                class="text-dark-gray fw-500 categories-text">{{ $blog->admin->full_name }}</a><a
+                                                href="#"
+                                                class="blog-date">{{ (new DateTime($blog->created_at))->format('j F Y') }}</a></span>
+                                        <a href="{{ route('blog.details', ['slug' => $blog->slug]) }}"
+                                            class="alt-font card-title fs-20 lh-30 fw-500 text-dark-gray d-inline-block w-75 xl-w-85 lg-w-100">{{ $blog->title }}</a>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    {!! customPagination($blogs) !!}
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection
