@@ -157,7 +157,7 @@ class ProductVariantService
             return null;
         }
 
-        return $this->uploadImage($variant['image'], 'variant');
+        return $this->uploadFile($variant['image'], 'variant');
     }
 
     // =========================
@@ -170,10 +170,10 @@ class ProductVariantService
         }
 
         if ($model->image) {
-            $this->deleteImage($model->image, 'variant');
+            $this->deleteFile($model->image, 'variant');
         }
 
-        return $this->uploadImage($variant['image'], 'variant');
+        return $this->uploadFile($variant['image'], 'variant');
     }
 
     // =========================
@@ -181,6 +181,6 @@ class ProductVariantService
     // =========================
     public function deleteVariantImage(string $image): void
     {
-        $this->deleteImage($image, 'variant');
+        $this->deleteFile($image, 'variant');
     }
 }

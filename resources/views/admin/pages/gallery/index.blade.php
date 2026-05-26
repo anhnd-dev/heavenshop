@@ -18,20 +18,24 @@
 
                     </th>
 
+                    <th width="140">
+                        Media
+                    </th>
+
                     <th>
-                        {{ __('admin.product.gallery_path') }}
+                        Màu sắc
+                    </th>
+
+                    <th width="100">
+                        Type
+                    </th>
+
+                    <th width="100">
+                        Sort
                     </th>
 
                     <th width="140">
-                        {{ __('admin.product.product_image') }}
-                    </th>
-
-                    <th>
-                        {{ __('admin.product.product_name') }}
-                    </th>
-
-                    <th width="120">
-                        {{ __('admin.common.action') }}
+                        Action
                     </th>
 
                 </tr>
@@ -56,14 +60,50 @@
 
                         <td>
 
-                            <img src="{{ asset('uploads/gallery/' . $gallery->image) }}" class="img-thumbnail"
-                                width="100">
+                            @if ($gallery->type === 'image')
+                                <img src="{{ asset('uploads/gallery/' . $gallery->file) }}" class="img-thumbnail"
+                                    width="100">
+                            @else
+                                <video width="100" height="100" controls>
+
+                                    <source src="{{ asset('uploads/gallery/' . $gallery->file) }}">
+
+                                </video>
+                            @endif
 
                         </td>
 
                         <td>
 
-                            {{ $gallery->product?->name }}
+                            @if ($gallery->color)
+                                <div
+                                    style="
+                                        width:25px;
+                                        height:25px;
+                                        border-radius:50%;
+                                        background:{{ $gallery->color->code }};
+                                        border:1px solid #ddd;
+                                    ">
+                                </div>
+                            @else
+                                --
+                            @endif
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-primary">
+
+                                {{ strtoupper($gallery->type) }}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            {{ $gallery->sort_order }}
 
                         </td>
 
@@ -84,6 +124,14 @@
 
                                 </button>
                             @else
+                                <button type="button"
+                                    class="editGallery btn btn-primary shadow btn-xs sharp mr-1 btn-sm"
+                                    data-id="{{ $gallery->id }}">
+
+                                    <i class="fas fa-pencil-alt"></i>
+
+                                </button>
+
                                 <button type="button" id="{{ $gallery->id }}"
                                     class="deleteGallery btn btn-danger shadow btn-xs sharp btn-sm">
 
@@ -105,7 +153,7 @@
 @else
     <div class="text-center py-5 text-muted">
 
-        Không có dữ liệu thư viện ảnh
+        Không có dữ liệu media
 
     </div>
 

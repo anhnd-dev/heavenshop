@@ -352,10 +352,14 @@ return [
 
     'slider' => [
         'title' => 'Tiêu đề',
-        'description' => 'Mô tả',
+        'subtitle' => 'Mô tả ngắn',
 
-        'link_url' => 'Liên kết',
-        'image_url' => 'Hình ảnh',
+        'url' => 'Liên kết',
+        'position' => 'Phân vùng hiển thị',
+        'sort_order' => 'Sắp xếp',
+        'start_at' => 'Ngày bắt đầu',
+        'end_at' => 'Ngày kết thúc',
+        'image' => 'Hình ảnh',
 
         'status' => 'Trạng thái',
         'action' => 'Thao tác',
@@ -364,8 +368,10 @@ return [
         'edit_slider' => 'Cập nhật slider',
 
         'enter_title' => 'Nhập tiêu đề',
-        'enter_description' => 'Nhập mô tả',
-        'enter_link_url' => 'Nhập liên kết',
+        'enter_subtitle' => 'Nhập mô tả ngắn',
+        'enter_url' => 'https://',
+
+        'select_position' => 'Chọn vùng hiển thị'
     ],
 
     /*

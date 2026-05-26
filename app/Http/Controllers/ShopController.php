@@ -99,24 +99,6 @@ class ShopController extends Controller
         return view('pages.shop', compact('products', 'page', 'psize', 'order', 'categories', 'colors', 'sizes', 'brands', 'q_brands', 'q_subcategories', 'activeCategoryIds', 'q_colors', 'q_sizes'));
     }
 
-    public function category(string $slug)
-    {
-        $category = Category::query()
-
-            ->where('slug', $slug)
-
-            ->where('is_active', true)
-
-            ->orderBy('name')
-
-            ->firstOrFail();
-
-        return view(
-            'frontend.pages.shop.category',
-            compact('category')
-        );
-    }
-
     public function productDetails($slug) // :GET
     {
         $product = Product::with('brand', 'subcategory')->where('slug', $slug)->first();

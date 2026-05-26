@@ -29,10 +29,12 @@ class AppServiceProvider extends ServiceProvider
     */
         View::composer(
             [
-                'layouts.partials.seo',
-                'layouts.partials.header',
-                'layouts.partials.header_cart',
-                // 'admin.layouts.partials.header',
+                'frontend.layouts.partials.seo',
+                'frontend.layouts.partials.header',
+                'frontend.layouts.partials.header_cart',
+                'admin.layouts.partials.seo',
+                'admin.layouts.partials.header',
+
             ],
             function ($view) {
 
@@ -61,7 +63,7 @@ class AppServiceProvider extends ServiceProvider
     | Footer
     |--------------------------------------------------------------------------
     */
-        View::composer('layouts.partials.footer', function ($view) {
+        View::composer('frontend.layouts.partials.footer', function ($view) {
 
             $frontendData = Frontend::query()
                 ->whereIn('data_key', [
@@ -105,7 +107,7 @@ class AppServiceProvider extends ServiceProvider
     | Social Icons
     |--------------------------------------------------------------------------
     */
-        View::composer('layouts.partials.social', function ($view) {
+        View::composer('frontend.layouts.partials.social', function ($view) {
 
             $socialIcons = Frontend::query()
                 ->where('data_key', 'social_icon.element')
@@ -122,7 +124,7 @@ class AppServiceProvider extends ServiceProvider
     | Menu Categories
     |--------------------------------------------------------------------------
     */
-        View::composer('layouts.partials.header', function ($view) {
+        View::composer('frontend.layouts.partials.header', function ($view) {
 
             $menuCategories = Category::query()
                 ->whereNull('parent_id')

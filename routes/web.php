@@ -4,28 +4,28 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes (Entry Point)
+| Web Routes
 |--------------------------------------------------------------------------
-| File này chỉ dùng để load các route module
-| Không viết logic lớn ở đây
+|
+| Entry point chỉ dùng để load route modules.
+| Không đặt business logic tại đây.
 |
 */
 
-// ================= TEST / TEMP =================
-// Route::view('/done', 'test');
+// ================= FRONTEND =================
 
+require __DIR__ . '/frontend/web.php';
 
-// ================= LOAD MODULE ROUTES =================
+// ================= AUTH =================
 
-// Frontend (khách)
-require __DIR__ . '/frontend/index.php';
-
-// Auth (login/register user)
 require __DIR__ . '/auth.php';
 
-// Admin
+// ================= ADMIN =================
+
 Route::prefix('admin')
-    ->name('admin.')
+    ->as('admin.')
+    // ->middleware(['auth', 'admin'])
     ->group(function () {
-        require __DIR__ . '/admin/index.php';
+
+        require __DIR__ . '/admin/web.php';
     });

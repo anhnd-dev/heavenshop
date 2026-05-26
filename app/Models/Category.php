@@ -75,6 +75,49 @@ class Category extends Model
 
     /*
     |--------------------------------------------------------------------------
+    | Get All Children
+    |--------------------------------------------------------------------------
+    */
+
+    public function getAllChildrenCount()
+    {
+        return $this->children->count() +
+            $this->children->sum(fn($child) => $child->getAllChildrenCount());
+    }
+
+    public function getAllChildrenIds(): array
+    {
+        $ids = [$this->id];
+
+        foreach ($this->children as $child) {
+
+            $ids = array_merge(
+                $ids,
+                $child->getAllChildrenIds()
+            );
+        }
+
+        return $ids;
+    }
+
+    public function getBreadcrumbAttribute()
+    {
+        $breadcrumbs = [];
+
+        $category = $this;
+
+        while ($category) {
+
+            array_unshift($breadcrumbs, $category);
+
+            $category = $category->parent;
+        }
+
+        return $breadcrumbs;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | Blogs
     |--------------------------------------------------------------------------
     */

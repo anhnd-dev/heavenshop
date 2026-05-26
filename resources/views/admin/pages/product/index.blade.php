@@ -189,7 +189,7 @@
     @include('admin.components.modal', [
         'id' => 'addGalleryModel',
         'size' => 'modal-lg',
-        'title' => __('admin.product.add_gallery'),
+        'title' => 'Thêm media',
         'formId' => 'add_gallery_form',
         'submitId' => 'add_gallery_btn',
         'submitText' => __('admin.common.add'),
@@ -198,11 +198,39 @@
         'hiddenFields' => [
             [
                 'name' => 'product_id',
-                'id' => 'gallery_product_id',
+                'id' => 'add_gallery_product_id',
             ],
         ],
     
-        'body' => view('admin.pages.gallery.components.gallery-form')->render(),
+        'body' => view('admin.pages.gallery.components.gallery-form', [
+            'prefix' => 'add',
+            'mode' => 'create',
+            'colors' => $colors,
+        ])->render(),
+    ])
+
+    @include('admin.components.modal', [
+        'id' => 'editGalleryModel',
+        'size' => 'modal-lg',
+        'title' => 'Cập nhật media',
+        'formId' => 'edit_gallery_form',
+        'method' => 'PUT',
+        'submitId' => 'edit_gallery_btn',
+        'submitText' => __('admin.common.update'),
+        'enctype' => 'multipart/form-data',
+    
+        'hiddenFields' => [
+            [
+                'name' => 'gallery_id',
+                'id' => 'edit_gallery_id',
+            ],
+        ],
+    
+        'body' => view('admin.pages.gallery.components.gallery-form', [
+            'prefix' => 'edit',
+            'mode' => 'edit',
+            'colors' => $colors,
+        ])->render(),
     ])
 @endsection
 
@@ -236,4 +264,5 @@
 
     <!-- Page JS -->
     <script src="{{ asset('backend/assets/js/pages/product/index.js') }}"></script>
+    <script src="{{ asset('backend/assets/js/pages/product_gallery/index.js') }}"></script>
 @endpush

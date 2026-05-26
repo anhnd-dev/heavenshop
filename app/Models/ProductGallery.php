@@ -4,20 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductGallery extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'product_galleries';
 
     protected $fillable = [
         'product_id',
-        'image',
+        'color_id',
+        'file',
+        'type',
+        'thumbnail',
+        'sort_order',
     ];
 
     protected $casts = [
-        'product_id' => 'integer',
+        'sort_order' => 'integer',
     ];
 
     // =========================
@@ -29,14 +34,44 @@ class ProductGallery extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function color()
+    {
+        return $this->belongsTo(Color::class);
+    }
+
     // =========================
     // ACCESSORS
     // =========================
 
-    public function getImageUrlAttribute(): string
+    public function getIsImageAttribute(): bool
     {
-        return $this->image
-            ? asset('uploads/product/gallery/' . $this->image)
-            : asset('admin/images/default-image.png');
+        return $this->type === 'image';
+    }
+
+    public function getIsVideoAttribute(): bool
+    {
+        return $this->type === 'video';
+    }
+
+    public function getFileUrlAttribute(): ?string
+    {
+        if (!$this->file) {
+            return null;
+        }
+
+        return asset(
+            'uploads/gallery/' . $this->file
+        );
+    }
+
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        if (!$this->thumbnail) {
+            return null;
+        }
+
+        return asset(
+            'uploads/gallery/' . $this->thumbnail
+        );
     }
 }

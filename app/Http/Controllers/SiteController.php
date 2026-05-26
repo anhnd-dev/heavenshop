@@ -6,6 +6,7 @@ use App\Models\Blog;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\Slider;
 use App\Models\Frontend;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -15,21 +16,22 @@ class SiteController extends Controller
 {
     public function home() // :GET
     {
-        $sliders = Frontend::where([
-            ['data_key', 'slider.element'],
-            ['is_active', 1],
-        ])->take(3)->get();
-
-        $categories = Category::query()
-            ->where([
-                'type' => 'product',
-                'is_active' => 1
-            ])
-            ->whereNotNull('parent_id')
-            ->latest()
+        $sliders = Slider::query()
+            ->display()
+            ->where('position', 'home_top')
+            ->orderBy('sort_order')
             ->get();
 
-        // dd($categories);
+        $categories = Category::query()
+            ->with('children')
+            ->where([
+                'type' => 'product',
+                'is_active' => 1,
+            ])
+            ->whereNull('parent_id')
+            ->latest()
+            ->take(3)
+            ->get();
 
 
         $brands = Brand::whereNull('deleted_at')->take(5)->get();
@@ -45,13 +47,13 @@ class SiteController extends Controller
             ->inRandomOrder()
             ->first(['start_date', 'end_date', 'code']);
 
-        return view('pages.home.index', compact('sliders', 'categories', 'brands', 'bestSellers', 'blogs', 'coupon'));
+        return view('frontend.home.index', compact('sliders', 'categories', 'brands', 'bestSellers', 'blogs', 'coupon'));
     }
 
     public function blog() // :GET
     {
         $blogs = Blog::latest()->paginate(12);
-        return view('pages.blog', compact('blogs'));
+        return view('frontend.pages.blog', compact('blogs'));
     }
 
     public function blogDetails($slug) // :GET
@@ -70,19 +72,19 @@ class SiteController extends Controller
             ->take(3) // Giới hạn số lượng bài viết liên quan
             ->get();
 
-        return view('pages.blog_detail', compact('blog', 'relatedBlogs'));
+        return view('frontend.pages.blog_detail', compact('blog', 'relatedBlogs'));
     }
 
     public function contact() // :GET
     {
         $contact = Frontend::where('data_key', 'contact_us.content')->first();
-        return view('pages.contact', compact('contact'));
+        return view('frontend.pages.contact', compact('contact'));
     }
 
     public function about() // :GET
     {
         // $contact = Frontend::where('data_key', 'contact_us.content')->first();
-        return view('pages.about');
+        return view('frontend.pages.about');
     }
 
     public function policy($slug)
@@ -92,11 +94,11 @@ class SiteController extends Controller
             ->whereJsonContains('data_value->slug', $slug)
             ->first();
 
-        return view('pages.policy.' . strtr($slug, "-", "_"), ['policy' => $policy]);
+        return view('frontend.pages.policy.' . strtr($slug, "-", "_"), ['policy' => $policy]);
     }
 
     public function faqs() // :GET
     {
-        return view('pages.faqs');
+        return view('frontend.pages.faqs');
     }
 }

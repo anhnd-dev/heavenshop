@@ -404,7 +404,7 @@ class CategoryService
 
             ->findOrFail($id);
 
-        $this->deleteImage(
+        $this->deleteFile(
             $category->image,
             'category'
         );
@@ -430,7 +430,7 @@ class CategoryService
 
         foreach ($categories as $category) {
 
-            $this->deleteImage(
+            $this->deleteFile(
                 $category->image,
                 'category'
             );
@@ -537,14 +537,14 @@ class CategoryService
 
         if ($request->hasFile('image')) {
 
-            $data['image'] = $this->uploadImage(
+            $data['image'] = $this->uploadFile(
                 $request->file('image'),
                 'category'
             );
 
             if ($category?->image) {
 
-                $this->deleteImage(
+                $this->deleteFile(
                     $category->image,
                     'category'
                 );

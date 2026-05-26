@@ -87,7 +87,7 @@ class ProductController extends BaseAdminController
             'brand',
             'variants.color',
             'variants.size',
-            'galleries',
+            'galleries.color',
         ])->findOrFail($request->id);
 
         return response()->json($product);
@@ -196,11 +196,11 @@ class ProductController extends BaseAdminController
 
             $ids = $request->ids ?? [];
 
-            Product::whereIn('id', $ids)
-                ->delete();
+            $this->productService
+                ->deleteMultiple($ids);
 
             return $this->successResponse(
-                'Xóa sản phẩm thành công'
+                'Xóa nhiều sản phẩm thành công'
             );
         });
     }
@@ -231,7 +231,7 @@ class ProductController extends BaseAdminController
                 ->restoreMultiple($ids);
 
             return $this->successResponse(
-                'Khôi phục sản phẩm thành công'
+                'Khôi phục tất cả sản phẩm thành công'
             );
         });
     }
@@ -244,7 +244,10 @@ class ProductController extends BaseAdminController
         return $this->transaction(function () use ($request) {
 
             $product = Product::withTrashed()
-                ->with('variants')
+                ->with([
+                    'variants',
+                    'galleries',
+                ])
                 ->findOrFail($request->id);
 
             $this->productService
@@ -265,19 +268,11 @@ class ProductController extends BaseAdminController
 
             $ids = $request->ids ?? [];
 
-            $products = Product::withTrashed()
-                ->with('variants')
-                ->whereIn('id', $ids)
-                ->get();
-
-            foreach ($products as $product) {
-
-                $this->productService
-                    ->forceDelete($product);
-            }
+            $this->productService
+                ->forceDeleteMultiple($ids);
 
             return $this->successResponse(
-                'Xóa vĩnh viễn sản phẩm thành công'
+                'Xóa vĩnh viễn nhiểu sản phẩm thành công'
             );
         });
     }

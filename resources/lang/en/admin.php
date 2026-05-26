@@ -355,10 +355,14 @@ return [
 
     'slider' => [
         'title' => 'Title',
-        'description' => 'Description',
+        'subtitle' => 'SubTitle',
 
-        'link_url' => 'Link',
-        'image_url' => 'Image',
+        'url' => 'URL',
+        'position' => 'Position',
+        'sort_order' => 'Sort',
+        'start_at' => 'Start At',
+        'end_at' => 'End At',
+        'image' => 'Image',
 
         'status' => 'Status',
         'action' => 'Action',
@@ -367,8 +371,10 @@ return [
         'edit_slider' => 'Edit Slider',
 
         'enter_title' => 'Enter Title',
-        'enter_description' => 'Enter Description',
-        'enter_link_url' => 'Enter Link',
+        'enter_subtitle' => 'Enter SubTitle',
+        'enter_url' => 'https://',
+
+        'select_position' => 'Select Position'
     ],
 
     /*

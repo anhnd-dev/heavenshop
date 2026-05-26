@@ -1,0 +1,772 @@
+/* =========================================
+    FILTER SIDEBAR
+========================================= */
+
+.filter-sidebar {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 24px;
+    border: 1px solid #ececec;
+    position: sticky;
+    top: 120px;
+}
+
+.filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.filter-header h5 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: #111;
+}
+
+.filter-result {
+    color: #888;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.filter-group {
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.filter-group:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.filter-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    margin-bottom: 18px;
+}
+
+.filter-title span {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111;
+}
+
+.filter-title i {
+    font-size: 14px;
+    color: #999;
+    transition: 0.3s ease;
+}
+
+.filter-group.active .filter-title i {
+    transform: rotate(180deg);
+}
+
+.filter-content {
+    display: none;
+}
+
+.filter-group.active .filter-content {
+    display: block;
+}
+
+.filter-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.filter-item {
+    margin-bottom: 16px;
+}
+
+.filter-item:last-child {
+    margin-bottom: 0;
+}
+
+.filter-link,
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    text-decoration: none;
+    color: #666;
+    transition: 0.25s ease;
+}
+
+.filter-link:hover,
+.filter-checkbox:hover {
+    color: #111;
+}
+
+.filter-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fake-radio,
+.custom-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: 26px;
+    height: 26px;
+
+    border: 1.5px solid #dcdcdc;
+    background: #fff;
+
+    position: relative;
+    cursor: pointer;
+    transition: 0.25s ease;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.fake-radio {
+    border-radius: 50%;
+}
+
+.custom-checkbox {
+    border-radius: 8px;
+}
+
+.filter-link.active .fake-radio {
+    border-color: #111;
+}
+
+.filter-link.active .fake-radio::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #111;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.custom-checkbox:checked {
+    background: #111;
+    border-color: #111;
+}
+
+.custom-checkbox:checked::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    width: 6px;
+    height: 12px;
+    border: solid #ddd;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.color-checkbox {
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.filter-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: inherit;
+}
+
+.filter-count {
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f5f5f5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+
+    flex-shrink: 0;
+}
+
+/* =========================================
+   SIZE FILTER
+========================================= */
+
+.size-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.size-filter-item {
+    position: relative;
+    cursor: pointer;
+}
+
+.size-filter-item input {
+    display: none;
+}
+
+.size-filter-item span {
+    height: 46px;
+
+    border: 1px solid #dcdcdc;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: #666;
+
+    transition: 0.25s ease;
+}
+
+.size-filter-item input:checked + span {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+/* =========================================
+   COLOR FILTER
+========================================= */
+
+.color-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px 10px;
+}
+
+.color-filter-item {
+    text-align: center;
+    cursor: pointer;
+}
+
+.color-filter-item input {
+    display: none;
+}
+
+.color-swatch {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+    border: 1px solid #d8d8d8;
+
+    display: block;
+    margin: 0 auto 8px;
+
+    transition: 0.25s ease;
+}
+
+.color-filter-item input:checked + .color-swatch {
+    box-shadow:
+        0 0 0 3px #fff,
+        0 0 0 5px #111;
+}
+
+.color-filter-item small {
+    display: block;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+
+    line-height: 1.4;
+}
+
+/* =========================================
+    TOP FILTER
+========================================= */
+
+.select-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 35px;
+}
+
+/* =========================================
+    PRODUCT GRID
+========================================= */
+
+.shop-wrapper {
+    margin: 0 -10px;
+}
+
+.shop-wrapper .grid-item {
+    padding: 0 10px;
+    margin-bottom: 35px;
+}
+
+.shop-box {
+    width: 100%;
+}
+
+.shop-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #f5f5f5;
+    aspect-ratio: 3 / 4;
+}
+
+.shop-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.35s ease;
+}
+
+.shop-box:hover .shop-image img {
+    transform: scale(1.04);
+}
+
+/* =========================================
+    BADGE
+========================================= */
+
+.product-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #111;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 0px 8px;
+    border-radius: 999px;
+    z-index: 5;
+}
+
+/* =========================================
+    QUICK SIZE
+========================================= */
+
+.quick-size {
+    position: absolute;
+
+    left: 12px;
+    right: 12px;
+    bottom: 55px;
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border-radius: 14px;
+
+    padding: 16px;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px);
+
+    transition: 0.3s ease;
+
+    z-index: 10;
+}
+
+.shop-box:hover .quick-size {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.quick-size-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 12px;
+
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+}
+
+.quick-size-title span {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111;
+}
+
+.add-to-cart {
+    width: 40px;
+    height: 33px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: #111;
+    color: #fff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+}
+
+.add-to-cart i {
+    font-size: 13px;
+}
+
+.add-to-cart:hover {
+    background: #2d3fd7;
+    transform: rotate(90deg);
+}
+
+.add-to-cart:active {
+    transform: scale(0.92);
+}
+
+.quick-size-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.size-item {
+    height: 42px;
+
+    border-radius: 10px;
+    border: 1px solid #e5e5e5;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.size-item:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+/* =========================================
+    PROMO
+========================================= */
+
+.product-promo {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: #2d3fd7;
+    color: #fff;
+
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    z-index: 5;
+}
+
+.product-promo span {
+    background: #fff;
+    color: #2d3fd7;
+
+    padding: 0px 10px;
+    border-radius: 999px;
+}
+
+/* =========================================
+    COLORS
+========================================= */
+
+.product-colors {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 14px;
+    margin-bottom: 10px;
+}
+
+.color-dot {
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+    border: 2px solid #fff;
+
+    box-shadow: 0 0 0 1px #ddd;
+
+    flex-shrink: 0;
+}
+
+.color-dot.active {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px #111;
+}
+
+.size-item.active {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+.more-color {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* =========================================
+    PRODUCT INFO
+========================================= */
+
+.shop-footer {
+    padding-top: 0;
+}
+
+.product-name {
+    display: block;
+
+    font-size: 16px;
+    font-weight: 500;
+    color: #111;
+
+    line-height: 1.5;
+
+    min-height: 24px;
+
+    text-decoration: none;
+    transition: 0.25s ease;
+}
+
+.product-name:hover {
+    color: #2d3fd7;
+}
+
+.wrap-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sale-price {
+    color: #111;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.origin-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+}
+
+.discount-badge {
+    background: #2d3fd7;
+    color: #fff;
+
+    padding: 2px 8px;
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+@media (max-width: 991px) {
+    .filter-sidebar {
+        position: static;
+        margin-top: 40px;
+    }
+
+    .quick-size {
+        display: none;
+    }
+
+    .product-name {
+        font-size: 14px;
+    }
+
+    .sale-price {
+        font-size: 16px;
+    }
+}
+
+/* =========================================
+    AJAX LOADING
+========================================= */
+
+#product-container {
+    position: relative;
+    min-height: 300px;
+}
+
+#product-container.collection-loading::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background: rgba(255, 255, 255, 0.75);
+
+    backdrop-filter: blur(2px);
+
+    z-index: 20;
+}
+
+#product-container.collection-loading::after {
+    content: "";
+
+    width: 54px;
+    height: 54px;
+
+    border: 3px solid #e5e5e5;
+    border-top-color: #111;
+
+    border-radius: 50%;
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    animation: collectionSpin 0.8s linear infinite;
+
+    z-index: 30;
+}
+
+@keyframes collectionSpin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* =========================================
+    RESULT FILTER
+========================================= */
+
+.collection-result {
+    margin-bottom: 14px;
+}
+
+.collection-result-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.active-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.active-filter-item {
+    height: 38px;
+    padding: 0 14px;
+
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.remove-filter {
+    border: none;
+    background: transparent;
+    color: #fff;
+
+    font-size: 18px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    padding: 0;
+}
+
+.clear-all-filters {
+    height: 38px;
+    padding: 0 18px;
+
+    border-radius: 999px;
+    border: 1px solid #ddd;
+
+    background: #fff;
+    color: #111;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.clear-all-filters:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}
+
+/* =========================================
+    DISABLED VARIANT
+========================================= */
+
+.size-item.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: #f5f5f5;
+    color: #999;
+    border-color: #e5e5e5;
+}
+
+.color-dot.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    position: relative;
+}
+
+.color-dot.disabled::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -3px;
+    right: -3px;
+    height: 2px;
+    background: #111;
+    transform: rotate(-45deg);
+}

@@ -2,304 +2,273 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Frontend;
+use App\Http\Requests\Slider\StoreSliderRequest;
+use App\Http\Requests\Slider\UpdateSliderRequest;
+use App\Services\SliderService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\Facades\DataTables;
 
-class SliderController extends Controller
+class SliderController extends BaseAdminController
 {
-    protected $request;
+    public function __construct(
+        protected SliderService $sliderService
+    ) {}
 
-    public function __construct(Request $request)
+    /**
+     * Danh sách slider
+     */
+    public function index(Request $request)
     {
-        $this->request = $request;
+        if ($request->ajax()) {
+
+            return $this->sliderService->datatable(
+                $request->boolean('include_trashed')
+            );
+        }
+
+        return view('admin.pages.slider.index');
     }
 
-    public function index() // :GET
+    /**
+     * Thêm slider
+     */
+    public function store(StoreSliderRequest $request)
     {
-        if ($this->request->ajax()) {
+        try {
 
-            $includeTrashed = $this->request->get('include_trashed');
+            return $this->transaction(function () use ($request) {
 
-            $query = Frontend::query()->select('id', 'data_key', 'data_value', 'status');
+                $this->sliderService->store($request);
 
-            if ($includeTrashed) {
-                $query->onlyTrashed();
-            } else {
-                $query->whereNull('deleted_at');
-            }
-
-            $sliders = $query->latest()->get();
-
-            $sliderData = $sliders->filter(function ($item) {
-                return $item->data_key === 'slider.element';
+                return $this->successResponse(
+                    'Thêm slider thành công'
+                );
             });
-
-            return DataTables::of($sliderData)
-                ->addIndexColumn()
-                ->addColumn('action', function ($slider) use ($includeTrashed) {
-                    if ($includeTrashed) {
-                        return '<button type="button" title="'. __('admin.action.button_restore') .'" id="' . $slider->id . '" class="restoreIcon btn btn-danger shadow btn-xs sharp mr-1 me-1 btn-sm" ><i class="fas fa-trash-restore"></i></button>' .
-                            '<button type="button" title="'. __('admin.action.button_delete_permanently') .'" id="' . $slider->id . '" class="forceIcon btn btn-danger shadow btn-xs sharp mr-1 btn-sm"><i class="fas fa-trash-alt"></i></button>';
-                    } else {
-                        return '<button type="button" title="'. __('admin.action.button_update') .'" id="' . $slider->id . '" class="editIcon btn btn-primary shadow btn-xs sharp mr-1 mb-1 btn-sm" data-toggle="modal" data-target="#editSliderModel"><i class="fas fa-pencil-alt"></i></button>' .
-                            '<button type="button" title="'. __('admin.action.button_delete') .'" id="' . $slider->id . '" class="deleteIcon btn btn-danger shadow btn-xs sharp mr-1 mb-1 btn-sm"><i class="fa fa-trash"></i></button>' .
-                            '<button type="button" title="'. __('admin.action.button_status') .'" id="' . $slider->id . '" class="statusIcon btn '.($slider->status == 1 ? "btn-success": "btn-dark").' shadow btn-xs sharp btn-sm"><i class="fa '.($slider->status == 1 ? "fa-eye": "fa-eye-slash").'"></i></button>';
-                    }
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-
-
-        return view('admin.frontend.slider.index');
-    }
-
-    public function store() // :POST
-    {
-        DB::beginTransaction();
-
-        try {
-            if ($this->request->hasFile('image_url')) {
-                $image_new = $this->uploadImage($this->request->file('image_url'));
-            }
-
-            $data = [
-                'title' => $this->request->input('title'),
-                'description' => $this->request->input('description'),
-                'link_url' => $this->request->input('link_url'),
-                'image_url' => $image_new
-            ];
-
-            $jsonData = json_encode($data);
-
-            Frontend::create([
-                'data_key' => 'slider.element',
-                'data_value' => $jsonData,
-            ]);
-
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.slider.added')]);
         } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_added')]);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi thêm slider'
+            );
         }
     }
 
-    public function edit() // :GET
+    /**
+     * Chỉnh sửa slider
+     */
+    public function edit(Request $request)
     {
-        $id = $this->request->id;
-        $slider = Frontend::find($id);
-
-        if ($slider) {
-            return response()->json(['status' => 200, 'data' => $slider]);
-        } else {
-            return response()->json(['status' => 404, 'message' => __('admin.notify.slider.not_found')]);
-        }
-    }
-
-    public function update() // :PUT
-    {
-        $slider_id = $this->request->input('slider_id');
-
-        DB::beginTransaction();
-
         try {
-            $slider = Frontend::find($slider_id);
 
-            $sliderData = json_decode($slider->data_value, true);
+            $slider = $this->sliderService->find(
+                $request->id
+            );
 
-            $data = [
-                'title' => $this->request->input('title'),
-                'description' => $this->request->input('description'),
-                'link_url' => $this->request->input('link_url'),
-            ];
-
-            if ($this->request->hasFile('image_url')) {
-                $image_new = $this->uploadImage($this->request->file('image_url'));
-                $data['image_url'] = $image_new;
-
-                if (isset($sliderData['image_url'])) {
-                    $this->deleteImage($sliderData['image_url']);
-                }
-            } else {
-                $data['image_url'] = $sliderData['image_url'];
-            }
-
-            $jsonData = json_encode($data);
-
-            $slider->update([
-                'data_value' => $jsonData,
-            ]);
-
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.slider.updated')]);
+            return response()->json($slider);
         } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_updated')]);
+
+            return $this->errorResponse(
+                'Không tìm thấy slider',
+                404
+            );
         }
     }
 
-    public function delete() // :DELETE
+    /**
+     * Cập nhật slider
+     */
+    public function update(UpdateSliderRequest $request)
     {
-        $id = $this->request->id;
-
-        DB::beginTransaction();
-
         try {
-            $slider = Frontend::findOrFail($id);
-            $slider->delete();
 
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.slider.deleted')]);
+            return $this->transaction(function () use ($request) {
+
+                $this->sliderService->update(
+                    $request,
+                    $request->slider_id
+                );
+
+                return $this->successResponse(
+                    'Cập nhật slider thành công'
+                );
+            });
         } catch (\Throwable $th) {
-            DB::rollBack();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_deleted')]);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi cập nhật slider'
+            );
         }
     }
 
-    public function deleteAll() // :DELETE
+    /**
+     * Xóa mềm slider
+     */
+    public function delete(Request $request)
     {
-        $ids = $this->request->ids;
-
-        DB::beginTransaction();
-
         try {
-            $deletedCount = Frontend::whereIn('id', $ids)->delete();
 
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => $deletedCount . ' ' . __('admin.notify.slider.deleted_all')]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_deleted_all')]);
-        }
-    }
+            return $this->transaction(function () use ($request) {
 
-    public function restore() // :POST
-    {
-        $id = $this->request->id;
+                $this->sliderService->delete(
+                    $request->id
+                );
 
-        DB::beginTransaction();
-
-        try {
-            Frontend::where('id', $id)->withTrashed()->restore();
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.slider.restore')]);
+                return $this->successResponse(
+                    'Slider đã được chuyển vào thùng rác'
+                );
+            });
         } catch (\Throwable $th) {
-            DB::rollBack();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_restore')]);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi xóa slider'
+            );
         }
     }
 
-    public function restoreAll() // :POST
+    /**
+     * Xóa mềm nhiều slider
+     */
+    public function deleteAll(Request $request)
     {
-        DB::beginTransaction();
-
         try {
-            Frontend::onlyTrashed()->restore();
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.slider.restore_all')]);
+
+            return $this->transaction(function () use ($request) {
+
+                $deletedCount = $this->sliderService->deleteAll(
+                    $request->ids
+                );
+
+                return $this->successResponse(
+                    "{$deletedCount} slider đã được chuyển vào thùng rác"
+                );
+            });
         } catch (\Throwable $th) {
-            DB::rollBack();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_restore_all')]);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi xóa slider'
+            );
         }
     }
 
-    public function forceDelete() // :DELETE
+    /**
+     * Khôi phục slider
+     */
+    public function restore(Request $request)
     {
-        $id = $this->request->id;
-
-        DB::beginTransaction();
-
         try {
-            $slider = Frontend::where('id', $id)->withTrashed()->firstOrFail();
 
-            $sliderData = json_decode($slider->data_value, true);
+            return $this->transaction(function () use ($request) {
 
-            if (isset($sliderData['image_url'])) {
-                $this->deleteImage($sliderData['image_url']);
-            }
+                $this->sliderService->restore(
+                    $request->id
+                );
 
-            $slider->forceDelete();
-
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.slider.force_delete')]);
+                return $this->successResponse(
+                    'Khôi phục slider thành công'
+                );
+            });
         } catch (\Throwable $th) {
-            DB::rollBack();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_force_delete')]);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi khôi phục slider'
+            );
         }
     }
 
-    public function forceDeleteAll() // :DELETE
+    /**
+     * Khôi phục tất cả
+     */
+    public function restoreAll()
     {
-        $ids = $this->request->ids;
-
-        DB::beginTransaction();
-
         try {
-            // Lấy danh sách các thương hiệu cần xóa
-            $sliders = Frontend::withTrashed()->whereIn('id', $ids)->get();
 
-            foreach ($sliders as $slider) {
-                $sliderData = json_decode($slider->data_value, true);
+            return $this->transaction(function () {
 
-                if (isset($sliderData['image_url'])) {
-                    $this->deleteImage($sliderData['image_url']);
-                }
-            }
+                $this->sliderService->restoreAll();
 
-            // Xóa các thương hiệu vĩnh viễn
-            $deletedCount = Frontend::withTrashed()->whereIn('id', $ids)->forceDelete();
-
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => $deletedCount . ' ' . __('admin.notify.slider.force_delete_all')]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_force_delete_all')]);
-        }
-    }
-
-    public function changeStatus() // :POST
-    {
-        $id = $this->request->id;
-        $newStatus = $this->request->input('new_status');
-
-        DB::beginTransaction();
-
-        try {
-            $slider = Frontend::findOrFail($id);
-            $slider->status = $newStatus;
-            $slider->save();
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.slider.update_status')]);
+                return $this->successResponse(
+                    'Khôi phục tất cả slider thành công'
+                );
+            });
         } catch (\Throwable $th) {
-            DB::rollBack();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.slider.err_update_status')]);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi khôi phục slider'
+            );
         }
     }
 
-    protected function uploadImage($file)
+    /**
+     * Xóa vĩnh viễn
+     */
+    public function forceDelete(Request $request)
     {
-        $image_new = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('uploads/slider/'), $image_new);
-        return $image_new;
+        try {
+
+            return $this->transaction(function () use ($request) {
+
+                $this->sliderService->forceDelete(
+                    $request->id
+                );
+
+                return $this->successResponse(
+                    'Xóa vĩnh viễn slider thành công'
+                );
+            });
+        } catch (\Throwable $th) {
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi xóa slider'
+            );
+        }
     }
 
-    protected function deleteImage($image_url)
+    /**
+     * Xóa vĩnh viễn nhiều slider
+     */
+    public function forceDeleteAll(Request $request)
     {
-        $filePath = public_path('uploads/slider/' . $image_url);
+        try {
 
-        if (file_exists($filePath) && is_readable($filePath)) {
-            if (unlink($filePath)) {
-                usleep(50000);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return true;
+            return $this->transaction(function () use ($request) {
+
+                $deletedCount = $this->sliderService->forceDeleteAll(
+                    $request->ids
+                );
+
+                return $this->successResponse(
+                    "{$deletedCount} slider đã được xóa vĩnh viễn"
+                );
+            });
+        } catch (\Throwable $th) {
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi xóa slider'
+            );
+        }
+    }
+
+    /**
+     * Đổi trạng thái slider
+     */
+    public function changeStatus(Request $request)
+    {
+        try {
+
+            return $this->transaction(function () use ($request) {
+
+                $this->sliderService->changeStatus(
+                    $request->id,
+                    $request->new_status
+                );
+
+                return $this->successResponse(
+                    'Cập nhật trạng thái thành công'
+                );
+            });
+        } catch (\Throwable $th) {
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi cập nhật trạng thái'
+            );
         }
     }
 }

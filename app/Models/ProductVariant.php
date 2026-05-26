@@ -54,6 +54,16 @@ class ProductVariant extends Model
         return $this->belongsTo(Size::class);
     }
 
+    public function galleries()
+    {
+        return $this->product
+            ->galleries()
+            ->where(
+                'color_id',
+                $this->color_id
+            );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accessors
@@ -90,7 +100,7 @@ class ProductVariant extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', true);
+        return $query->where('is_active', true);
     }
 
     public function scopeInStock($query)

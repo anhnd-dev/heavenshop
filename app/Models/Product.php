@@ -103,6 +103,14 @@ class Product extends Model
         return (int) $this->variants()->sum('stock');
     }
 
+    public function galleriesByColor(
+        int $colorId
+    ) {
+        return $this->galleries()
+            ->where('color_id', $colorId)
+            ->orderBy('sort_order');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Scopes
@@ -111,11 +119,11 @@ class Product extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', true);
+        return $query->where('is_active', true);
     }
 
     public function scopeFeatured($query)
     {
-        return $query->where('featured', true);
+        return $query->where('is_featured', true);
     }
 }

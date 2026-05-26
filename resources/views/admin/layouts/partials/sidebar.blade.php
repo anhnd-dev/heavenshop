@@ -69,7 +69,7 @@
                         <a href="#"><i class="mdi mdi-language-html5"
                                 style="font-size: 14px;"></i>{{ __('admin.sidebar.manage_section') }}</a>
                         <ul class="sub-menu">
-                            <li><a href="{{ route('admin.frontend.slider.index') }}"><i
+                            <li><a href="{{ route('admin.slider.index') }}"><i
                                         class="icon-energy"></i>{{ __('admin.sidebar.slider_section') }}</a></li>
                             <li><a href="{{ route('admin.frontend.contact') }}"><i
                                         class="icon-energy"></i>{{ __('admin.sidebar.contact_section') }}</a></li>

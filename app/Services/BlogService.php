@@ -184,7 +184,7 @@ class BlogService
         $blog = Blog::withTrashed()
             ->findOrFail($id);
 
-        $this->deleteImage(
+        $this->deleteFile(
             $blog->image,
             'blog'
         );
@@ -203,7 +203,7 @@ class BlogService
 
         foreach ($blogs as $blog) {
 
-            $this->deleteImage(
+            $this->deleteFile(
                 $blog->image,
                 'blog'
             );
@@ -245,14 +245,14 @@ class BlogService
 
         if ($request->hasFile('image')) {
 
-            $data['image'] = $this->uploadImage(
+            $data['image'] = $this->uploadFile(
                 $request->file('image'),
                 'blog'
             );
 
             if ($blog?->image) {
 
-                $this->deleteImage(
+                $this->deleteFile(
                     $blog->image,
                     'blog'
                 );

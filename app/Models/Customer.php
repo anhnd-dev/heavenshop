@@ -12,13 +12,21 @@ class Customer extends Authenticatable
 
     protected $guarded = [];
 
+    public function coupons()
+    {
+        return $this->belongsToMany(
+            Coupon::class,
+            'coupon_customers'
+        );
+    }
+
     public function shippingAddresses()
     {
         return $this->hasMany(ShippingAddress::class);
     }
 
     public function carts()
-{
-    return $this->hasMany(CustomerCart::class);
-}
+    {
+        return $this->hasMany(CustomerCart::class);
+    }
 }

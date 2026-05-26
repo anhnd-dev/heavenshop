@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Color;
 use App\Models\Product;
+
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+
 use App\Services\ProductGalleryService;
 
-class ProductGalleryController extends Controller
+use App\Http\Requests\ProductGallery\StoreProductGalleryRequest;
+use App\Http\Requests\ProductGallery\UpdateProductGalleryRequest;
+
+class ProductGalleryController extends BaseAdminController
 {
     public function __construct(
         protected ProductGalleryService $galleryService
@@ -33,14 +38,19 @@ class ProductGalleryController extends Controller
                 $includeTrashed
             );
 
+        $colors = Color::query()
+            ->orderBy('name')
+            ->get();
+
         return view(
             'admin.pages.gallery.index',
             compact(
                 'product',
                 'galleries',
+                'colors',
                 'includeTrashed'
             )
-        )->render();
+        );
     }
 
     /**
@@ -49,24 +59,74 @@ class ProductGalleryController extends Controller
      * =========================
      */
     public function store(
-        Request $request,
+        StoreProductGalleryRequest $request,
         Product $product
     ) {
 
-        $request->validate([
-            'images' => ['required', 'array'],
-            'images.*' => ['required', 'image'],
-        ]);
+        return $this->transaction(function () use (
+            $request,
+            $product
+        ) {
 
-        $this->galleryService->store(
+            $this->galleryService->store(
+
+                product: $product,
+
+                files: $request->file('files'),
+
+                colorId: $request->color_id,
+
+                sortOrder: $request->sort_order ?? 0
+            );
+
+            return $this->successResponse(
+                'Thêm thư viện media thành công'
+            );
+        });
+    }
+
+    /**
+     * =========================
+     * UPDATE
+     * =========================
+     */
+    public function update(
+        UpdateProductGalleryRequest $request,
+        Product $product,
+        int $id
+    ) {
+
+        return $this->transaction(function () use (
+            $request,
             $product,
-            $request->file('images')
-        );
+            $id
+        ) {
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Thêm thư viện ảnh thành công',
-        ]);
+            $gallery = $this->galleryService->update(
+
+                product: $product,
+
+                id: $id,
+
+                data: [
+
+                    'file' => $request->file('file'),
+
+                    'thumbnail' => $request->file('thumbnail'),
+
+                    'color_id' => $request->color_id,
+
+                    'sort_order' => $request->sort_order,
+                ]
+            );
+
+            return $this->successResponse(
+                'Cập nhật thư viện media thành công',
+                [
+                    'gallery' => $gallery,
+                ]
+            );
+        });
     }
 
     /**
@@ -75,17 +135,18 @@ class ProductGalleryController extends Controller
      * =========================
      */
     public function delete(
-        Request $request
+        Request $request,
+        Product $product
     ) {
 
         $this->galleryService->delete(
-            $request->id
+            product: $product,
+            id: $request->id
         );
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Đã chuyển ảnh vào thùng rác',
-        ]);
+        return $this->successResponse(
+            'Đã chuyển media vào thùng rác'
+        );
     }
 
     /**
@@ -94,18 +155,19 @@ class ProductGalleryController extends Controller
      * =========================
      */
     public function deleteAll(
-        Request $request
+        Request $request,
+        Product $product
     ) {
 
         $count = $this->galleryService
             ->deleteAll(
-                $request->ids ?? []
+                product: $product,
+                ids: $request->ids ?? []
             );
 
-        return response()->json([
-            'status' => 200,
-            'message' => "{$count} ảnh đã chuyển vào thùng rác",
-        ]);
+        return $this->successResponse(
+            "{$count} media đã chuyển vào thùng rác"
+        );
     }
 
     /**
@@ -114,17 +176,18 @@ class ProductGalleryController extends Controller
      * =========================
      */
     public function restore(
-        Request $request
+        Request $request,
+        Product $product
     ) {
 
         $this->galleryService->restore(
-            $request->id
+            product: $product,
+            id: $request->id
         );
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Khôi phục ảnh thành công',
-        ]);
+        return $this->successResponse(
+            'Khôi phục media thành công'
+        );
     }
 
     /**
@@ -132,15 +195,17 @@ class ProductGalleryController extends Controller
      * RESTORE ALL
      * =========================
      */
-    public function restoreAll()
-    {
+    public function restoreAll(
+        Product $product
+    ) {
 
-        $this->galleryService->restoreAll();
+        $this->galleryService->restoreAll(
+            $product
+        );
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Khôi phục tất cả ảnh thành công',
-        ]);
+        return $this->successResponse(
+            'Khôi phục tất cả media thành công'
+        );
     }
 
     /**
@@ -149,17 +214,18 @@ class ProductGalleryController extends Controller
      * =========================
      */
     public function forceDelete(
-        Request $request
+        Request $request,
+        Product $product
     ) {
 
         $this->galleryService->forceDelete(
-            $request->id
+            product: $product,
+            id: $request->id
         );
 
-        return response()->json([
-            'status' => 200,
-            'message' => 'Xóa ảnh vĩnh viễn thành công',
-        ]);
+        return $this->successResponse(
+            'Xóa media vĩnh viễn thành công'
+        );
     }
 
     /**
@@ -168,17 +234,18 @@ class ProductGalleryController extends Controller
      * =========================
      */
     public function forceDeleteAll(
-        Request $request
+        Request $request,
+        Product $product
     ) {
 
         $count = $this->galleryService
             ->forceDeleteAll(
-                $request->ids ?? []
+                product: $product,
+                ids: $request->ids ?? []
             );
 
-        return response()->json([
-            'status' => 200,
-            'message' => "{$count} ảnh đã xóa vĩnh viễn",
-        ]);
+        return $this->successResponse(
+            "{$count} media đã xóa vĩnh viễn"
+        );
     }
 }

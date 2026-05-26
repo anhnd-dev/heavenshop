@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\ProductGallery;
-use Illuminate\Support\Facades\DB;
+
 use App\Traits\ImageUploadTrait;
 
 class ProductGalleryService
@@ -21,16 +21,17 @@ class ProductGalleryService
         bool $includeTrashed = false
     ) {
 
-        $query = $product->galleries();
+        $query = $product->galleries()
+            ->with('color')
+            ->orderBy('sort_order')
+            ->latest();
 
         if ($includeTrashed) {
 
             $query->onlyTrashed();
         }
 
-        return $query
-            ->latest()
-            ->get();
+        return $query->get();
     }
 
     /**
@@ -40,31 +41,141 @@ class ProductGalleryService
      */
     public function store(
         Product $product,
-        array $images
+        array|string $files,
+        ?int $colorId = null,
+        int $sortOrder = 0
     ): void {
 
-        foreach ($images as $image) {
+        $files = is_array($files)
+            ? $files
+            : [$files];
 
-            // upload file object
-            if (is_object($image)) {
+        foreach ($files as $file) {
 
-                $imageName = $this->uploadImage(
-                    $image,
+            $mime = $file->getMimeType();
+
+            $type = str_contains(
+                $mime,
+                'video'
+            )
+                ? 'video'
+                : 'image';
+
+            $fileName = $this->uploadFile(
+                $file,
+                'gallery'
+            );
+
+            ProductGallery::create([
+
+                'product_id' => $product->id,
+
+                'color_id' => $colorId,
+
+                'file' => $fileName,
+
+                'type' => $type,
+
+                'thumbnail' => null,
+
+                'sort_order' => $sortOrder,
+            ]);
+        }
+    }
+
+    /**
+     * =========================
+     * UPDATE
+     * =========================
+     */
+    public function update(
+        Product $product,
+        int $id,
+        array $data
+    ): ProductGallery {
+
+        $gallery = ProductGallery::query()
+            ->where('product_id', $product->id)
+            ->findOrFail($id);
+
+        /**
+         * =========================
+         * UPDATE FILE
+         * =========================
+         */
+        if (!empty($data['file'])) {
+
+            if ($gallery->file) {
+
+                $this->deleteFile(
+                    $gallery->file,
                     'gallery'
                 );
             }
 
-            // image string
-            else {
+            $uploadedFile = $data['file'];
 
-                $imageName = $image;
+            $mime = $uploadedFile->getMimeType();
+
+            $data['type'] = str_contains(
+                $mime,
+                'video'
+            )
+                ? 'video'
+                : 'image';
+
+            $fileName = $this->uploadFile(
+                $uploadedFile,
+                'gallery'
+            );
+
+            $data['file'] = $fileName;
+        }
+
+        /**
+         * =========================
+         * UPDATE THUMBNAIL
+         * =========================
+         */
+        if (!empty($data['thumbnail'])) {
+
+            if ($gallery->thumbnail) {
+
+                $this->deleteFile(
+                    $gallery->thumbnail,
+                    'gallery'
+                );
             }
 
-            ProductGallery::create([
-                'product_id' => $product->id,
-                'image' => $imageName,
-            ]);
+            $thumbnail = $this->uploadFile(
+                $data['thumbnail'],
+                'gallery'
+            );
+
+            $data['thumbnail'] = $thumbnail;
         }
+
+        $gallery->update([
+
+            'file' => $data['file']
+                ?? $gallery->file,
+
+            'type' => $data['type']
+                ?? $gallery->type,
+
+            'thumbnail' => $data['thumbnail']
+                ?? $gallery->thumbnail,
+
+            'color_id' => $data['color_id']
+                ?? $gallery->color_id,
+
+            'sort_order' => $data['sort_order']
+                ?? $gallery->sort_order,
+        ]);
+
+        return $gallery->fresh([
+            'color',
+        ]);
     }
 
     /**
@@ -73,10 +184,13 @@ class ProductGalleryService
      * =========================
      */
     public function delete(
+        Product $product,
         int $id
     ): void {
 
-        ProductGallery::findOrFail($id)
+        ProductGallery::query()
+            ->where('product_id', $product->id)
+            ->findOrFail($id)
             ->delete();
     }
 
@@ -86,10 +200,12 @@ class ProductGalleryService
      * =========================
      */
     public function deleteAll(
+        Product $product,
         array $ids
     ): int {
 
         return ProductGallery::query()
+            ->where('product_id', $product->id)
             ->whereIn('id', $ids)
             ->delete();
     }
@@ -100,10 +216,12 @@ class ProductGalleryService
      * =========================
      */
     public function restore(
+        Product $product,
         int $id
     ): void {
 
-        ProductGallery::withTrashed()
+        ProductGallery::onlyTrashed()
+            ->where('product_id', $product->id)
             ->findOrFail($id)
             ->restore();
     }
@@ -113,10 +231,12 @@ class ProductGalleryService
      * RESTORE ALL
      * =========================
      */
-    public function restoreAll(): void
-    {
+    public function restoreAll(
+        Product $product
+    ): void {
 
         ProductGallery::onlyTrashed()
+            ->where('product_id', $product->id)
             ->restore();
     }
 
@@ -126,16 +246,26 @@ class ProductGalleryService
      * =========================
      */
     public function forceDelete(
+        Product $product,
         int $id
     ): void {
 
         $gallery = ProductGallery::withTrashed()
+            ->where('product_id', $product->id)
             ->findOrFail($id);
 
-        if ($gallery->image) {
+        if ($gallery->file) {
 
-            $this->deleteImage(
-                $gallery->image,
+            $this->deleteFile(
+                $gallery->file,
+                'gallery'
+            );
+        }
+
+        if ($gallery->thumbnail) {
+
+            $this->deleteFile(
+                $gallery->thumbnail,
                 'gallery'
             );
         }
@@ -149,43 +279,38 @@ class ProductGalleryService
      * =========================
      */
     public function forceDeleteAll(
+        Product $product,
         array $ids
     ): int {
 
         $galleries = ProductGallery::withTrashed()
+            ->where('product_id', $product->id)
             ->whereIn('id', $ids)
             ->get();
 
         foreach ($galleries as $gallery) {
 
-            if ($gallery->image) {
+            if ($gallery->file) {
 
-                $this->deleteImage(
-                    $gallery->image,
+                $this->deleteFile(
+                    $gallery->file,
+                    'gallery'
+                );
+            }
+
+            if ($gallery->thumbnail) {
+
+                $this->deleteFile(
+                    $gallery->thumbnail,
                     'gallery'
                 );
             }
         }
 
         return ProductGallery::withTrashed()
+            ->where('product_id', $product->id)
             ->whereIn('id', $ids)
             ->forceDelete();
-    }
-
-    /**
-     * =========================
-     * DELETE BY IMAGE
-     * =========================
-     */
-    public function deleteByImage(
-        Product $product,
-        string $image
-    ): void {
-
-        ProductGallery::query()
-            ->where('product_id', $product->id)
-            ->where('image', $image)
-            ->delete();
     }
 
     /**
@@ -203,10 +328,18 @@ class ProductGalleryService
 
         foreach ($galleries as $gallery) {
 
-            if ($gallery->image) {
+            if ($gallery->file) {
 
-                $this->deleteImage(
-                    $gallery->image,
+                $this->deleteFile(
+                    $gallery->file,
+                    'gallery'
+                );
+            }
+
+            if ($gallery->thumbnail) {
+
+                $this->deleteFile(
+                    $gallery->thumbnail,
                     'gallery'
                 );
             }

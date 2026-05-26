@@ -16,8 +16,6 @@
         addVariantIndex: 1,
         editVariantIndex: 0,
 
-        currentGalleryProductId: null,
-
         // =========================
         // INIT
         // =========================
@@ -75,16 +73,6 @@
             this.el.forceDeleteAll = "#forceDeleteMultiple";
 
             this.el.checkAll = $("#checkAll");
-
-            // gallery
-            this.el.galleryWrapper = ".gallery-wrapper";
-
-            this.el.galleryForm = "#add_gallery_form";
-            this.el.galleryBtn = "#add_gallery_btn";
-
-            this.el.galleryAction = ".galleryBtn";
-
-            this.el.galleryTrash = "#includeGalleryCheckboxTrash";
         },
 
         // =========================
@@ -380,45 +368,6 @@
 
                 self.loadEdit($(this).attr("id"));
             });
-
-            // gallery checkbox
-            // gallery button
-            $(document).on("click", this.el.galleryAction, function () {
-                const productId = $(this).data("product_id");
-
-                const productName = $(this).data("product_name");
-
-                // toggle same product
-                if (
-                    self.currentGalleryProductId === productId &&
-                    $(self.el.galleryWrapper).is(":visible")
-                ) {
-                    $(self.el.galleryWrapper).hide();
-
-                    self.currentGalleryProductId = null;
-
-                    return;
-                }
-
-                self.currentGalleryProductId = productId;
-
-                // set hidden input
-                $("#gallery_product_id").val(productId);
-
-                // title
-                $("#gallery-product-title").text(`Gallery - ${productName}`);
-
-                // show wrapper
-                $(self.el.galleryWrapper).show();
-
-                // load gallery
-                self.loadGallery();
-            });
-
-            // include trash gallery
-            $(document).on("change", this.el.galleryTrash, function () {
-                self.loadGallery();
-            });
         },
 
         // =========================
@@ -512,19 +461,6 @@
                 this.el.forceDeleteAll,
                 window.productConfig.routes.forceDeleteAll,
                 () => this.reload(),
-            );
-
-            // gallery add
-            window.setupAddHandler(
-                this.el.galleryForm,
-                this.el.galleryBtn,
-                "#addGalleryModel",
-
-                window.productConfig.routes.galleryStore,
-
-                () => {
-                    this.loadGallery();
-                },
             );
         },
 

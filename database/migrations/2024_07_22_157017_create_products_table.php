@@ -107,13 +107,33 @@ return new class extends Migration
         });
 
         Schema::create('product_galleries', function (Blueprint $table) {
+
             $table->id();
 
             $table->foreignId('product_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('image', 255);
+            $table->foreignId('color_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            // image/video
+            $table->string('file');
+
+            // image | video
+            $table->enum('type', [
+                'image',
+                'video',
+            ]);
+
+            // thumbnail video
+            $table->string('thumbnail')
+                ->nullable();
+
+            $table->unsignedInteger('sort_order')
+                ->default(0);
 
             $table->softDeletes();
             $table->timestamps();

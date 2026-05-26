@@ -6,36 +6,64 @@ use Illuminate\Http\UploadedFile;
 
 trait ImageUploadTrait
 {
-    protected function uploadImage(
+    /**
+     * =========================
+     * UPLOAD FILE
+     * =========================
+     */
+    protected function uploadFile(
         UploadedFile $file,
         string $folder
     ): string {
 
-        $imageName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $fileName = time()
+            . '_'
+            . uniqid()
+            . '.'
+            . $file->getClientOriginalExtension();
 
-        $destinationPath = public_path("uploads/{$folder}");
+        $destinationPath = public_path(
+            "uploads/{$folder}"
+        );
 
         if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0777, true);
+
+            mkdir(
+                $destinationPath,
+                0777,
+                true
+            );
         }
 
-        $file->move($destinationPath, $imageName);
+        $file->move(
+            $destinationPath,
+            $fileName
+        );
 
-        return $imageName;
+        return $fileName;
     }
 
-    protected function deleteImage(
-        ?string $image,
+    /**
+     * =========================
+     * DELETE FILE
+     * =========================
+     */
+    protected function deleteFile(
+        ?string $file,
         string $folder
     ): bool {
 
-        if (!$image) {
+        if (!$file) {
+
             return true;
         }
 
-        $filePath = public_path("uploads/{$folder}/{$image}");
+        $filePath = public_path(
+            "uploads/{$folder}/{$file}"
+        );
 
         if (file_exists($filePath)) {
+
             unlink($filePath);
         }
 

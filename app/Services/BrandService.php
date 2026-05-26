@@ -174,7 +174,7 @@ class BrandService
         $brand = Brand::withTrashed()
             ->findOrFail($id);
 
-        $this->deleteImage(
+        $this->deleteFile(
             $brand->image,
             'brand'
         );
@@ -193,7 +193,7 @@ class BrandService
 
         foreach ($brands as $brand) {
 
-            $this->deleteImage(
+            $this->deleteFile(
                 $brand->image,
                 'brand'
             );
@@ -234,14 +234,14 @@ class BrandService
 
         if ($request->hasFile('image')) {
 
-            $data['image'] = $this->uploadImage(
+            $data['image'] = $this->uploadFile(
                 $request->file('image'),
                 'brand'
             );
 
             if ($brand?->image) {
 
-                $this->deleteImage(
+                $this->deleteFile(
                     $brand->image,
                     'brand'
                 );

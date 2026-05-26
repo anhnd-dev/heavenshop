@@ -10,9 +10,7 @@ class ProductService
 {
     use ImageUploadTrait;
 
-    public function __construct(
-        protected ProductGalleryService $galleryService
-    ) {}
+    public function __construct() {}
 
     // =========================
     // DATATABLE
@@ -164,7 +162,7 @@ class ProductService
     {
         if (!empty($data['image'])) {
 
-            $data['image'] = $this->uploadImage(
+            $data['image'] = $this->uploadFile(
                 $data['image'],
                 'product'
             );
@@ -185,19 +183,7 @@ class ProductService
             );
         }
 
-        $product = Product::create($data);
-
-        // sync gallery
-        if ($product->image) {
-
-            $this->galleryService->store(
-                $product,
-                $product->image
-            );
-        }
-
-
-        return $product;
+        return Product::create($data);
     }
 
     // =========================
@@ -210,22 +196,16 @@ class ProductService
 
         if (!empty($data['image'])) {
 
-            $newImage = $this->uploadImage(
+            $newImage = $this->uploadFile(
                 $data['image'],
                 'product'
             );
 
-            // delete old image
             if ($product->image) {
 
-                $this->deleteImage(
+                $this->deleteFile(
                     $product->image,
                     'product'
-                );
-
-                $this->galleryService->deleteByImage(
-                    $product,
-                    $product->image
                 );
             }
 
@@ -250,15 +230,6 @@ class ProductService
 
         // update product
         $product->update($data);
-
-        // sync gallery
-        if (!empty($data['image'])) {
-
-            $this->galleryService->store(
-                $product,
-                [$data['image']]
-            );
-        }
 
         return $product;
     }
@@ -331,13 +302,9 @@ class ProductService
         // product image
         if ($product->image) {
 
-            $this->deleteImage(
+            $this->deleteFile(
                 $product->image,
                 'product'
-            );
-
-            $this->galleryService->deleteByProduct(
-                $product
             );
         }
 
@@ -346,9 +313,29 @@ class ProductService
 
             if ($variant->image) {
 
-                $this->deleteImage(
+                $this->deleteFile(
                     $variant->image,
                     'variant'
+                );
+            }
+        }
+
+        // delete gallery files
+        foreach ($product->galleries as $gallery) {
+
+            if ($gallery->file) {
+
+                $this->deleteFile(
+                    $gallery->file,
+                    'gallery'
+                );
+            }
+
+            if ($gallery->thumbnail) {
+
+                $this->deleteFile(
+                    $gallery->thumbnail,
+                    'gallery'
                 );
             }
         }

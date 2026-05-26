@@ -12,12 +12,12 @@ Route::controller(ShopController::class)
             'index'
         )->name('shop');
 
-        Route::get(
-            '/shop/{slug}',
-            'category'
-        )
-            ->where('slug', '.*')
-            ->name('category.show');
+        // Route::get(
+        //     '/shop/{slug}',
+        //     'category'
+        // )
+        //     ->where('slug', '.*')
+        //     ->name('category.show');
 
         Route::get(
             '/product-detail/{slug}',
