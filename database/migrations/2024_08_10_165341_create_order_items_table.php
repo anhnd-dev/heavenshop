@@ -14,34 +14,30 @@ return new class extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
 
-            /**
-             * ORDER
-             */
+            /*
+            |--------------------------------------------------------------------------
+            | RELATIONS
+            |--------------------------------------------------------------------------
+            */
             $table->foreignId('order_id')
                 ->constrained()
                 ->cascadeOnDelete();
 
-            /**
-             * PRODUCT
-             */
             $table->foreignId('product_id')
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
 
-            /**
-             * PRODUCT VARIANT
-             * size + color
-             */
             $table->foreignId('product_variant_id')
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
 
-            /**
-             * PRODUCT SNAPSHOT
-             */
-
+            /*
+            |--------------------------------------------------------------------------
+            | PRODUCT SNAPSHOT
+            |--------------------------------------------------------------------------
+            */
             $table->string('product_name');
 
             $table->string('product_slug')
@@ -53,19 +49,15 @@ return new class extends Migration
             $table->string('product_image')
                 ->nullable();
 
-            /**
-             * VARIANT SNAPSHOT
-             */
 
-            $table->foreignId('color_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            /*
+            |--------------------------------------------------------------------------
+            | VARIANT SNAPSHOT
+            |--------------------------------------------------------------------------
+            */
 
-            $table->foreignId('size_id')
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
+            $table->string('variant_name')
+                ->nullable();
 
             $table->string('color_name')
                 ->nullable();
@@ -73,38 +65,45 @@ return new class extends Migration
             $table->string('size_name')
                 ->nullable();
 
+            /*
+            |--------------------------------------------------------------------------
+            | PRICE
+            |--------------------------------------------------------------------------
+            */
 
-            /**
-             * PRICE
-             */
+            $table->decimal('original_price', 12, 2);
 
-            // Giá gốc
-            $table->decimal('price', 12, 2);
+            $table->decimal('final_price', 12, 2);
 
-            // Giá sau sale
-            $table->decimal('sale_price', 12, 2)
-                ->nullable();
+            /*
+            |--------------------------------------------------------------------------
+            | QUANTITY
+            |--------------------------------------------------------------------------
+            */
 
-            /**
-             * QUANTITY
-             */
             $table->unsignedInteger('quantity');
 
-            /**
-             * TOTAL
-             */
+            /*
+            |--------------------------------------------------------------------------
+            | TOTAL
+            |--------------------------------------------------------------------------
+            */
+
             $table->decimal('total', 12, 2);
 
             $table->timestamps();
 
-            /**
-             * INDEX
-             */
+            /*
+            |--------------------------------------------------------------------------
+            | INDEX
+            |--------------------------------------------------------------------------
+            */
+
             $table->index('order_id');
+
             $table->index('product_id');
+
             $table->index('product_variant_id');
-            $table->index('color_id');
-            $table->index('size_id');
         });
     }
 

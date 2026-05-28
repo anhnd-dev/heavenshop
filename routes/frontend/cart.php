@@ -35,7 +35,7 @@ Route::prefix('cart')
         Route::delete('/remove-coupon', 'removeCoupon')
             ->name('removeCoupon');
 
-        Route::delete('/remove/{variantId}', 'remove')
+        Route::delete('/remove', 'remove')
             ->name('remove');
 
         Route::delete('/clear', 'clear')

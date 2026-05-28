@@ -1,10 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\OrderController;
 
-Route::controller(OrderController::class)
-    ->group(function () {
+Route::prefix('order')->group(function () {
 
-        Route::get('/complete', 'complete')->name('complete');
-    });
+    Route::get('/success/{order_code}', function ($order_code) {
+        return view('frontend.order.success', compact('order_code'));
+    })->name('order.success');
+
+    Route::get('/failed', function () {
+        return view('frontend.order.failed');
+    })->name('order.failed');
+});

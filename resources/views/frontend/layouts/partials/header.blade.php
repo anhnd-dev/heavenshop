@@ -252,8 +252,7 @@
                         </div>
                     </div>
                     <div class="widget-text icon alt-font">
-                        <a href="{{ route('buyer.auth') }}"><i
-                                class="feather icon-feather-user d-inline-block me-5px"></i><span
+                        <a href=""><i class="feather icon-feather-user d-inline-block me-5px"></i><span
                                 class="d-none d-xxl-inline-block">Account</span></a>
                     </div>
                     <div class="header-cart-icon icon">

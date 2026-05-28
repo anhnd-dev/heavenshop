@@ -31,23 +31,17 @@ return new class extends Migration
             /**
              * LOCATION
              */
-            // Áp dụng toàn tỉnh
             $table->foreignId('province_id')
-                ->nullable()
                 ->constrained('provinces')
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
-            // Áp dụng riêng quận/huyện
             $table->foreignId('district_id')
-                ->nullable()
                 ->constrained('districts')
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
-            // Áp dụng riêng phường/xã
             $table->foreignId('ward_id')
-                ->nullable()
                 ->constrained('wards')
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
 
             /**
              * ADDRESS
@@ -65,10 +59,10 @@ return new class extends Migration
             /**
              * INDEX
              */
-            $table->index('customer_id');
-            $table->index('province_id');
-            $table->index('district_id');
-            $table->index('ward_id');
+            $table->index([
+                'customer_id',
+                'is_default'
+            ]);
         });
     }
 

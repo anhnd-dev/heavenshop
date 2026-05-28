@@ -217,7 +217,11 @@
 
                 <div class="voucher-footer">
 
-                    <div class="radio"></div>
+                    @if ($appliedCoupon === $coupon->code)
+                        <div class="radio remove-coupon-btn"></div>
+                    @else
+                        <div class="radio"></div>
+                    @endif
 
                 </div>
 

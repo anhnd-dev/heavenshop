@@ -172,7 +172,7 @@
     @stack('lib-styles')
 </head>
 
-<body data-mobile-nav-style="classic">
+<body data-mobile-nav-style="classic" data-auth="{{ Auth::guard('customer')->check() ? 1 : 0 }}">
 
     {{-- @if (!request()->routeIs('cart.index', 'checkout.index', 'payment.index')) --}}
     @include('frontend.layouts.partials.header')
@@ -231,6 +231,7 @@
     <script src="{{ asset('backend/vendors/sweetalert/sweetalert.min.js') }}"></script>
 
     <script src="{{ asset('frontend/js/header-cart.js') }}"></script>
+    <script src="{{ asset('frontend/js/location.js') }}"></script>
 
     {!! Toastr::message() !!}
 

@@ -64,6 +64,10 @@ Route::middleware(
 
     require __DIR__ . '/checkout.php';
 
+    require __DIR__ . '/customer.php';
+
+    require __DIR__ . '/auth.php';
+
     require __DIR__ . '/payment.php';
 
     require __DIR__ . '/catalog.php';

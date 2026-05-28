@@ -17,23 +17,22 @@ class OrderItem extends Model
         'product_sku',
         'product_image',
 
-        'color_id',
-        'size_id',
-
+        'variant_name',
         'color_name',
         'size_name',
 
-        'price',
-        'sale_price',
+        'original_price',
+        'final_price',
 
         'quantity',
         'total',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'sale_price' => 'decimal:2',
+        'original_price' => 'decimal:2',
+        'final_price' => 'decimal:2',
         'total' => 'decimal:2',
+        'quantity' => 'integer',
     ];
 
     /*
@@ -54,30 +53,17 @@ class OrderItem extends Model
 
     public function variant()
     {
-        return $this->belongsTo(
-            ProductVariant::class,
-            'product_variant_id'
-        );
-    }
-
-    public function color()
-    {
-        return $this->belongsTo(Color::class);
-    }
-
-    public function size()
-    {
-        return $this->belongsTo(Size::class);
+        return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | ACCESSORS
+    | ACCESSORS (OPTIONAL)
     |--------------------------------------------------------------------------
     */
 
-    public function getFinalPriceAttribute()
+    public function getDisplayPriceAttribute()
     {
-        return $this->sale_price ?: $this->price;
+        return $this->final_price;
     }
 }

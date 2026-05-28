@@ -43,6 +43,10 @@ return new class extends Migration
                 ->nullable();
 
             $table->timestamps();
+
+            $table->unique(['coupon_id', 'customer_id', 'order_id']);
+
+            $table->index(['customer_id', 'coupon_id']);
         });
     }
 

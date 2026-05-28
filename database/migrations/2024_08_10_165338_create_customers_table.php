@@ -12,16 +12,45 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('customers', function (Blueprint $table) {
+
             $table->id();
-            $table->string('full_name', 50);
-            $table->string('user_name', 50)->unique();
-            $table->string('email', 100);
-            $table->string('password', 100);
-            $table->string('avatar', 100)->nullable();
-            $table->char('phone', 20)->unique();
-            $table->text('address');
-            $table->enum('gender', ['male','female'])->nullable();
+
+            // =========================
+            // BASIC
+            // =========================
+            $table->string('name', 100);
+
+            $table->string('email', 100)
+                ->nullable()
+                ->unique();
+
+            $table->string('phone', 20)
+                ->unique();
+
+            $table->string('password');
+
+            // =========================
+            // PROFILE
+            // =========================
+            $table->string('avatar')
+                ->nullable();
+
+            $table->text('address')
+                ->nullable();
+
+            $table->enum('gender', [
+                'male',
+                'female'
+            ])->nullable();
+
+            // =========================
+            // STATUS
+            // =========================
+            $table->boolean('is_active')
+                ->default(true);
+
             $table->rememberToken();
+
             $table->timestamps();
         });
     }

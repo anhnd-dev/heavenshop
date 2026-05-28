@@ -10,6 +10,7 @@ use App\Models\ProductVariant;
 
 use App\Services\CartService;
 use App\Services\CouponService;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
@@ -23,7 +24,11 @@ class CartController extends Controller
     // =========================
     public function index()
     {
-        $cart = $this->cartService->getCart();
+        // =========================
+        // CART
+        // =========================
+        $cart = $this->cartService
+            ->getCart();
 
         $subtotal = $this->cartService
             ->subtotalSelected();
@@ -41,27 +46,71 @@ class CartController extends Controller
             0
         );
 
+        // =========================
+        // CUSTOMER
+        // =========================
+        $customer = null;
+
+        $addresses = collect();
+
+        $defaultAddress = null;
+
+        if (Auth::guard('customer')->check()) {
+
+            $customer = \App\Models\Customer::query()
+                ->with('addresses')
+                ->find(
+                    Auth::guard('customer')->id()
+                );
+
+            if ($customer) {
+
+                $addresses = $customer->addresses;
+
+                $defaultAddress = $addresses
+                    ->where('is_default', 1)
+                    ->first();
+            }
+        }
+
+        // =========================
+        // COUPONS
+        // =========================
         $availableCoupons = $this->couponService
             ->availableCoupons(
                 $subtotal,
-                auth('customer')->id()
+                Auth::guard('customer')->id()
             );
 
+        // =========================
+        // SUGGEST PRODUCTS
+        // =========================
         $suggestProducts = Product::query()
             ->active()
             ->latest()
             ->take(8)
             ->get();
 
-        return view('frontend.cart.index', compact(
-            'cart',
-            'subtotal',
-            'shipping',
-            'discount',
-            'total',
-            'availableCoupons',
-            'suggestProducts'
-        ));
+        // =========================
+        // VIEW
+        // =========================
+        return view(
+            'frontend.cart.index',
+            compact(
+                'cart',
+                'subtotal',
+                'shipping',
+                'discount',
+                'total',
+
+                'customer',
+                'addresses',
+                'defaultAddress',
+
+                'availableCoupons',
+                'suggestProducts'
+            )
+        );
     }
 
     // =========================
@@ -464,18 +513,22 @@ class CartController extends Controller
     // =========================
     // REMOVE ITEM
     // =========================
-    public function remove(int $variantId)
+    public function remove(Request $request)
     {
+        $request->validate([
+            'variant_id' => 'required|integer',
+        ]);
+
         $cart = $this->cartService->getCart();
 
-        if (!isset($cart[$variantId])) {
+        if (!isset($cart[$request->variant_id])) {
 
             return response()->json([
                 'message' => 'Sản phẩm không tồn tại trong giỏ hàng'
             ], 404);
         }
 
-        unset($cart[$variantId]);
+        unset($cart[$request->variant_id]);
 
         $this->cartService->putCart($cart);
 
