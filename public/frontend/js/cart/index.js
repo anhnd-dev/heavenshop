@@ -13,7 +13,6 @@
             this.cache();
             this.bindCartEvents();
             this.bindCheckoutEvents();
-            this.bindAuthEvents();
             this.restoreCheckoutData();
             this.autoLoadAddress();
             this.loadCartItems();
@@ -196,51 +195,6 @@
         },
 
         // =========================
-        // AUTH EVENTS
-        // =========================
-        bindAuthEvents() {
-            const self = this;
-
-            $(document).on(
-                "click",
-                ".checkout-auth-close, .checkout-auth-overlay",
-                function () {
-                    self.closeAuthModal();
-                },
-            );
-
-            $(document).on("click", "#show-register-form", function (e) {
-                e.preventDefault();
-                $("#checkout-login-form").hide();
-                $("#checkout-register-form").fadeIn(200);
-                $("#auth-modal-title").text("Tạo tài khoản");
-                $("#auth-modal-description").text(
-                    "Đăng ký tài khoản để tiếp tục thanh toán",
-                );
-            });
-
-            $(document).on("click", "#show-login-form", function (e) {
-                e.preventDefault();
-                $("#checkout-register-form").hide();
-                $("#checkout-login-form").fadeIn(200);
-                $("#auth-modal-title").text("Đăng nhập để tiếp tục đặt hàng");
-                $("#auth-modal-description").text(
-                    "Vui lòng đăng nhập tài khoản khách hàng trước",
-                );
-            });
-
-            $(document).on("submit", "#checkout-login-form", function (e) {
-                e.preventDefault();
-                self.ajaxLogin($(this));
-            });
-
-            $(document).on("submit", "#checkout-register-form", function (e) {
-                e.preventDefault();
-                self.ajaxRegister($(this));
-            });
-        },
-
-        // =========================
         // CART ACTIONS
         // =========================
         updateQuantity(id, qty) {
@@ -393,7 +347,7 @@
             const isLoggedIn = $("body").data("auth") == 1;
 
             if (!isLoggedIn) {
-                this.openAuthModal();
+                window.App.AuthModal.open();
                 return;
             }
 
@@ -494,77 +448,6 @@
                     $(".ward").val(res.ward_id);
                 })
                 .fail(() => toastr.error("Không thể tải địa chỉ"));
-        },
-
-        // =========================
-        // AUTH MODAL
-        // =========================
-        openAuthModal() {
-            const modal = $(this.el.authModal);
-            modal.css({ display: "block" }).addClass("show");
-            $("body").css("overflow", "hidden");
-        },
-
-        closeAuthModal() {
-            const modal = $(this.el.authModal);
-            modal.removeClass("show");
-
-            setTimeout(() => {
-                modal.css({ display: "none" });
-            }, 350);
-
-            $("body").css("overflow", "");
-        },
-
-        ajaxLogin(form) {
-            let btn = form.find('button[type="submit"]');
-
-            btn.prop("disabled", true).text("Đang đăng nhập...");
-
-            $.ajax({
-                url: window.cartConfig.routes.login,
-                type: "POST",
-                data: form.serialize(),
-                success: (res) => {
-                    toastr.success(res.message);
-
-                    this.closeAuthModal();
-
-                    $("body").css("overflow", "");
-
-                    location.reload();
-                },
-                error: (xhr) => {
-                    toastr.error(
-                        xhr.responseJSON?.message || "Đăng nhập thất bại",
-                    );
-
-                    btn.prop("disabled", false).text("Đăng nhập");
-                },
-            });
-        },
-
-        ajaxRegister(form) {
-            let btn = form.find('button[type="submit"]');
-
-            btn.prop("disabled", true).text("Đang xử lý...");
-
-            $.ajax({
-                url: window.cartConfig.routes.register,
-                type: "POST",
-                data: form.serialize(),
-                success: (res) => {
-                    toastr.success(res.message);
-                    location.reload();
-                },
-                error: (xhr) => {
-                    toastr.error(
-                        xhr.responseJSON?.message || "Đăng ký thất bại",
-                    );
-
-                    btn.prop("disabled", false).text("Đăng ký tài khoản");
-                },
-            });
         },
 
         // =========================

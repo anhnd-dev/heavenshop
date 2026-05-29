@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('frontend.layouts.app')
 
 @section('content')
     <section class="top-space-margin half-section bg-gradient-very-light-gray">
@@ -38,7 +38,7 @@
                                             <a href="#"
                                                 class="text-dark-gray fw-500 categories-text">{{ $blog->admin->full_name }}</a><a
                                                 href="#"
-                                                class="blog-date">{{ (new DateTime($blog->created_at))->format('j F Y') }}</a></span>
+                                                class="blog-date">{{ new DateTime($blog->created_at)->format('j F Y') }}</a></span>
                                         <a href="{{ route('blog.details', ['slug' => $blog->slug]) }}"
                                             class="alt-font card-title fs-20 lh-30 fw-500 text-dark-gray d-inline-block w-75 xl-w-85 lg-w-100">{{ $blog->title }}</a>
                                     </div>

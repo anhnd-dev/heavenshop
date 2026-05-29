@@ -21,6 +21,8 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/main.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('frontend/css/shopping-cart.min.css') }}">
 
+    <link rel="stylesheet" href="{{ asset('frontend/css/auth/style.css') }}">
+
     <link rel="stylesheet" href="{{ asset('backend/vendors/toastr/toastr.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('backend/vendors/sweetalert/sweetalert.css') }}">
 
@@ -174,44 +176,16 @@
 
 <body data-mobile-nav-style="classic" data-auth="{{ Auth::guard('customer')->check() ? 1 : 0 }}">
 
-    {{-- @if (!request()->routeIs('cart.index', 'checkout.index', 'payment.index')) --}}
     @include('frontend.layouts.partials.header')
 
     @yield('content')
-    {{-- @else
-        @include('partials.header_cart')
 
-        <div class="bg-very-light-gray checkout-container breadcrumb breadcrumb-style-01"
-            data-anime='{ "el": "childs", "translateY": [-15, 0], "opacity": [0,1], "duration": 300, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
-            <ul class="steps">
-                <li class="step">
-                    <a href="{{ route('cart.index') }}"
-                        class="{{ Request::is('cart') || Request::is('checkout') || Request::is('payment') || Request::is('complete') ? 'active' : '' }}">Giỏ
-                        hàng</a>
-                </li>
-                <li class="step">
-                    <a href="{{ route('checkout.index') }}"
-                        class="{{ Request::is('checkout') || Request::is('payment') || Request::is('complete') ? 'active' : '' }}">Đặt
-                        hàng</a>
-                </li>
-                <li class="step">
-                    <a href="{{ route('payment.index') }}"
-                        class="{{ Request::is('payment') || Request::is('complete') ? 'active' : '' }}">Trả tiền</a>
-                </li>
-                <li class="step">
-                    <a href="{{ route('payment.index') }}" class="{{ Request::is('complete') ? 'active' : '' }}">Hoàn
-                        thành Đơn hàng</a>
-                </li>
-            </ul>
-            <div class="step-content" style="width: 80%;">
-                @yield('content')
-            </div>
-        </div> --}}
-    {{-- @endif --}}
     @if (!request()->routeIs('cart.index'))
         @include('frontend.layouts.partials.footer')
     @else
     @endif
+
+    @include('frontend.layouts.partials.auth-modal')
 
     @include('frontend.layouts.partials.cookie')
 
@@ -219,58 +193,25 @@
 
     @include('frontend.layouts.partials.scroll_to_top')
 
+    @include('frontend.layouts.partials.config')
+
     <script data-cfasync="false" src="{{ asset('frontend/js/email-decode.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('frontend/js/jquery.js') }}"></script>
     <script type="text/javascript" src="{{ asset('frontend/js/vendors.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('frontend/js/main.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('frontend/js/shopping-cart.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('frontend/js/checkout.js') }}"></script>
 
     <script src="{{ asset('backend/vendors/toastr/toastr.min.js') }}"></script>
     <script src="{{ asset('backend/vendors/toastr/config.js') }}"></script>
     <script src="{{ asset('backend/vendors/sweetalert/sweetalert.min.js') }}"></script>
 
     <script src="{{ asset('frontend/js/header-cart.js') }}"></script>
+    <script src="{{ asset('frontend/js/auth-modal.js') }}"></script>
     <script src="{{ asset('frontend/js/location.js') }}"></script>
 
     {!! Toastr::message() !!}
 
     @stack('lib-scripts')
     @stack('scripts')
-
-    {{-- <script>
-        window.translations = {
-            title: "{{ __('admin.notify.title') }}",
-            confirmText: "{{ __('admin.notify.confirmText') }}",
-            cancelText: "{{ __('admin.notify.cancelText') }}",
-        }
-
-        window.routes = {
-            loadCartView: "{{ route('cart.load.view') }}",
-            loadCartCount: "{{ route('load.cart.count') }}",
-            loadCartDropdown: "{{ route('load.cart.dropdown') }}",
-            cartRemoveItem: "{{ route('cart.remove.item') }}",
-            cartDeleteSelectedItem: "{{ route('cart.delete.selected.item') }}",
-            cartRemoveAllItem: "{{ route('cart.remove.all.item') }}",
-            cartUpdateQuantity: "{{ route('cart.update.quantity') }}",
-            cartApplyCoupon: "{{ route('cart.apply.coupon') }}",
-            getShippingFee: "{{ route('cart.shipping.fee') }}",
-            saveCouponSession: "{{ route('cart.save.coupon.session') }}",
-            forgetCouponSession: "{{ route('cart.forget.coupon.session') }}",
-            saveShippingMethodSession: "{{ route('cart.save.shipping.method.session') }}",
-            checkAuth: "{{ route('check.auth') }}",
-            checkout: "{{ route('checkout.index') }}",
-            loadCheckoutView: "{{ route('checkout.load.view') }}",
-            loadCheckoutProvince: "{{ route('checkout.load.province') }}",
-            loadCheckoutDistrict: "{{ route('checkout.load.district') }}",
-            loadCheckoutWard: "{{ route('checkout.load.ward') }}",
-            loadCheckoutWard: "{{ route('checkout.load.ward') }}",
-            storeShippingAddress: "{{ route('shipping.address.store') }}",
-            editShippingAddress: "{{ route('shipping.address.edit') }}",
-            updateShippingAddress: "{{ route('shipping.address.update') }}",
-        };
-    </script> --}}
-
 
 </body>
 

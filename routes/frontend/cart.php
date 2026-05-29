@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\CartController;
 
+// ================= CART =================
+
 Route::prefix('cart')
     ->name('cart.')
     ->controller(CartController::class)

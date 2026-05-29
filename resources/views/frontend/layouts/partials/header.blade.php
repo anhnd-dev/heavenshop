@@ -181,7 +181,7 @@
 
                     <ul class="navbar-nav alt-font navbar-right justify-content-start">
                         <li class="nav-item">
-                            <a href="{{ route('blog') }}" class="nav-link">{{ __('frontend.header.blog') }}</a>
+                            <a href="{{ route('blog.index') }}" class="nav-link">{{ __('frontend.header.blog') }}</a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('contact') }}" class="nav-link">{{ __('frontend.header.contact') }}</a>
@@ -251,15 +251,37 @@
                             </form>
                         </div>
                     </div>
+
                     <div class="widget-text icon alt-font">
-                        <a href=""><i class="feather icon-feather-user d-inline-block me-5px"></i><span
-                                class="d-none d-xxl-inline-block">Account</span></a>
+
+                        @auth('customer')
+                            <a href="{{ route('customer.dashboard') }}">
+
+                                <i class="feather icon-feather-user d-inline-block me-5px"></i>
+
+                            </a>
+                        @else
+                            <a href="javascript:void(0)" id="openAuthModal">
+
+                                <i class="feather icon-feather-user d-inline-block me-5px"></i>
+
+                                <span class="d-none d-xxl-inline-block">
+                                    Account
+                                </span>
+
+                            </a>
+                        @endauth
+
                     </div>
+
                     <div class="header-cart-icon icon">
                         <div class="header-cart dropdown">
+
                             <a href="{{ route('cart.index') }}">
-                                <i class="feather icon-feather-shopping-bag"></i><span id="cart-count"
-                                    class="cart-count alt-font text-white bg-dark-gray"> </span></a>
+                                <i class="feather icon-feather-shopping-bag"></i>
+                                <span id="cart-count" class="cart-count alt-font text-white bg-dark-gray"></span>
+                            </a>
+
                             <ul class="cart-item-list" id="cartItemList"
                                 style="padding: 12px 14px; width: max-content"></ul>
                         </div>

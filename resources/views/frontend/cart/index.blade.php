@@ -2,7 +2,6 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('frontend/css/cart/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('frontend/css/auth/style.css') }}">
 @endpush
 
 @section('content')

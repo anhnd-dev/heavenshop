@@ -3,12 +3,6 @@
 use App\Http\Controllers\Frontend\CollectionController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Catalog Routes
-|--------------------------------------------------------------------------
-*/
-
 // ================= COLLECTIONS =================
 
 Route::prefix('collections')

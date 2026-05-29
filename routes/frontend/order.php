@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+// ================= ORDER =================
+
 Route::prefix('order')->group(function () {
 
     Route::get('/success/{order_code}', function ($order_code) {

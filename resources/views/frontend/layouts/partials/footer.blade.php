@@ -23,7 +23,7 @@
                         <a href="collection.html" class="nav-link">{{ __('frontend.footer.collection') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('blog') }}" class="nav-link">{{ __('frontend.footer.blog') }}</a>
+                        <a href="{{ route('blog.index') }}" class="nav-link">{{ __('frontend.footer.blog') }}</a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('contact') }}" class="nav-link">{{ __('frontend.footer.contact') }}</a>
@@ -42,7 +42,7 @@
                     @if ($categories)
                         @foreach ($categories as $category)
                             <li>
-                                <li><a href="#">{{ $category->name }}</a></li>
+                            <li><a href="#">{{ $category->name }}</a></li>
                             </li>
                         @endforeach
                     @endif
@@ -57,7 +57,9 @@
                     <li><a
                             href="{{ route('policy', ['slug' => 'terms-of-service']) }}">{{ __('frontend.footer.term_and_condition') }}</a>
                     </li>
-                    <li><a href="{{ route('policy', ['slug' => 'privacy-policy']) }}">{{ __('frontend.footer.privacy_policy') }}</a></li>
+                    <li><a
+                            href="{{ route('policy', ['slug' => 'privacy-policy']) }}">{{ __('frontend.footer.privacy_policy') }}</a>
+                    </li>
                     <li><a href="#">{{ __('frontend.footer.shipping_and_delivery') }}</a></li>
                 </ul>
             </div>
@@ -144,9 +146,11 @@
                 <div class="col-12 col-lg-7 last-paragraph-no-margin md-mb-15px text-center text-lg-start lh-22">
                     <p>
                         {{ __('frontend.footer.reCapcha') }}
-                        <a href="#" class="text-white text-decoration-line-bottom">{{ __('frontend.footer.privacy_policy') }}</a>
+                        <a href="#"
+                            class="text-white text-decoration-line-bottom">{{ __('frontend.footer.privacy_policy') }}</a>
                         {{ __('frontend.footer.and') }}
-                        <a href="#" class="text-white text-decoration-line-bottom">{{ __('frontend.footer.term_and_condition') }}</a>
+                        <a href="#"
+                            class="text-white text-decoration-line-bottom">{{ __('frontend.footer.term_and_condition') }}</a>
                     </p>
                 </div>
                 <div class="col-12 col-lg-5 text-center text-lg-end lh-22">

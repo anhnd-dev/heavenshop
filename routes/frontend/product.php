@@ -3,17 +3,12 @@
 use App\Http\Controllers\Frontend\ProductController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Catalog Routes
-|--------------------------------------------------------------------------
-*/
-
-// ================= COLLECTIONS =================
+// ================= PRODUCT =================
 
 Route::prefix('product')
+    ->name('product.')
     ->controller(ProductController::class)
     ->group(function () {
 
-        Route::get('{slug}', 'show')->name('product.show');
+        Route::get('{slug}', 'show')->name('show');
     });

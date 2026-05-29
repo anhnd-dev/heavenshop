@@ -50,13 +50,11 @@ Route::middleware(
 
     require __DIR__ . '/language.php';
 
-    require __DIR__ . '/site.php';
+    require __DIR__ . '/home.php';
 
     require __DIR__ . '/product.php';
 
-    require __DIR__ . '/shop.php';
-
-    require __DIR__ . '/basic.php';
+    require __DIR__ . '/catalog.php';
 
     require __DIR__ . '/order.php';
 
@@ -68,7 +66,7 @@ Route::middleware(
 
     require __DIR__ . '/auth.php';
 
-    require __DIR__ . '/payment.php';
+    require __DIR__ . '/blog.php';
 
-    require __DIR__ . '/catalog.php';
+    require __DIR__ . '/page.php';
 });

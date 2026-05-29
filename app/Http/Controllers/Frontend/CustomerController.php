@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
+    public function index() {}
+
     public function show(Request $request)
     {
         $address = CustomerAddress::where(
