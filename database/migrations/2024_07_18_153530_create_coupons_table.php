@@ -15,15 +15,12 @@ return new class extends Migration
             $table->id();
 
             /**
-             * CODE
-             * Ví dụ:
-             * SUMMER2026
-             * SALE50K
+             * Mã voucher
              */
             $table->string('code', 50)->unique();
 
             /**
-             * discount_type
+             * Loại giảm giá
              * - percentage => giảm theo %
              * - fixed => giảm số tiền cố định
              */
@@ -31,12 +28,6 @@ return new class extends Migration
 
             /**
              * Giá trị giảm
-             *
-             * percentage:
-             * 10 => giảm 10%
-             *
-             * fixed:
-             * 100000 => giảm 100.000 VNĐ
              */
             $table->decimal('discount_value', 12, 2);
 
@@ -49,9 +40,7 @@ return new class extends Migration
                 ->nullable();
 
             /**
-             * Giảm tối đa
-             *
-             * Dùng cho coupon %
+             * Giảm tối đa (%)
              * Ví dụ:
              * giảm 20% tối đa 100k
              */
@@ -59,13 +48,13 @@ return new class extends Migration
                 ->nullable();
 
             /**
-             * Tổng số lượt có thể dùng
+             * Tổng lượt dùng toàn hệ thống
              */
             $table->unsignedInteger('quantity')
                 ->default(0);
 
             /**
-             * Đã dùng bao nhiêu lần
+             * Đã dùng toàn hệ thống
              */
             $table->unsignedInteger('used_count')
                 ->default(0);
@@ -77,20 +66,22 @@ return new class extends Migration
                 ->default(false);
 
             /**
+             * Giới hạn mỗi user được dùng bao nhiêu lần
+             */
+            $table->unsignedInteger('limit_per_customer')->default(1);
+
+            /**
              * Mô tả coupon
              */
             $table->text('description')
                 ->nullable();
 
             /**
-             * Thời gian bắt đầu
+             * Thời gian hiệu lực
              */
             $table->timestamp('start_date')
                 ->nullable();
 
-            /**
-             * Thời gian kết thúc
-             */
             $table->timestamp('end_date')
                 ->nullable();
 

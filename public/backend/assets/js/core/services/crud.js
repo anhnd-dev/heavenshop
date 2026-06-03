@@ -260,3 +260,68 @@ window.setupDeleteMultipleHandler = function (button, route, callback) {
         );
     });
 };
+
+window.setupAjaxActionHandler = function (
+    button,
+    route,
+    getData,
+    callback,
+    confirmText = "Bạn có chắc chắn?",
+) {
+    $(document).on("click", button, function (e) {
+        e.preventDefault();
+
+        const csrfToken = $('meta[name="csrf-token"]').attr("content");
+
+        swal(
+            {
+                title: window.translations.title,
+                text: confirmText,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: window.translations.confirmText,
+                cancelButtonText: window.translations.cancelText,
+                closeOnConfirm: false,
+                closeOnCancel: true,
+            },
+
+            function (isConfirm) {
+                if (!isConfirm) {
+                    return;
+                }
+
+                $.ajax({
+                    url: route,
+
+                    method: "POST",
+
+                    data: getData(),
+
+                    headers: {
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+
+                    dataType: "json",
+                })
+
+                    .done(function (res) {
+                        toastr.success(res.message);
+
+                        callback?.(res);
+                    })
+
+                    .fail(function (xhr) {
+                        let message =
+                            xhr.responseJSON?.message ??
+                            window.translations.error;
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi",
+                            html: message,
+                        });
+                    });
+            },
+        );
+    });
+};

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Slider\StoreSliderRequest;
-use App\Http\Requests\Slider\UpdateSliderRequest;
-use App\Services\SliderService;
+use App\Http\Requests\Admin\Slider\StoreSliderRequest;
+use App\Http\Requests\Admin\Slider\UpdateSliderRequest;
+use App\Services\Admin\SliderService;
 use Illuminate\Http\Request;
 
 class SliderController extends BaseAdminController

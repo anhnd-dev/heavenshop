@@ -8,8 +8,8 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Size;
 use Illuminate\Http\Request;
-use App\Services\ProductService;
-use App\Services\ProductVariantService;
+use App\Services\Admin\ProductService;
+use App\Services\Admin\ProductVariantService;
 
 class ProductController extends BaseAdminController
 {

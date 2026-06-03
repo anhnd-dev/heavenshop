@@ -15,6 +15,8 @@
         // =========================
         init() {
             this.bindEvents();
+
+            this.checkAutoOpen();
         },
 
         // =========================
@@ -82,6 +84,12 @@
             });
         },
 
+        checkAutoOpen() {
+            if (window.autoOpenLoginModal) {
+                this.open();
+            }
+        },
+
         // =========================
         // OPEN
         // =========================
@@ -138,6 +146,16 @@
 
                     this.close();
 
+                    if (window.accountRedirect) {
+                        const redirectUrl = window.accountRedirect;
+
+                        window.accountRedirect = null;
+
+                        window.location.href = redirectUrl;
+
+                        return;
+                    }
+
                     location.reload();
                 },
 
@@ -190,6 +208,16 @@
     };
 
     window.App.AuthModal = AuthModal;
+
+    window.openLoginModal = function (redirect = null) {
+        if (redirect) {
+            window.accountRedirect = redirect;
+        }
+
+        if (window.App?.AuthModal) {
+            window.App.AuthModal.open();
+        }
+    };
 
     $(function () {
         AuthModal.init();

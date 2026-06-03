@@ -10,13 +10,18 @@
             'cartClear' => route('cart.clear'),
             'applyCoupon' => route('cart.applyCoupon'),
             'removeCoupon' => route('cart.removeCoupon'),
-
-            'customerAddress' => route('customer.address.show'),
+    
+            'customerAddress' => route('account.address.show'),
+            'addressStore' => route('account.address.store'),
+            'addressUpdate' => route('account.address.update'),
+            'addressSetDefault' => route('account.address.setDefault'),
+    
             'checkoutPlace' => route('checkout.place'),
+    
             'login' => route('auth.ajax.login'),
             'register' => route('auth.ajax.register'),
         ],
-
+    
         'csrf' => csrf_token(),
     ]) !!};
 </script>

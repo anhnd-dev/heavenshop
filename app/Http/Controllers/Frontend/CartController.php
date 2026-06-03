@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 use App\Models\Product;
 use App\Models\ProductVariant;
 
-use App\Services\CartService;
-use App\Services\CouponService;
+use App\Services\Frontend\CartService;
+use App\Services\Frontend\CouponService;
 use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
@@ -19,22 +20,20 @@ class CartController extends Controller
         protected CouponService $couponService
     ) {}
 
-    // =========================
-    // PAGE
-    // =========================
+    /*
+    |--------------------------------------------------------------------------
+    | CART PAGE
+    |--------------------------------------------------------------------------
+    */
     public function index()
     {
-        // =========================
-        // CART
-        // =========================
-        $cart = $this->cartService
-            ->getCart();
+        $customerId = Auth::guard('customer')->id();
 
-        $subtotal = $this->cartService
-            ->subtotalSelected();
+        $cart = $this->cartService->getCart();
 
-        $shipping = $this->cartService
-            ->shipping();
+        $subtotal = $this->cartService->subtotalSelected();
+
+        $shipping = $this->cartService->shipping($subtotal);
 
         $discount = session(
             'applied_coupon.discount',
@@ -46,9 +45,7 @@ class CartController extends Controller
             0
         );
 
-        // =========================
-        // CUSTOMER
-        // =========================
+        // customer
         $customer = null;
 
         $addresses = collect();
@@ -57,43 +54,31 @@ class CartController extends Controller
 
         if (Auth::guard('customer')->check()) {
 
-            $customer = \App\Models\Customer::query()
-                ->with('addresses')
-                ->find(
-                    Auth::guard('customer')->id()
-                );
+            $customer = Customer::query()
+                ->with(['addresses' => function ($q) {
+                    $q->orderByDesc('is_default');
+                }])
+                ->find($customerId);
 
-            if ($customer) {
+            $addresses = $customer->addresses;
 
-                $addresses = $customer->addresses;
-
-                $defaultAddress = $addresses
-                    ->where('is_default', 1)
-                    ->first();
-            }
+            $defaultAddress = $addresses->first();
         }
 
-        // =========================
-        // COUPONS
-        // =========================
+        // coupons
         $availableCoupons = $this->couponService
             ->availableCoupons(
                 $subtotal,
                 Auth::guard('customer')->id()
             );
 
-        // =========================
-        // SUGGEST PRODUCTS
-        // =========================
+        // suggest product
         $suggestProducts = Product::query()
             ->active()
             ->latest()
             ->take(8)
             ->get();
 
-        // =========================
-        // VIEW
-        // =========================
         return view(
             'frontend.cart.index',
             compact(
@@ -173,10 +158,6 @@ class CartController extends Controller
     // =========================
     public function add(Request $request)
     {
-        // =========================
-        // VALIDATE
-        // =========================
-
         $request->validate([
 
             'quantity' => 'required|integer|min:1',
@@ -189,10 +170,6 @@ class CartController extends Controller
 
             'size_id' => 'nullable|integer',
         ]);
-
-        // =========================
-        // FIND VARIANT
-        // =========================
 
         if ($request->variant_id) {
 
@@ -219,10 +196,6 @@ class CartController extends Controller
                 ->first();
         }
 
-        // =========================
-        // NOT FOUND
-        // =========================
-
         if (!$variant) {
 
             return response()->json([
@@ -230,10 +203,6 @@ class CartController extends Controller
                 'message' => 'Biến thể không tồn tại'
             ], 404);
         }
-
-        // =========================
-        // OUT OF STOCK
-        // =========================
 
         if ($variant->stock <= 0) {
 
@@ -243,10 +212,7 @@ class CartController extends Controller
             ], 400);
         }
 
-        // =========================
-        // GET CART
-        // =========================
-
+        // Get cart
         $cart = $this->cartService->getCart();
 
         $cartKey = $variant->id;
@@ -257,10 +223,7 @@ class CartController extends Controller
 
         $newQty = $currentQty + $request->quantity;
 
-        // =========================
-        // CHECK STOCK
-        // =========================
-
+        // Check stock
         if ($newQty > $variant->stock) {
 
             return response()->json([
@@ -269,19 +232,13 @@ class CartController extends Controller
             ], 400);
         }
 
-        // =========================
-        // UPDATE EXIST ITEM
-        // =========================
-
+        // Update exist item
         if (isset($cart[$cartKey])) {
 
             $cart[$cartKey]['quantity'] = $newQty;
         }
 
-        // =========================
-        // NEW ITEM
-        // =========================
-
+        // New item
         else {
 
             $cart[$cartKey] = $this->buildCartItem(
@@ -533,7 +490,6 @@ class CartController extends Controller
         $this->cartService->putCart($cart);
 
         session()->forget('applied_coupon');
-
 
         return response()->json([
             'status' => 200,

@@ -65,28 +65,35 @@ Route::middleware(
 )->group(function () {
 
     require __DIR__ . '/optimize.php';
+
     require __DIR__ . '/dashboard.php';
     require __DIR__ . '/language.php';
+
     require __DIR__ . '/category.php';
     require __DIR__ . '/brand.php';
+
     require __DIR__ . '/product.php';
 
     require __DIR__ . '/color.php';
     require __DIR__ . '/size.php';
 
-    // require __DIR__ . '/order.php';
     require __DIR__ . '/coupon.php';
+
+    require __DIR__ . '/order.php';
+
+    require __DIR__ . '/blog.php';
+
     // require __DIR__ . '/user.php';
     // require __DIR__ . '/role.php';
     // require __DIR__ . '/permission.php';
-    require __DIR__ . '/blog.php';
-    require __DIR__ . '/subscriber.php';
 
-    require __DIR__ . '/setting.php';
 
     require __DIR__ . '/frontend.php';
 
     require __DIR__ . '/slider.php';
+
+    require __DIR__ . '/setting.php';
+
     // require __DIR__ . '/delivery.php';
     // require __DIR__ . '/comment.php';
     // require __DIR__ . '/gallery.php';

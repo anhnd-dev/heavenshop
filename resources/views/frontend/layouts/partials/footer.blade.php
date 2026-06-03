@@ -111,22 +111,6 @@
 
             <div class="col-lg-3 col-md-6 col-sm-7 ps-20px sm-ps-15px md-mb-50px xs-mb-0 order-sm-1 order-lg-5">
                 <span class="fw-500 d-block text-white mb-5px fs-17">{{ __('frontend.footer.become_a_number') }}</span>
-                <div class="mb-15px">{{ __('frontend.footer.join_discount') }}</div>
-                <div class="d-inline-block w-100 newsletter-style-04 position-relative mb-15px">
-                    <form action="https://craftohtml.themezaa.com/email-templates/subscribe-newsletter.php"
-                        method="post" class="position-relative w-100">
-                        <input
-                            class="input-small bg-nero-grey border-radius-4px fs-14 border-color-transparent w-100 form-control pe-50px ps-20px lg-ps-15px required"
-                            type="email" name="email" placeholder="Enter your email" />
-                        <input type="hidden" name="redirect" value />
-                        <button class="btn pe-20px submit" aria-label="submit">
-                            <i class="icon bi bi-envelope icon-small text-white"></i>
-                        </button>
-                        <div
-                            class="form-results border-radius-4px pt-5px pb-5px ps-15px pe-15px fs-14 lh-22 mt-10px w-100 text-center position-absolute d-none">
-                        </div>
-                    </form>
-                </div>
                 <div class="footer-card">
                     <a href="#" class="d-inline-block me-5px align-middle"><img
                             src="{{ asset('frontend/images/demo-decor-store-payment-icon-01.png') }}" alt /></a>
@@ -154,8 +138,8 @@
                     </p>
                 </div>
                 <div class="col-12 col-lg-5 text-center text-lg-end lh-22">
-                    <span>&copy; {{ __('frontend.footer.copyright') }}
-                        <a href="https://www.themezaa.com/" target="_blank"
+                    <span>{{ __('frontend.footer.copyright') }}
+                        <a href="{{ route('home') }}" target="_blank"
                             class="text-decoration-line-bottom text-white">{{ __('frontend.footer.copyright_name') }}</a></span>
                 </div>
             </div>

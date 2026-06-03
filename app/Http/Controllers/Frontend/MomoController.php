@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\PaymentTransaction;
 
-use App\Services\MomoService;
+use App\Services\Frontend\MomoService;
 
 class MomoController extends Controller
 {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Coupon\StoreCouponRequest;
-use App\Http\Requests\Coupon\UpdateCouponRequest;
-use App\Services\CouponService;
+use App\Http\Requests\Admin\Coupon\StoreCouponRequest;
+use App\Http\Requests\Admin\Coupon\UpdateCouponRequest;
+use App\Services\Admin\CouponService;
 use Illuminate\Http\Request;
 
 class CouponController extends BaseAdminController

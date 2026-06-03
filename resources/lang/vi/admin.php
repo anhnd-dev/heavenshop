@@ -44,6 +44,9 @@ return [
         // Content
         'blog' => 'Bài viết',
 
+        // Order
+        'order' => 'Hóa đơn',
+
         // Settings
         'setting' => 'Cài đặt',
         'general_setting' => 'Cài đặt chung',
@@ -342,6 +345,25 @@ return [
         'edit_blog' => 'Cập nhật bài viết',
 
         'enter_title' => 'Nhập tiêu đề',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Order
+    |--------------------------------------------------------------------------
+    */
+
+    'order' => [
+        'code' => 'Mã đơn',
+        'customer' => 'Khách hàng',
+        'phone' => 'SĐT',
+
+        'total_price' => 'Tổng tiền',
+        'payment_status' => 'Thanh toán',
+
+        'order_status' => 'Trạng thái',
+
+        'date' => 'Ngày tạo',
     ],
 
     /*

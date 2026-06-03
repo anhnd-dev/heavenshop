@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\AuthRequest;
+use App\Http\Requests\Admin\Auth\AuthRequest;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -52,8 +52,7 @@ class LoginController extends Controller
 
         if (!Auth::guard('admin')->attempt($credentials, $remember)) {
             Toastr::error(
-                'Email hoặc mật khẩu không chính xác!',
-                'Error'
+                'Email hoặc mật khẩu không chính xác!'
             );
             return redirect()
                 ->back()
@@ -78,7 +77,6 @@ class LoginController extends Controller
 
             Toastr::error(
                 'Bạn không có quyền truy cập hệ thống!',
-                'Error'
             );
 
             return redirect()->route('login');
@@ -105,7 +103,6 @@ class LoginController extends Controller
 
         Toastr::success(
             'Đăng xuất thành công!',
-            'Success'
         );
 
         return redirect()->route('admin.getLogin');

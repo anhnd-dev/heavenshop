@@ -7,10 +7,10 @@ use App\Models\Product;
 
 use Illuminate\Http\Request;
 
-use App\Services\ProductGalleryService;
+use App\Services\Admin\ProductGalleryService;
 
-use App\Http\Requests\ProductGallery\StoreProductGalleryRequest;
-use App\Http\Requests\ProductGallery\UpdateProductGalleryRequest;
+use App\Http\Requests\Admin\ProductGallery\StoreProductGalleryRequest;
+use App\Http\Requests\Admin\ProductGallery\UpdateProductGalleryRequest;
 
 class ProductGalleryController extends BaseAdminController
 {

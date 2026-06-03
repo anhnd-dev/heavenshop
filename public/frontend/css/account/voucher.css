@@ -1,0 +1,198 @@
+.voucher-wrapper {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial;
+}
+
+/* TITLE */
+.title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+/* SUMMARY */
+.summary {
+    display: flex;
+    gap: 15px;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* TABS */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.tab {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.tab.active {
+    background: #ff4d4f;
+    color: #fff;
+    border-color: #ff4d4f;
+}
+
+/* TOOLBAR */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+/* SEARCH */
+.search-box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+/* GRID SWITCH */
+.layout-switch {
+    display: flex;
+    gap: 6px;
+}
+
+.layout-btn {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.layout-btn.active {
+    background: #ff4d4f;
+    color: #fff;
+    border-color: #ff4d4f;
+}
+
+/* TAB CONTENT GRID */
+.tab-content {
+    display: none;
+    gap: 12px;
+}
+
+.tab-content.active {
+    display: grid;
+}
+
+/* GRID MODES */
+.grid-1 {
+    grid-template-columns: 1fr;
+}
+
+.grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .grid-2,
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* CARD */
+.voucher-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border: 1px solid #b6b6b6;
+    border-radius: 10px;
+    background: #fff;
+    transition: 0.2s;
+}
+
+.voucher-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* STATUS */
+.voucher-card.available {
+    border-left: 5px solid #52c41a;
+}
+
+.voucher-card.used {
+    opacity: 0.6;
+    border-left: 5px solid #222222;
+}
+
+.voucher-card.expired {
+    opacity: 0.5;
+    border-left: 5px solid #ff4d4f;
+}
+
+/* TEXT */
+.code {
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.desc,
+.meta {
+    font-size: 13px;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* BADGE */
+.badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+}
+
+.badge.available {
+    background: #e6fffb;
+    color: #13c2c2;
+}
+
+.badge.used {
+    background: #f5f5f5;
+    color: #999;
+}
+
+.badge.expired {
+    background: #fff1f0;
+    color: #ff4d4f;
+}
+
+/* BUTTON */
+.btn-use {
+    background: linear-gradient(135deg, #ff4d4f, #ff7875);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* EMPTY */
+.empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #999;
+    padding: 20px;
+}

@@ -1,120 +1,159 @@
-(function ($) {
+(function ($, window) {
     "use strict";
 
-    $(function () {
-        initLocation();
-    });
+    window.App = window.App || {};
 
-    function initLocation() {
-        $(".location-wrapper").each(function () {
-            bindLocation($(this));
-        });
-    }
+    const Location = {
+        routes: {
+            provinces: "/api/location/provinces",
+            districts: "/api/location/districts",
+            wards: "/api/location/wards",
+        },
 
-    function bindLocation($wrapper) {
-        let $province = $wrapper.find(".province");
-        let $district = $wrapper.find(".district");
-        let $ward = $wrapper.find(".ward");
+        init(selector = ".location-wrapper") {
+            $(selector).each((_, element) => {
+                this.bind($(element));
+            });
+        },
 
-        let oldProvince = $province.data("selected");
-        let oldDistrict = $district.data("selected");
-        let oldWard = $ward.data("selected");
+        bind($wrapper) {
+            if ($wrapper.data("location-initialized")) {
+                return;
+            }
 
-        // 🚀 Load province → district → ward (edit mode)
-        loadOptions("/api/location/provinces", $province, oldProvince)
-            .then(() => {
-                if (oldProvince) {
-                    return loadOptions(
-                        "/api/location/districts",
+            $wrapper.data("location-initialized", true);
+
+            const $province = $wrapper.find(".province");
+
+            const $district = $wrapper.find(".district");
+
+            const $ward = $wrapper.find(".ward");
+
+            const oldProvince = $province.data("selected");
+
+            const oldDistrict = $district.data("selected");
+
+            const oldWard = $ward.data("selected");
+
+            this.loadOptions(this.routes.provinces, $province, oldProvince)
+                .then(() => {
+                    if (!oldProvince) {
+                        return;
+                    }
+
+                    return this.loadOptions(
+                        this.routes.districts,
                         $district,
                         oldDistrict,
-                        { province_id: oldProvince },
+                        {
+                            province_id: oldProvince,
+                        },
                     );
-                }
-            })
-            .then(() => {
-                if (oldDistrict) {
-                    return loadOptions("/api/location/wards", $ward, oldWard, {
+                })
+                .then(() => {
+                    if (!oldDistrict) {
+                        return;
+                    }
+
+                    return this.loadOptions(this.routes.wards, $ward, oldWard, {
                         district_id: oldDistrict,
                     });
+                });
+
+            $province.on("change.location", () => {
+                const provinceId = $province.val();
+
+                this.reset($district);
+
+                this.reset($ward);
+
+                if (!provinceId) {
+                    return;
                 }
-            });
 
-        // Province → District
-        $province.on("change", function () {
-            let provinceId = $(this).val();
-
-            resetSelect($district);
-            resetSelect($ward);
-
-            if (provinceId) {
-                loadOptions("/api/location/districts", $district, null, {
+                this.loadOptions(this.routes.districts, $district, null, {
                     province_id: provinceId,
                 });
-            }
-        });
+            });
 
-        // District → Ward
-        $district.on("change", function () {
-            let districtId = $(this).val();
+            $district.on("change.location", () => {
+                const districtId = $district.val();
 
-            resetSelect($ward);
+                this.reset($ward);
 
-            if (districtId) {
-                loadOptions("/api/location/wards", $ward, null, {
+                if (!districtId) {
+                    return;
+                }
+
+                this.loadOptions(this.routes.wards, $ward, null, {
                     district_id: districtId,
                 });
-            }
-        });
-    }
+            });
+        },
 
-    /**
-     * Load options (AJAX)
-     */
-    function loadOptions(url, $target, selected = null, params = {}) {
-        return new Promise((resolve, reject) => {
-            $target.prop("disabled", true);
-            $target.html("<option>Đang tải...</option>");
+        loadOptions(url, $target, selected = null, params = {}) {
+            return new Promise((resolve, reject) => {
+                $target
+                    .prop("disabled", true)
+                    .html('<option value="">Đang tải...</option>');
 
-            $.get(url, params)
-                .done(function (res) {
-                    let options = '<option value="">-- Chọn --</option>';
+                $.get(url, params)
+                    .done((res) => {
+                        let html = '<option value="">-- Chọn --</option>';
 
-                    if (res.data && res.data.length) {
-                        res.data.forEach((item) => {
-                            let isSelected =
-                                selected == item.id ? "selected" : "";
-                            options += `<option value="${item.id}" ${isSelected}>${item.name}</option>`;
+                        (res.data || []).forEach((item) => {
+                            html += `
+                                    <option
+                                        value="${item.id}"
+                                        ${
+                                            selected == item.id
+                                                ? "selected"
+                                                : ""
+                                        }>
+                                        ${item.name}
+                                    </option>
+                                `;
                         });
-                    }
 
-                    $target.html(options);
+                        $target.html(html);
 
-                    if (selected) {
-                        $target.val(selected);
-                    }
+                        if (selected) {
+                            $target.val(selected);
+                        }
 
-                    // trigger select2 nếu có
-                    $target.trigger("change.select2");
+                        $target
+                            .prop("disabled", false)
+                            .trigger("change.select2");
 
-                    $target.prop("disabled", false);
+                        resolve(res);
+                    })
+                    .fail(() => {
+                        toastr.error("Không tải được dữ liệu địa chỉ");
 
-                    resolve();
-                })
-                .fail(function () {
-                    alert("Không tải được dữ liệu");
-                    $target.prop("disabled", false);
-                    reject();
-                });
-        });
-    }
+                        $target.prop("disabled", false);
 
-    /**
-     * Reset select
-     */
-    function resetSelect($el) {
-        $el.html('<option value="">-- Chọn --</option>')
-            .val(null)
-            .trigger("change.select2");
-    }
-})(jQuery);
+                        reject();
+                    });
+            });
+        },
+
+        reset($select) {
+            $select
+                .html('<option value="">-- Chọn --</option>')
+                .val("")
+                .trigger("change.select2");
+        },
+
+        reload($wrapper) {
+            $wrapper.removeData("location-initialized");
+
+            this.bind($wrapper);
+        },
+    };
+
+    window.App.Location = Location;
+
+    $(function () {
+        Location.init();
+    });
+})(jQuery, window);

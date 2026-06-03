@@ -22,6 +22,7 @@ class Coupon extends Model
         'quantity',
         'used_count',
         'is_unlimited',
+        'limit_per_customer',
         'description',
         'start_date',
         'end_date',
@@ -65,7 +66,9 @@ class Coupon extends Model
 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsToMany(Order::class, 'coupon_customers')
+            ->withPivot(['used_at'])
+            ->withTimestamps();
     }
 
     /*
@@ -74,31 +77,26 @@ class Coupon extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function isValid(): bool
+    public function isValid($orderAmount = null): bool
     {
-        if (!$this->is_active) {
+        if (!$this->is_active) return false;
+
+        if ($this->start_date && now()->lt($this->start_date)) {
             return false;
         }
 
-        if (
-            $this->start_date &&
-            now()->lt($this->start_date)
-        ) {
+        if ($this->end_date && now()->gt($this->end_date)) {
             return false;
         }
 
-        if (
-            $this->end_date &&
-            now()->gt($this->end_date)
-        ) {
+        if (!$this->is_unlimited && $this->used_count >= $this->quantity) {
             return false;
         }
 
-        if (
-            !$this->is_unlimited &&
-            $this->used_count >= $this->quantity
-        ) {
-            return false;
+        if ($orderAmount !== null && $this->min_order_amount) {
+            if ($orderAmount < $this->min_order_amount) {
+                return false;
+            }
         }
 
         return true;

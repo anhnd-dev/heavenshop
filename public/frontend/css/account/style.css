@@ -1,0 +1,471 @@
+/* ==================================================
+   ACCOUNT PAGE
+================================================== */
+
+body {
+    background: #f4f4f4;
+}
+
+body.overflow-hidden {
+    overflow: hidden;
+}
+
+.account-page {
+    display: flex;
+    gap: 40px;
+
+    min-height: 100vh;
+
+    margin: 9% 4% 0;
+}
+
+/* ==================================================
+   SIDEBAR
+================================================== */
+
+.account-sidebar {
+    width: 460px;
+
+    padding: 0 14px 10px;
+
+    background: #f4f4f4;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    height: 60px;
+
+    padding: 0 18px;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    color: #111;
+    text-decoration: none;
+
+    transition: all 0.3s ease;
+}
+
+.sidebar-item:hover {
+    transform: translateX(4px);
+}
+
+.sidebar-item.active {
+    background: #000;
+    color: #fff;
+}
+
+.sidebar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 50%;
+
+    background: #000;
+    color: #fff;
+}
+
+.sidebar-item.active .sidebar-icon {
+    background: #fff;
+    color: #000;
+}
+
+.logout-btn {
+    width: 100%;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+}
+
+/* ==================================================
+   CONTENT
+================================================== */
+
+.account-content {
+    flex: 1;
+
+    padding: 40px 60px;
+
+    background: #fff;
+
+    border-radius: 20px;
+}
+
+.account-title {
+    margin-bottom: 30px;
+
+    font-size: 58px;
+    font-weight: 700;
+}
+
+/* ==================================================
+   MODAL OVERLAY
+================================================== */
+
+.account-modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: 0.3s;
+
+    z-index: 9999;
+}
+
+.account-modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* ==================================================
+   MODAL
+================================================== */
+
+.account-modal {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 600px;
+
+    padding: 40px;
+
+    background: #fff;
+
+    border-radius: 20px;
+
+    transform: translateY(20px);
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+}
+
+.account-modal .modal-title {
+    font-size: 28px;
+    color: #000;
+}
+
+.account-modal-overlay.show .account-modal {
+    transform: translateY(0);
+}
+
+.modal-title {
+    margin-bottom: 30px;
+
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+/* ==================================================
+   MODAL CLOSE
+================================================== */
+
+.modal-close {
+    position: absolute;
+    top: -16px;
+    right: -16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    border: 3px solid #fff;
+    border-radius: 50%;
+
+    background: #000;
+    color: #fff;
+
+    cursor: pointer;
+}
+
+/* ==================================================
+   FORM
+================================================== */
+
+.floating-group {
+    position: relative;
+
+    margin-bottom: 24px;
+}
+
+.floating-group > label {
+    position: absolute;
+    top: -10px;
+    left: 22px;
+
+    z-index: 2;
+
+    padding: 0 10px;
+
+    background: #fff;
+
+    color: #777;
+    font-size: 14px;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+
+    min-height: 56px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d9d9d9;
+    border-radius: 30px;
+}
+
+.input-box i:first-child {
+    color: #bdbdbd;
+}
+
+.input-box input,
+.input-box select,
+.input-box textarea {
+    width: 100%;
+
+    border: 0;
+    outline: none;
+
+    background: transparent;
+
+    font-size: 16px;
+}
+
+.input-box textarea {
+    resize: vertical;
+    min-height: 100px;
+
+    padding: 16px 0;
+}
+
+/* ==================================================
+   GENDER
+================================================== */
+
+.gender-group {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+
+    margin-bottom: 24px;
+}
+
+.gender-group i {
+    margin-left: 18px;
+}
+
+.radio-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    cursor: pointer;
+}
+
+.radio-item input {
+    width: 18px;
+    height: 18px;
+}
+
+/* ==================================================
+   PASSWORD
+================================================== */
+
+.password-box {
+    justify-content: space-between;
+}
+
+.password-box input {
+    flex: 1;
+}
+
+.toggle-password {
+    border: none;
+    background: transparent;
+
+    color: #666;
+
+    cursor: pointer;
+}
+
+.input-error {
+    display: block;
+
+    margin-top: 8px;
+
+    color: #dc3545;
+    font-size: 13px;
+}
+
+/* ==================================================
+   SUBMIT BUTTON
+================================================== */
+
+.modal-submit-btn {
+    width: 100%;
+    height: 56px;
+
+    margin-top: 20px;
+
+    border: none;
+    border-radius: 999px;
+
+    background: #000;
+    color: #fff;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.modal-submit-btn:hover {
+    opacity: 0.9;
+}
+
+/* =========================
+   GENDER RADIO
+========================= */
+
+.gender-group {
+    display: flex;
+    gap: 16px;
+
+    margin-bottom: 24px;
+}
+
+.radio-item {
+    position: relative;
+    cursor: pointer;
+}
+
+.radio-item input {
+    position: absolute;
+
+    opacity: 0;
+    visibility: hidden;
+}
+
+.radio-item span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 56px;
+    width: 56px;
+
+    border: 2px solid #e5e7eb;
+    border-radius: 14px;
+
+    background: #fff;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    color: #555;
+
+    transition: all 0.25s ease;
+}
+
+/* Hover */
+
+.radio-item:hover span {
+    border-color: #000;
+
+    transform: translateY(-2px);
+}
+
+/* Checked */
+
+.radio-item input:checked + span {
+    background: #000;
+
+    border-color: #000;
+
+    color: #fff;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Focus */
+
+.radio-item input:focus + span {
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08);
+}
+
+/* =====================================================
+   PAGINATION
+===================================================== */
+
+.custom-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.custom-pagination a,
+.custom-pagination span {
+    min-width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    border: 1px solid #ddd;
+
+    text-decoration: none;
+
+    color: #333;
+}
+
+.custom-pagination a.active {
+    background: #111;
+    border-color: #111;
+    color: #fff;
+}

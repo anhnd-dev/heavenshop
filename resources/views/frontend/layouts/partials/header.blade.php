@@ -255,20 +255,18 @@
                     <div class="widget-text icon alt-font">
 
                         @auth('customer')
-                            <a href="{{ route('customer.dashboard') }}">
+                            <a href="{{ route('account.profile') }}">
 
                                 <i class="feather icon-feather-user d-inline-block me-5px"></i>
 
                             </a>
                         @else
-                            <a href="javascript:void(0)" id="openAuthModal">
-
+                            <a href="javascript:void(0)" onclick="openLoginModal('{{ route('account.profile') }}')">
                                 <i class="feather icon-feather-user d-inline-block me-5px"></i>
 
                                 <span class="d-none d-xxl-inline-block">
                                     Account
                                 </span>
-
                             </a>
                         @endauth
 

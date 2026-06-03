@@ -264,22 +264,21 @@
 
         <span class="summary-muted">
             Voucher giảm giá
+
+            @if (session()->has('applied_coupon'))
+                <div class="applied-coupon">
+
+                    <strong>
+                        ({{ session('applied_coupon.code') }})
+                    </strong>
+
+                </div>
+            @endif
         </span>
 
         <strong class="summary-discount">
             -{{ number_format($discount, 0, ',', '.') }}đ
         </strong>
-
-        @if (session()->has('applied_coupon'))
-            <div class="applied-coupon">
-
-                Đã áp dụng:
-                <strong>
-                    {{ session('applied_coupon.code') }}
-                </strong>
-
-            </div>
-        @endif
 
     </div>
 

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\PaymentTransaction;
 
-use App\Services\PaymentService;
+use App\Services\Frontend\PaymentService;
 
 class VnpayController extends Controller
 {

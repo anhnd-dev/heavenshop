@@ -49,7 +49,8 @@
                                                 <label class="cart-select-item">
 
                                                     <input type="radio" class="saved-address-radio"
-                                                        name="selected_address" value="{{ $address->id }}">
+                                                        name="selected_address" value="{{ $address->id }}"
+                                                        {{ $address->is_default ? 'checked' : '' }}>
                                                     <span class="custom-checkbox"></span>
 
                                                 </label>
@@ -61,13 +62,6 @@
                                                         <strong>
                                                             {{ $address->full_name }}
                                                         </strong>
-
-                                                        @if ($address->is_default)
-                                                            <span class="default-badge">
-                                                                Mặc định
-                                                            </span>
-                                                        @endif
-
                                                     </div>
 
                                                     <p>
@@ -78,10 +72,16 @@
                                                         {{ $address->address }}
                                                     </p>
 
+                                                    @if ($address->is_default)
+                                                        <span class="default-badge">
+                                                            Mặc định
+                                                        </span>
+                                                    @endif
+
                                                 </div>
 
                                                 <button type="button" class="edit-address-btn"
-                                                    data-id="{{ $address->id }}">
+                                                    data-address-id="{{ $address->id }}">
 
                                                     <i class="fa fa-edit"></i>
 
@@ -169,7 +169,7 @@
                                 </div>
 
                                 {{-- LOCATION --}}
-                                <div class="location-wrapper">
+                                <div class="location-wrapper checkout-location">
 
                                     {{-- PROVINCE --}}
                                     <div class="checkout-group">
@@ -425,197 +425,44 @@
 @endsection
 
 {{-- LOGIN MODAL --}}
-<div class="checkout-auth-modal" id="checkoutAuthModal" style="display:none;">
-
-    <div class="checkout-auth-overlay"></div>
-
-    <div class="checkout-auth-box">
-
-        <button type="button" class="checkout-auth-close">
-            ×
-        </button>
-
-        <div class="checkout-auth-header">
-
-            <img src="{{ asset('frontend/images/logo.png') }}" alt="Logo">
-
-            <h2 id="auth-modal-title">
-                Đăng nhập để tiếp tục đặt hàng
-            </h2>
-
-            <p id="auth-modal-description">
-                Vui lòng đăng nhập tài khoản khách hàng trước khi thanh toán
-            </p>
-
-        </div>
-
-        {{-- =========================
-            LOGIN FORM
-        ========================== --}}
-        <form id="checkout-login-form">
-
-            @csrf
-
-            <div class="checkout-auth-group">
-
-                <input type="text" name="login" class="checkout-auth-input"
-                    placeholder="Email hoặc số điện thoại">
-
-            </div>
-
-            <div class="checkout-auth-group">
-
-                <input type="password" name="password" class="checkout-auth-input" placeholder="Mật khẩu">
-
-            </div>
-
-            <button type="submit" class="checkout-auth-submit">
-                Đăng nhập
-            </button>
-
-            <div class="checkout-auth-footer">
-
-                <a href="#" id="show-register-form">
-                    Đăng ký tài khoản
-                </a>
-
-                <a href="#">
-                    Quên mật khẩu
-                </a>
-
-            </div>
-
-        </form>
-
-        {{-- =========================
-            REGISTER FORM
-        ========================== --}}
-        <form id="checkout-register-form" style="display:none;">
-
-            @csrf
-
-            {{-- FULL NAME --}}
-            <div class="checkout-auth-group">
-
-                <input type="text" name="name" class="checkout-auth-input" placeholder="Họ và tên">
-
-            </div>
-
-            {{-- ROW --}}
-            <div class="checkout-auth-row">
-
-                {{-- PHONE --}}
-                <div class="checkout-auth-group">
-
-                    <input type="text" name="phone" class="checkout-auth-input" placeholder="Số điện thoại">
-
-                </div>
-
-                {{-- EMAIL --}}
-                <div class="checkout-auth-group">
-
-                    <input type="email" name="email" class="checkout-auth-input" placeholder="Email">
-
-                </div>
-
-            </div>
-
-            {{-- PASSWORD --}}
-            <div class="checkout-auth-group">
-
-                <input type="password" name="password" class="checkout-auth-input" placeholder="Mật khẩu">
-
-            </div>
-
-            {{-- CONFIRM --}}
-            <div class="checkout-auth-group">
-
-                <input type="password" name="password_confirmation" class="checkout-auth-input"
-                    placeholder="Nhập lại mật khẩu">
-
-            </div>
-
-            {{-- BUTTON --}}
-            <button type="submit" class="checkout-auth-submit">
-
-                Đăng ký tài khoản
-
-            </button>
-
-            {{-- FOOTER --}}
-            <div class="checkout-auth-footer">
-
-                <a href="#" id="show-login-form">
-
-                    Đã có tài khoản? Đăng nhập
-
-                </a>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
+@include('frontend.cart.partials.check-auth-modal')
 
 {{-- ADDRESS MODAL --}}
-<div class="address-modal" id="addressModal" style="display:none;">
-
-    <div class="address-modal-overlay"></div>
-
-    <div class="address-modal-box">
-
-        <button type="button" class="close-address-modal">
-            ×
-        </button>
-
-        <h3>
-            Thêm địa chỉ mới
-        </h3>
-
-        <form id="add-address-form">
-
-            @csrf
-
-            <input type="text" name="full_name" class="checkout-input" placeholder="Họ tên">
-
-            <input type="text" name="phone" class="checkout-input" placeholder="Số điện thoại">
-
-            <input type="text" name="address" class="checkout-input" placeholder="Địa chỉ">
-
-            <select name="province_id" class="checkout-select modal-province">
-                <option value="">
-                    Chọn tỉnh/thành
-                </option>
-            </select>
-
-            <select name="district_id" class="checkout-select modal-district">
-                <option value="">
-                    Chọn quận/huyện
-                </option>
-            </select>
-
-            <select name="ward_id" class="checkout-select modal-ward">
-                <option value="">
-                    Chọn phường/xã
-                </option>
-            </select>
-
-            <button type="submit" class="checkout-auth-submit">
-
-                Lưu địa chỉ
-
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
+@include('frontend.cart.partials.address-modal', [
+    'id' => 'addressModal',
+    'size' => 'modal-lg',
+    'title' => 'Thông tin địa chỉ',
+    'formId' => 'address_form',
+    'hiddenFields' => [
+        [
+            'name' => 'address_id',
+            'id' => 'address_id',
+        ],
+        [
+            'name' => 'mode',
+            'id' => 'address_mode',
+            'value' => 'create',
+        ],
+    ],
+    'submitId' => 'save_address_btn',
+    'submitText' => 'Lưu địa chỉ',
+    'body' => view('frontend.cart.partials.address-form')->render(),
+])
 
 @include('frontend.cart.partials.config')
 
 @push('scripts')
+    <script src="{{ asset('frontend/js/cart/core/cache.js') }}"></script>
+
+    <script src="{{ asset('frontend/js/cart/services/api.js') }}"></script>
+
+    <script src="{{ asset('frontend/js/cart/modules/cart.js') }}"></script>
+
+    <script src="{{ asset('frontend/js/cart/modules/address.js') }}"></script>
+
+    <script src="{{ asset('frontend/js/cart/modules/validation.js') }}"></script>
+
+    <script src="{{ asset('frontend/js/cart/modules/checkout.js') }}"></script>
+
     <script src="{{ asset('frontend/js/cart/index.js') }}"></script>
 @endpush

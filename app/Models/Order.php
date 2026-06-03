@@ -173,6 +173,16 @@ class Order extends Model
         ]);
     }
 
+    public function scopeOfCustomer(
+        $query,
+        int $customerId
+    ) {
+        return $query->where(
+            'customer_id',
+            $customerId
+        );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | HELPERS
@@ -212,5 +222,74 @@ class Order extends Model
                 self::STATUS_CONFIRMED
             ]
         );
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->order_status) {
+
+            self::STATUS_PENDING =>
+            'Chờ xác nhận',
+
+            self::STATUS_CONFIRMED =>
+            'Đã xác nhận',
+
+            self::STATUS_SHIPPING =>
+            'Đang giao hàng',
+
+            self::STATUS_DELIVERED =>
+            'Đã giao hàng',
+
+            self::STATUS_CANCELLED =>
+            'Đã hủy',
+
+            self::STATUS_RETURNED =>
+            'Đã trả hàng',
+
+            default =>
+            'Không xác định',
+        };
+    }
+
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        return match ($this->payment_status) {
+
+            self::PAYMENT_PENDING =>
+            'Chờ thanh toán',
+
+            self::PAYMENT_PAID =>
+            'Đã thanh toán',
+
+            self::PAYMENT_FAILED =>
+            'Thanh toán thất bại',
+
+            self::PAYMENT_REFUNDED =>
+            'Đã hoàn tiền',
+
+            default =>
+            'Không xác định',
+        };
+    }
+
+    public function getPaymentMethodLabelAttribute(): string
+    {
+        return match ($this->payment_method) {
+
+            self::PAYMENT_COD =>
+            'Thanh toán khi nhận hàng',
+
+            self::PAYMENT_VNPAY =>
+            'VNPay',
+
+            self::PAYMENT_MOMO =>
+            'MoMo',
+
+            self::PAYMENT_ZALOPAY =>
+            'ZaloPay',
+
+            default =>
+            strtoupper($this->payment_method),
+        };
     }
 }

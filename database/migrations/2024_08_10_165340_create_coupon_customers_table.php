@@ -15,21 +15,21 @@ return new class extends Migration
             $table->id();
 
             /**
-             * Coupon được sử dụng
+             * Coupon
              */
             $table->foreignId('coupon_id')
                 ->constrained('coupons')
                 ->cascadeOnDelete();
 
             /**
-             * Customer sử dụng coupon
+             * Customer
              */
             $table->foreignId('customer_id')
                 ->constrained('customers')
                 ->cascadeOnDelete();
 
             /**
-             * Order đã dùng coupon
+             * Order đã dùng voucher
              */
             $table->foreignId('order_id')
                 ->nullable()
@@ -44,9 +44,17 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['coupon_id', 'customer_id', 'order_id']);
+            /**
+             * 1 customer chỉ giữ 1 voucher duy nhất
+             * (tránh duplicate claim voucher)
+             */
+            $table->unique(['coupon_id', 'customer_id']);
 
-            $table->index(['customer_id', 'coupon_id']);
+            /**
+             * INDEX tối ưu query ví voucher
+             */
+            $table->index(['customer_id', 'used_at']);
+            $table->index(['coupon_id', 'used_at']);
         });
     }
 

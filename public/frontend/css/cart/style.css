@@ -195,7 +195,7 @@ body {
     grid-template-columns: 1.1fr 0.9fr;
     gap: 24px;
     align-items: start;
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
 }
 
@@ -1292,17 +1292,46 @@ span.error::before {
 .saved-address-list {
     display: flex;
     gap: 12px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding-bottom: 8px;
+
+    scroll-behavior: smooth;
+    scrollbar-width: auto;
+    scrollbar-color: #ddd #e5e7eb;
+}
+
+.saved-address-list::-webkit-scrollbar {
+    height: 12px;
+}
+
+.saved-address-list::-webkit-scrollbar-track {
+    background: #e5e7eb;
+    border-radius: 999px;
+}
+
+.saved-address-list::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 999px;
+    border: 2px solid #e5e7eb;
+}
+
+.saved-address-list::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
 }
 
 .saved-address-card {
+    flex: 0 0 calc((100% - 24px) / 3);
+
+    min-width: 280px;
+
     padding: 14px;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-
     background: #fff;
     position: relative;
-
-    transition: 0.2s ease;
 }
 
 .saved-address-card:hover {
@@ -1347,4 +1376,18 @@ span.error::before {
     align-items: center;
     gap: 10px;
     margin-bottom: 6px;
+}
+
+#addressModalTitle {
+    font-size: 24px;
+}
+
+#addressModal .close {
+    border: none;
+    background: none;
+    font-size: 24px;
+}
+
+#address_form label {
+    margin-bottom: 8px;
 }

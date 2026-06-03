@@ -106,7 +106,7 @@
 
                     @include('admin.components.datatable', [
                         'tableId' => 'product_datatable',
-                    
+
                         'columns' => [
                             __('admin.product.product_image'),
                             __('admin.product.product_name'),
@@ -137,7 +137,7 @@
         'body' => view('admin.pages.product.components.form-fields', [
             'prefix' => 'add',
             'mode' => 'create',
-    
+
             'categories' => $categories,
             'brands' => $brands,
             'colors' => $colors,
@@ -194,14 +194,14 @@
         'submitId' => 'add_gallery_btn',
         'submitText' => __('admin.common.add'),
         'enctype' => 'multipart/form-data',
-    
+
         'hiddenFields' => [
             [
                 'name' => 'product_id',
                 'id' => 'add_gallery_product_id',
             ],
         ],
-    
+
         'body' => view('admin.pages.gallery.components.gallery-form', [
             'prefix' => 'add',
             'mode' => 'create',
@@ -218,14 +218,14 @@
         'submitId' => 'edit_gallery_btn',
         'submitText' => __('admin.common.update'),
         'enctype' => 'multipart/form-data',
-    
+
         'hiddenFields' => [
             [
                 'name' => 'gallery_id',
                 'id' => 'edit_gallery_id',
             ],
         ],
-    
+
         'body' => view('admin.pages.gallery.components.gallery-form', [
             'prefix' => 'edit',
             'mode' => 'edit',
@@ -236,7 +236,6 @@
 
 @include('admin.pages.product.assets.config')
 @include('admin.pages.gallery.assets.config')
-
 
 @push('scripts-lib')
     <script src="{{ asset('backend/vendors/datatable/js/jquery.dataTables.min.js') }}"></script>

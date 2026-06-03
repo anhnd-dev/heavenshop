@@ -195,6 +195,14 @@
 
     @include('frontend.layouts.partials.config')
 
+    <script>
+        window.accountRedirect =
+            @json(session('redirect_after_login'));
+
+        window.autoOpenLoginModal =
+            @json(session('open_login_modal', false));
+    </script>
+
     <script data-cfasync="false" src="{{ asset('frontend/js/email-decode.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('frontend/js/jquery.js') }}"></script>
     <script type="text/javascript" src="{{ asset('frontend/js/vendors.min.js') }}"></script>

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Color\StoreColorRequest;
-use App\Http\Requests\Color\UpdateColorRequest;
-use App\Services\ColorService;
+use App\Http\Requests\Admin\Color\StoreColorRequest;
+use App\Http\Requests\Admin\Color\UpdateColorRequest;
+use App\Services\Admin\ColorService;
 use Illuminate\Http\Request;
 
 class ColorController extends BaseAdminController

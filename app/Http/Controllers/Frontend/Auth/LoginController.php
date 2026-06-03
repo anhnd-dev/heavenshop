@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Hash;
 
 use App\Models\Customer;
 
-use App\Http\Requests\Auth\CustomerLoginRequest;
-use App\Http\Requests\Auth\CustomerRegisterRequest;
+use App\Http\Requests\Frontend\Auth\CustomerLoginRequest;
+use App\Http\Requests\Frontend\Auth\CustomerRegisterRequest;
 
 class LoginController extends Controller
 {

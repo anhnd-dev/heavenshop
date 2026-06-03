@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Category;
-use App\Services\BlogService;
+use App\Services\Admin\BlogService;
 use Illuminate\Http\Request;
 
 class BlogController extends BaseAdminController

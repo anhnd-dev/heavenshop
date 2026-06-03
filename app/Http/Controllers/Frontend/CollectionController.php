@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Services\CollectionService;
+use App\Services\Frontend\CollectionService;
 use Illuminate\Http\Request;
 
 class CollectionController extends Controller

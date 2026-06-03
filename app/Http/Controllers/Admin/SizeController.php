@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\Size\StoreSizeRequest;
-use App\Http\Requests\Size\UpdateSizeRequest;
-use App\Services\SizeService;
+use App\Http\Requests\Admin\Size\StoreSizeRequest;
+use App\Http\Requests\Admin\Size\UpdateSizeRequest;
+use App\Services\Admin\SizeService;
 use Illuminate\Http\Request;
 
 class SizeController extends BaseAdminController

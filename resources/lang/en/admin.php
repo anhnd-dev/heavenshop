@@ -46,6 +46,9 @@ return [
         // Content
         'blog' => 'Blog',
 
+        // Order
+        'order' => 'Order',
+
         // Settings
         'setting' => 'Setting',
         'general_setting' => 'General Setting',
@@ -345,6 +348,25 @@ return [
         'edit_blog' => 'Edit Blog',
 
         'enter_title' => 'Enter Title',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Order
+    |--------------------------------------------------------------------------
+    */
+
+    'order' => [
+        'code' => 'Code',
+        'customer' => 'Customer',
+        'phone' => 'Phone',
+
+        'total_price' => 'Total Price',
+        'payment_status' => 'Payment',
+
+        'order_status' => 'Status',
+
+        'date' => 'Date',
     ],
 
     /*

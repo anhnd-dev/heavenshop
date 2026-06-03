@@ -106,5 +106,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkAcl' => \App\Http\Middleware\CheckPermissionAcl::class,
+        'customer.auth' => \App\Http\Middleware\CustomerAuth::class
     ];
 }

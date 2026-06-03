@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Checkout\CheckoutPlaceOrderRequest;
-use App\Services\OrderService;
+use App\Http\Requests\Frontend\Checkout\CheckoutPlaceOrderRequest;
+use App\Services\Frontend\OrderService;
 
 class CheckoutController extends Controller
 {
