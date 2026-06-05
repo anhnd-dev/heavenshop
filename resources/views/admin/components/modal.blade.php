@@ -48,7 +48,7 @@
 
                     <button type="button" class="btn btn-danger light" data-dismiss="modal">
 
-                        {{ __('admin.common.close') }}
+                        {{ __('admin.action.close') }}
 
                     </button>
 

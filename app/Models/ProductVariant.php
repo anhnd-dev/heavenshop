@@ -64,6 +64,11 @@ class ProductVariant extends Model
             );
     }
 
+    public function cartItems()
+    {
+        return $this->hasMany(CustomerCartItem::class);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accessors

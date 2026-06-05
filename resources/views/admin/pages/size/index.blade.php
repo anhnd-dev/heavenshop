@@ -58,7 +58,7 @@
         'title' => __('admin.size.add_size'),
         'formId' => 'add_size_form',
         'submitId' => 'add_size_btn',
-        'submitText' => __('admin.common.add'),
+        'submitText' => __('admin.action.add'),
         'body' => view('admin.pages.size.components.form-fields', ['prefix' => 'add'])->render(),
     ])
 
@@ -75,7 +75,7 @@
             ],
         ],
         'submitId' => 'edit_size_btn',
-        'submitText' => __('admin.common.update'),
+        'submitText' => __('admin.action.update'),
         'body' => view('admin.pages.size.components.form-fields', ['prefix' => 'edit'])->render(),
     ])
 @endsection

@@ -560,12 +560,12 @@ File: Main Style
 }
 
 .sidebar .sidebar-menu > li .active {
-    background: #6d6d6d;
     border-radius: 8px;
 }
 
 .sidebar .sidebar-menu > li .active > a {
-    color: #fff;
+    color: #8a7769;
+    font-weight: 700;
 }
 
 .sidebar .sidebar-menu > li > a {

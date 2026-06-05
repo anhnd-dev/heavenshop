@@ -10,7 +10,15 @@ Route::prefix('order')
 
         Route::get('/', 'index')->name('index');
 
-        Route::post('{id}', 'show')->name('show');
+        Route::get('/details/{id}', 'show')->name('show');
+
+        Route::get('/print/{id}', 'print')->name('print');
+
+        Route::post('/edit', 'edit')->name('edit');
+
+        Route::post('/updateStatus', 'updateStatus')->name('updateStatus');
+
+        Route::post('/updatePaymentStatus', 'updatePaymentStatus')->name('updatePaymentStatus');
 
         // Route::get('/edit', 'edit')->name('edit');
         // Route::put('/update', 'update')->name('update');

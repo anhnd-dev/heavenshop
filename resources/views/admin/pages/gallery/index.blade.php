@@ -110,14 +110,14 @@
                         <td>
 
                             @if ($includeTrashed)
-                                <button type="button" id="{{ $gallery->id }}"
+                                <button type="button" data-id="{{ $gallery->id }}"
                                     class="restoreGallery btn btn-success shadow btn-xs sharp mr-1 btn-sm">
 
                                     <i class="fas fa-trash-restore"></i>
 
                                 </button>
 
-                                <button type="button" id="{{ $gallery->id }}"
+                                <button type="button" data-id="{{ $gallery->id }}"
                                     class="forceGallery btn btn-danger shadow btn-xs sharp btn-sm">
 
                                     <i class="fas fa-trash-alt"></i>
@@ -132,7 +132,7 @@
 
                                 </button>
 
-                                <button type="button" id="{{ $gallery->id }}"
+                                <button type="button" data-id="{{ $gallery->id }}"
                                     class="deleteGallery btn btn-danger shadow btn-xs sharp btn-sm">
 
                                     <i class="fa fa-trash"></i>

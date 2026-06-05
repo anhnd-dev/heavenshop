@@ -84,7 +84,6 @@ class LoginController extends Controller
 
         Toastr::success(
             'Đăng nhập thành công!',
-            'Success'
         );
 
         return redirect()->route($route);

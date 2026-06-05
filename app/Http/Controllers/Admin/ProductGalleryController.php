@@ -12,6 +12,8 @@ use App\Services\Admin\ProductGalleryService;
 use App\Http\Requests\Admin\ProductGallery\StoreProductGalleryRequest;
 use App\Http\Requests\Admin\ProductGallery\UpdateProductGalleryRequest;
 
+use App\Models\ProductGallery;
+
 class ProductGalleryController extends BaseAdminController
 {
     public function __construct(
@@ -27,7 +29,6 @@ class ProductGalleryController extends BaseAdminController
         Request $request,
         Product $product
     ) {
-
         $includeTrashed = $request->boolean(
             'include_trashed'
         );
@@ -53,6 +54,13 @@ class ProductGalleryController extends BaseAdminController
         );
     }
 
+    public function edit(Request $request)
+    {
+        $gallery = ProductGallery::findOrFail($request->id);
+
+        return response()->json($gallery);
+    }
+
     /**
      * =========================
      * STORE
@@ -62,7 +70,6 @@ class ProductGalleryController extends BaseAdminController
         StoreProductGalleryRequest $request,
         Product $product
     ) {
-
         return $this->transaction(function () use (
             $request,
             $product
@@ -95,7 +102,6 @@ class ProductGalleryController extends BaseAdminController
         Product $product,
         int $id
     ) {
-
         return $this->transaction(function () use (
             $request,
             $product,
@@ -138,7 +144,6 @@ class ProductGalleryController extends BaseAdminController
         Request $request,
         Product $product
     ) {
-
         $this->galleryService->delete(
             product: $product,
             id: $request->id
@@ -158,7 +163,6 @@ class ProductGalleryController extends BaseAdminController
         Request $request,
         Product $product
     ) {
-
         $count = $this->galleryService
             ->deleteAll(
                 product: $product,
@@ -179,7 +183,6 @@ class ProductGalleryController extends BaseAdminController
         Request $request,
         Product $product
     ) {
-
         $this->galleryService->restore(
             product: $product,
             id: $request->id
@@ -196,15 +199,18 @@ class ProductGalleryController extends BaseAdminController
      * =========================
      */
     public function restoreAll(
+        Request $request,
         Product $product
     ) {
 
-        $this->galleryService->restoreAll(
-            $product
-        );
+        $count = $this->galleryService
+            ->restoreAll(
+                product: $product,
+                ids: $request->ids ?? []
+            );
 
         return $this->successResponse(
-            'Khôi phục tất cả media thành công'
+            "Khôi phục {$count} media thành công"
         );
     }
 

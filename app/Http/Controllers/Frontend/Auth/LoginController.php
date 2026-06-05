@@ -11,9 +11,14 @@ use App\Models\Customer;
 
 use App\Http\Requests\Frontend\Auth\CustomerLoginRequest;
 use App\Http\Requests\Frontend\Auth\CustomerRegisterRequest;
+use App\Services\Frontend\CartService;
 
 class LoginController extends Controller
 {
+    public function __construct(
+        protected CartService $cartService
+    ) {}
+
     // =========================
     // AJAX LOGIN
     // =========================
@@ -54,6 +59,8 @@ class LoginController extends Controller
             ], 422);
         }
 
+        $this->cartService->mergeCartAfterLogin();
+
         return response()->json([
 
             'success' => true,
@@ -89,6 +96,8 @@ class LoginController extends Controller
         // =========================
         Auth::guard('customer')
             ->login($customer);
+
+        $this->cartService->mergeCartAfterLogin();
 
         return response()->json([
 

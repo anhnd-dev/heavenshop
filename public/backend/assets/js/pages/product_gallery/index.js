@@ -4,89 +4,81 @@
     window.App = window.App || {};
 
     const ProductGalleryPage = {
-        el: {},
-
         currentProductId: null,
 
-        // =========================
-        // INIT
-        // =========================
+        el: {},
+
         init() {
             this.cache();
             this.bind();
+            this.bindCrud();
         },
 
-        // =========================
-        // CACHE
-        // =========================
         cache() {
-            // wrapper
             this.el.wrapper = ".gallery-wrapper";
 
             this.el.content = "#gallery-content";
 
             this.el.title = "#gallery-product-title";
 
-            // gallery button
             this.el.galleryAction = ".galleryBtn";
 
             this.el.galleryTrash = "#includeGalleryCheckboxTrash";
 
-            // form
             this.el.addForm = "#add_gallery_form";
-
             this.el.editForm = "#edit_gallery_form";
 
-            // modal
             this.el.addModal = "#addGalleryModel";
-
             this.el.editModal = "#editGalleryModel";
 
-            // button
             this.el.addBtn = "#add_gallery_btn";
-
             this.el.editBtn = "#edit_gallery_btn";
 
-            // checkbox
             this.el.checkAll = "#checkAllGallery";
 
             this.el.checkboxIds = ".checkbox_gallery_ids";
 
-            // delete
             this.el.deleteBtn = ".deleteGallery";
-
             this.el.deleteMultiple = "#deleteGalleryMultiple";
 
-            // restore
             this.el.restoreBtn = ".restoreGallery";
-
             this.el.restoreAll = "#restoreGalleryAll";
 
-            // force
             this.el.forceBtn = ".forceGallery";
-
             this.el.forceMultiple = "#forceDeleteGalleryMultiple";
         },
 
-        // =========================
-        // EVENTS
-        // =========================
+        getRoute(routeName, id = null) {
+            if (!this.currentProductId) {
+                return null;
+            }
+
+            let url = window.galleryProductConfig.routes[routeName].replace(
+                "__PRODUCT_ID__",
+                this.currentProductId,
+            );
+
+            if (id !== null) {
+                url = url.replace("__ID__", id);
+            }
+
+            return url;
+        },
+
         bind() {
-            // =========================
             // OPEN GALLERY
-            // =========================
             $(document).on("click", this.el.galleryAction, (e) => {
                 e.preventDefault();
 
                 const btn = $(e.currentTarget);
 
-                const productId = btn.data("product_id");
+                const productId = String(btn.data("product_id"));
 
                 const productName = btn.data("product_name");
 
-                // toggle same product
+                // toggle close
                 if (
-                    this.currentProductId === productId &&
+                    String(this.currentProductId) === productId &&
                     $(this.el.wrapper).is(":visible")
                 ) {
                     $(this.el.wrapper).slideUp(200);
@@ -98,207 +90,233 @@
 
                 this.currentProductId = productId;
 
-                // bind CRUD after product selected
-                this.bindCrud();
-
-                // hidden input
                 $("#gallery_product_id").val(productId);
 
-                // title
                 $(this.el.title).text(`Gallery - ${productName}`);
 
-                // show wrapper
                 $(this.el.wrapper).slideDown(200);
 
-                // load gallery
                 this.loadGallery();
             });
 
-            // =========================
             // INCLUDE TRASH
-            // =========================
             $(document).on("change", this.el.galleryTrash, () => {
                 this.toggleTrashUI($(this.el.galleryTrash).is(":checked"));
 
                 this.loadGallery();
             });
 
-            // =========================
             // CHECK ALL
-            // =========================
             $(document).on("change", this.el.checkAll, (e) => {
                 $(this.el.checkboxIds).prop(
                     "checked",
                     $(e.currentTarget).is(":checked"),
                 );
             });
+
+            $(document).on("click", ".editGallery", (e) => {
+                e.preventDefault();
+
+                this.loadEditGallery($(e.currentTarget).data("id"));
+            });
         },
 
-        // =========================
-        // CRUD
-        // =========================
         bindCrud() {
-            // =========================
-            // URLS
-            // =========================
-            const storeUrl = window.galleryProductConfig.routes.store.replace(
-                "__PRODUCT_ID__",
-                this.currentProductId,
-            );
-
-            const deleteUrl = window.galleryProductConfig.routes.delete.replace(
-                "__PRODUCT_ID__",
-                this.currentProductId,
-            );
-
-            const deleteAllUrl =
-                window.galleryProductConfig.routes.deleteAll.replace(
-                    "__PRODUCT_ID__",
-                    this.currentProductId,
-                );
-
-            const restoreUrl =
-                window.galleryProductConfig.routes.restore.replace(
-                    "__PRODUCT_ID__",
-                    this.currentProductId,
-                );
-
-            const restoreAllUrl =
-                window.galleryProductConfig.routes.restoreAll.replace(
-                    "__PRODUCT_ID__",
-                    this.currentProductId,
-                );
-
-            const forceDeleteUrl =
-                window.galleryProductConfig.routes.forceDelete.replace(
-                    "__PRODUCT_ID__",
-                    this.currentProductId,
-                );
-
-            const forceDeleteAllUrl =
-                window.galleryProductConfig.routes.forceDeleteAll.replace(
-                    "__PRODUCT_ID__",
-                    this.currentProductId,
-                );
-
-            // =========================
             // ADD
-            // =========================
-            window.setupAddHandler(
-                this.el.addForm,
-                this.el.addBtn,
-                this.el.addModal,
+            window.setupFormHandler({
+                form: this.el.addForm,
+                button: this.el.addBtn,
+                modal: this.el.addModal,
 
-                storeUrl,
+                route: () => this.getRoute("store"),
 
-                () => {
-                    this.loadGallery();
-                },
-            );
+                method: "POST",
 
-            // =========================
+                buttonLoadingText: window.galleryProductConfig.action.adding,
+                buttonDefaultText: window.galleryProductConfig.action.add,
+
+                callback: () => this.loadGallery(),
+            });
+
             // EDIT
-            // =========================
-            if ($(this.el.editForm).length) {
-                window.setupEditHandler(
-                    this.el.editForm,
-                    this.el.editBtn,
-                    this.el.editModal,
+            window.setupFormHandler({
+                form: this.el.editForm,
+                button: this.el.editBtn,
+                modal: this.el.editModal,
 
-                    (id) => {
-                        return window.galleryProductConfig.routes.update
-                            .replace("__PRODUCT_ID__", this.currentProductId)
-                            .replace("__ID__", id);
-                    },
+                route: () => {
+                    const id = $("#edit_gallery_id").val();
 
-                    () => {
-                        this.loadGallery();
-                    },
-                );
-            }
+                    return this.getRoute("update", id);
+                },
 
-            // =========================
+                method: "PUT",
+
+                buttonLoadingText: window.galleryProductConfig.action.updating,
+                buttonDefaultText: window.galleryProductConfig.action.update,
+
+                callback: () => this.loadGallery(),
+            });
+
             // DELETE
-            // =========================
-            window.setupDeleteHandler(
-                this.el.deleteBtn,
+            window.setupAjaxActionHandler({
+                button: this.el.deleteBtn,
 
-                deleteUrl,
+                route: () => this.getRoute("delete"),
 
-                () => {
+                method: "DELETE",
+
+                confirmText: window.galleryProductConfig.action.deleteText,
+
+                getData: ($btn) => ({
+                    id: $btn.data("id"),
+                }),
+
+                callback: () => {
                     this.loadGallery();
                 },
-            );
+            });
 
-            // =========================
-            // DELETE MULTIPLE
-            // =========================
-            window.setupDeleteMultipleHandler(
-                this.el.deleteMultiple,
-
-                deleteAllUrl,
-
-                () => {
-                    this.loadGallery();
-                },
-            );
-
-            // =========================
             // RESTORE
-            // =========================
-            window.setupRestoreHandler(
-                this.el.restoreBtn,
+            window.setupAjaxActionHandler({
+                button: this.el.restoreBtn,
 
-                restoreUrl,
+                route: () => this.getRoute("restore"),
 
-                () => {
+                confirmText: window.galleryProductConfig.action.restore_text,
+
+                getData: ($btn) => ({
+                    id: $btn.data("id"),
+                }),
+
+                callback: () => {
                     this.loadGallery();
                 },
-            );
+            });
 
-            // =========================
-            // RESTORE ALL
-            // =========================
-            window.setupRestoreAllHandler(
-                this.el.restoreAll,
-
-                restoreAllUrl,
-
-                () => {
-                    this.loadGallery();
-                },
-            );
-
-            // =========================
             // FORCE DELETE
-            // =========================
-            window.setupForceHandler(
-                this.el.forceBtn,
+            window.setupAjaxActionHandler({
+                button: this.el.forceBtn,
 
-                forceDeleteUrl,
+                route: () => this.getRoute("forceDelete"),
 
-                () => {
+                method: "DELETE",
+
+                confirmText: window.translations.force_delete_text,
+
+                getData: ($btn) => ({
+                    id: $btn.data("id"),
+                }),
+
+                callback: () => {
                     this.loadGallery();
                 },
-            );
+            });
 
-            // =========================
+            // DELETE ALL
+            window.setupBulkActionHandler({
+                button: this.el.deleteMultiple,
+
+                route: () => this.getRoute("deleteAll"),
+
+                method: "DELETE",
+
+                checkboxSelector: ".checkbox_gallery_ids",
+
+                checkAllSelector: "#checkAllGallery",
+
+                confirmText: window.translations.confirmText,
+
+                emptyText: window.translations.checkbox_required,
+
+                callback: () => this.loadGallery(),
+            });
+
+            // RESTORE ALL
+            window.setupBulkActionHandler({
+                button: this.el.restoreAll,
+
+                route: () => this.getRoute("restoreAll"),
+
+                checkboxSelector: ".checkbox_gallery_ids",
+
+                checkAllSelector: "#checkAllGallery",
+
+                confirmText: window.translations.confirmText,
+
+                emptyText: window.translations.checkbox_required,
+
+                callback: () => this.loadGallery(),
+            });
+
             // FORCE DELETE MULTIPLE
-            // =========================
-            window.setupForceMultipleHandler(
-                this.el.forceMultiple,
+            window.setupBulkActionHandler({
+                button: this.el.forceMultiple,
 
-                forceDeleteAllUrl,
+                route: () => this.getRoute("forceDeleteAll"),
 
-                () => {
-                    this.loadGallery();
-                },
-            );
+                method: "DELETE",
+
+                checkboxSelector: ".checkbox_gallery_ids",
+
+                checkAllSelector: "#checkAllGallery",
+
+                confirmText: "Bạn có chắc muốn xoá vĩnh viễn các mục đã chọn?",
+
+                emptyText: window.translations.checkbox_required,
+
+                callback: () => this.loadGallery(),
+            });
         },
 
-        // =========================
-        // LOAD GALLERY
-        // =========================
+        loadEditGallery(id) {
+            $.ajax({
+                url: this.getRoute("edit"),
+
+                method: "GET",
+
+                data: {
+                    id: id,
+                },
+
+                success: (gallery) => {
+                    // id
+                    $("#edit_gallery_id").val(gallery.id);
+
+                    // alt
+                    $("#edit_alt").val(gallery.alt ?? "");
+
+                    // sort order
+                    $("#edit_sort_order").val(gallery.sort_order ?? 0);
+
+                    // status
+                    // $("#edit_is_active").val(gallery.is_active ? "1" : "0");
+
+                    // image preview
+                    const image = gallery.file
+                        ? `${window.galleryProductConfig.assets.gallery}/${gallery.file}`
+                        : window.galleryProductConfig.assets.defaultImage;
+
+                    $("#edit_preview_wrapper").html(`
+                        <img
+                            src="${image}"
+                            class="img-thumbnail"
+                            style="max-width: 150px"
+                        >
+                    `);
+
+                    $("#edit_color_id").val(gallery.color_id).trigger("change");
+
+                    // show modal
+                    $(this.el.editModal).modal("show");
+                },
+
+                error: () => {
+                    toastr.error("Không thể tải dữ liệu gallery");
+                },
+            });
+        },
+
         loadGallery() {
             if (!this.currentProductId) {
                 return;
@@ -306,19 +324,12 @@
 
             $(this.el.content).html(`
                 <div class="text-center py-5">
-
                     <div class="spinner-border text-primary"></div>
-
                 </div>
             `);
 
-            const url = window.galleryProductConfig.routes.index.replace(
-                "__PRODUCT_ID__",
-                this.currentProductId,
-            );
-
             $.ajax({
-                url,
+                url: this.getRoute("index"),
 
                 method: "GET",
 
@@ -335,18 +346,13 @@
                 error: () => {
                     $(this.el.content).html(`
                         <div class="alert alert-danger mb-0">
-
                             Không thể tải gallery
-
                         </div>
                     `);
                 },
             });
         },
 
-        // =========================
-        // TOGGLE TRASH UI
-        // =========================
         toggleTrashUI(isTrashed) {
             const show = isTrashed
                 ? [this.el.restoreAll, this.el.forceMultiple]
@@ -356,12 +362,12 @@
                 ? [this.el.deleteMultiple, "#addGallery"]
                 : [this.el.restoreAll, this.el.forceMultiple];
 
-            show.forEach((e) => {
-                $(e).show();
+            show.forEach((selector) => {
+                $(selector).show();
             });
 
-            hide.forEach((e) => {
-                $(e).hide();
+            hide.forEach((selector) => {
+                $(selector).hide();
             });
         },
     };

@@ -88,7 +88,7 @@
         'formId' => 'add_blog_form',
         'enctype' => 'multipart/form-data',
         'submitId' => 'add_blog_btn',
-        'submitText' => __('admin.common.add'),
+        'submitText' => __('admin.action.add'),
         'body' => view('admin.pages.blog.components.form-fields', [
             'prefix' => 'add',
             'categories' => $categories,
@@ -115,7 +115,7 @@
             ],
         ],
         'submitId' => 'edit_blog_btn',
-        'submitText' => __('admin.common.update'),
+        'submitText' => __('admin.action.update'),
         'body' => view('admin.pages.blog.components.form-fields', [
             'prefix' => 'edit',
             'categories' => $categories,

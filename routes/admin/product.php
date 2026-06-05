@@ -39,6 +39,8 @@ Route::prefix('product')
                 Route::get('/', 'index')->name('index');
                 Route::post('/store', 'store')->name('store');
 
+                Route::get('/edit', 'edit')->name('edit');
+
                 Route::put('/update/{id}', 'update')->name('update');
 
                 Route::delete('/delete', 'delete')->name('delete');

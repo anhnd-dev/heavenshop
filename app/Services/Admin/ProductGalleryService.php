@@ -232,11 +232,13 @@ class ProductGalleryService
      * =========================
      */
     public function restoreAll(
-        Product $product
-    ): void {
+        Product $product,
+        array $ids
+    ): int {
 
-        ProductGallery::onlyTrashed()
+        return ProductGallery::onlyTrashed()
             ->where('product_id', $product->id)
+            ->whereIn('id', $ids)
             ->restore();
     }
 

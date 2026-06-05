@@ -157,15 +157,14 @@
         // CRUD BINDINGS (external services)
         // =========================
         bindCrud() {
-            if (window.setupAddHandler) {
-                window.setupAddHandler(
-                    this.el.addForm,
-                    this.el.addBtn,
-                    this.el.addModal,
-                    window.brandConfig.routes.store,
-                    () => this.initDataTable(),
-                );
-            }
+            window.setupFormHandler({
+                form: this.el.addForm,
+                button: this.el.addBtn,
+                modal: this.el.addModal,
+                route: window.brandConfig.routes.store,
+                method: "POST",
+                callback: () => this.initDataTable(),
+            });
 
             if (window.setupEditHandler) {
                 window.setupEditHandler(

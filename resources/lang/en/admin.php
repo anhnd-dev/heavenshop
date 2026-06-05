@@ -93,23 +93,10 @@ return [
         'status' => 'Status',
         'description' => 'Description',
 
-        'add' => 'Add',
-        'update' => 'Update',
-        'close' => 'Close',
-
-        'search' => 'Search',
-        'show' => 'Show',
-        'hide' => 'Hide',
-
         'slug' => 'Slug',
         'enter_slug' => 'Enter slug',
 
         'created_at' => 'Created At',
-
-        'restore_all' => 'Restore All',
-        'delete_multiple_temps' => 'Delete Multiple Temps',
-        'delete_many_permanently' => 'Delete Many Permanently',
-        'trash_log' => 'Trash Log',
 
         'gdpr_cookie' => 'GDPR Cookie',
         'general_setting' => 'General Setting',
@@ -152,6 +139,15 @@ return [
         'submitting' => 'Submitting...',
         'adding' => 'Adding...',
         'updating' => 'Updating...',
+
+        'delete_text' => "Are you sure?",
+        'delete_all_text' => 'Are you sure you want to delete the selected items?',
+
+        'restore_text' => "Are you sure you want to restore this item?",
+        'restore_all_text' => 'Are you sure you want to restore the selected items?',
+
+        'force_delete_text' => 'This item will be permanently deleted and cannot be recovered.',
+        'force_delete_all_text' => 'The selected items will be permanently deleted and cannot be recovered.',
 
         'to' => 'to',
         'of' => 'of',
@@ -570,6 +566,7 @@ return [
         ],
 
         'deleted' => 'Deleted!',
+        'success' => 'Success',
         'errors' => 'Errors!',
         'cancelled' => 'Cancelled!',
 
@@ -577,6 +574,8 @@ return [
 
         'confirmText' => 'Yes, delete it!',
         'cancelText' => 'No, cancel!',
+
+
 
         'cancel' => 'Deletion cancelled',
         'cancel_all' => 'Bulk deletion cancelled',

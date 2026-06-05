@@ -48,9 +48,13 @@ class OrderController extends BaseAdminController
 
         return view(
             'admin.pages.order.show',
-            compact('order')
+            compact(
+                'order',
+            )
         );
     }
+
+    public function print() {}
 
     /*
     |--------------------------------------------------------------------------

@@ -37,7 +37,9 @@
     <link rel="stylesheet" href="{{ asset('backend/vendors/icofont/icofont.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/vendors/jquery-jvectormap/jquery-jvectormap-2.0.3.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/vendors/toastr/toastr.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('backend/vendors/sweetalert/sweetalert.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('backend/vendors/sweetalert/sweetalert.css') }}"> --}}
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- END: Page CSS-->
 
     <!-- START: Custom CSS-->
@@ -143,7 +145,8 @@
 
     <script src="{{ asset('backend/vendors/toastr/toastr.min.js') }}"></script>
     <script src="{{ asset('backend/vendors/toastr/config.js') }}"></script>
-    <script src="{{ asset('backend/vendors/sweetalert/sweetalert.min.js') }}"></script>
+    {{-- <script src="{{ asset('backend/vendors/sweetalert/sweetalert.min.js') }}"></script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Bootstrap Tags Input JS -->
     <script src="{{ asset('backend/vendors/bootstrap-tagsinput/js/bootstrap-tagsinput.min.js') }}"></script>

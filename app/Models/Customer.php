@@ -40,11 +40,9 @@ class Customer extends Authenticatable
         )->where('is_default', true);
     }
 
-    public function carts()
+    public function cartItems()
     {
-        return $this->hasMany(
-            CustomerCart::class
-        );
+        return $this->hasMany(CustomerCartItem::class);
     }
 
     public function orders()

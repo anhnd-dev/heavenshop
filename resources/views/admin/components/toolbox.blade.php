@@ -12,13 +12,13 @@
                 data-target="#{{ $modalId }}">
 
                 <i class="far fa-plus-square"></i>
-                {{ __('admin.common.add') }}
+                {{ __('admin.action.add') }}
             </a>
 
             <a class="dropdown-item" id="restoreAll" href="javascript:void(0)" style="display: none">
 
                 <i class="fab fa-cloudversify"></i>
-                {{ __('admin.common.restore_all') }}
+                {{ __('admin.action.restore_all') }}
             </a>
 
             <div class="dropdown-divider"></div>
@@ -26,13 +26,13 @@
             <a class="dropdown-item text-red" id="deleteMultiple" href="javascript:void(0)">
 
                 <i class="fas fa-trash-alt"></i>
-                {{ __('admin.common.delete_multiple_temps') }}
+                {{ __('admin.action.delete_temps') }}
             </a>
 
             <a class="dropdown-item text-red" id="forceDeleteMultiple" href="javascript:void(0)" style="display: none">
 
                 <i class="fas fa-trash-alt"></i>
-                {{ __('admin.common.delete_many_permanently') }}
+                {{ __('admin.action.delete_permanently') }}
             </a>
 
         </div>
@@ -44,7 +44,7 @@
 
         <label class="custom-control-label" for="includeTrashedCheckbox" style="padding-top: 2px">
 
-            {{ __('admin.common.trash_log') }}
+            {{ __('admin.action.trash_record') }}
         </label>
 
     </div>

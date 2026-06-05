@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\ProductGallery;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductGalleryRequest extends FormRequest
@@ -23,25 +24,21 @@ class UpdateProductGalleryRequest extends FormRequest
      */
     public function rules(): array
     {
+        $productId = $this->route('product');
+        $galleryId = $this->route('id');
+
         return [
 
-            'file' => [
+            'files' => [
+                'nullable',
+                'array',
+            ],
+
+            'files.*' => [
                 'nullable',
                 'file',
-                'mimes:jpg,jpeg,png,webp,mp4,mov,webm,avif',
+                'mimes:jpg,jpeg,png,webp,avif,mp4,mov,webm',
                 'max:51200',
-            ],
-
-            'thumbnail' => [
-                'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:10240',
-            ],
-
-            'type' => [
-                'required',
-                'in:image,video',
             ],
 
             'color_id' => [
@@ -50,10 +47,38 @@ class UpdateProductGalleryRequest extends FormRequest
             ],
 
             'sort_order' => [
-                'nullable',
+                'required',
                 'integer',
                 'min:0',
+
+                Rule::unique('product_galleries')
+                    ->ignore($galleryId)
+                    ->where(function ($query) use ($productId) {
+
+                        $query->where('product_id', $productId);
+
+                        if ($this->filled('color_id')) {
+                            $query->where('color_id', $this->color_id);
+                        } else {
+                            $query->whereNull('color_id');
+                        }
+
+                        return $query;
+                    }),
             ],
+        ];
+    }
+
+    /**
+     * =========================
+     * MESSAGES
+     * =========================
+     */
+    public function messages(): array
+    {
+        return [
+            'sort_order.unique' =>
+            'Màu sắc này đã tồn tại thứ tự hiển thị này.',
         ];
     }
 
@@ -65,11 +90,10 @@ class UpdateProductGalleryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'file' => 'media',
-            'thumbnail' => 'thumbnail',
-            'type' => 'loại media',
+            'files' => 'media',
+            'files.*' => 'media',
             'color_id' => 'màu sắc',
-            'sort_order' => 'thứ tự',
+            'sort_order' => 'thứ tự hiển thị',
         ];
     }
 }

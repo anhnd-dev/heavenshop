@@ -3,46 +3,17 @@
 namespace App\Services\Admin;
 
 use App\Models\Order;
+use App\Models\ProductVariant;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class OrderService
 {
     /*
     |--------------------------------------------------------------------------
-    | ORDER FLOW
-    |--------------------------------------------------------------------------
-    */
-
-    private const ORDER_FLOW = [
-
-        Order::STATUS_PENDING => [
-            Order::STATUS_CONFIRMED,
-            Order::STATUS_CANCELLED,
-        ],
-
-        Order::STATUS_CONFIRMED => [
-            Order::STATUS_SHIPPING,
-            Order::STATUS_CANCELLED,
-        ],
-
-        Order::STATUS_SHIPPING => [
-            Order::STATUS_DELIVERED,
-            Order::STATUS_RETURNED,
-        ],
-
-        Order::STATUS_DELIVERED => [],
-
-        Order::STATUS_CANCELLED => [],
-
-        Order::STATUS_RETURNED => [],
-    ];
-
-    /*
-    |--------------------------------------------------------------------------
     | DATATABLE
     |--------------------------------------------------------------------------
     */
-
     public function getDataTable()
     {
         $query = Order::query()
@@ -134,41 +105,33 @@ class OrderService
 
             ->addColumn('payment_badge', function ($order) {
 
-                return $this->paymentBadge(
-                    $order->payment_status
-                );
+                return $order->payment_badge;
             })
 
             ->addColumn('order_badge', function ($order) {
 
-                return $this->orderBadge(
-                    $order->order_status
-                );
+                return $order->order_badge;
             })
 
             ->addColumn('created_at_format', function ($order) {
 
                 return Carbon::parse(
                     $order->created_at
-                )->format(
-                    'd/m/Y H:i'
-                );
+                )->format('d/m/Y H:i');
             })
 
             ->addColumn('action', function ($order) {
 
                 return '
-
                     <a href="' . route(
                     'admin.order.show',
                     ['id' => $order->id]
                 ) . '"
-                        class="btn btn-info shadow btn-xs sharp">
+                    class="btn btn-info shadow btn-xs sharp">
 
                         <i class="fas fa-eye"></i>
 
                     </a>
-
                 ';
             })
 
@@ -186,63 +149,263 @@ class OrderService
     | UPDATE ORDER STATUS
     |--------------------------------------------------------------------------
     */
-
     public function updateStatus(
         Order $order,
         string $status
     ): bool {
 
-        $allowed = self::ORDER_FLOW[$order->order_status] ?? [];
+        $status = trim($status);
 
         if (
-            !in_array(
-                $status,
-                $allowed
-            )
+            ! $order->canMoveTo($status)
         ) {
             throw new \Exception(
                 'Trạng thái đơn hàng không hợp lệ'
             );
         }
 
-        $data = [
-            'order_status' => $status
-        ];
+        return match ($status) {
 
-        switch ($status) {
+            Order::STATUS_CANCELLED
+            => $this->cancelOrder($order),
 
-            case Order::STATUS_CONFIRMED:
+            Order::STATUS_RETURNED
+            => $this->returnOrder($order),
 
-                $data['confirmed_at'] = now();
+            default
+            => $this->changeNormalStatus(
+                $order,
+                $status
+            ),
+        };
+    }
 
-                break;
+    /*
+    |--------------------------------------------------------------------------
+    | CANCEL EXPIRED ORDERS
+    |--------------------------------------------------------------------------
+    */
+    public function cancelExpiredOrders(): int
+    {
+        return DB::transaction(function () {
 
-            case Order::STATUS_SHIPPING:
+            $orders = Order::query()
 
-                $data['shipped_at'] = now();
+                ->with('items')
 
-                break;
+                ->whereIn('payment_method', [
+                    Order::PAYMENT_VNPAY,
+                    Order::PAYMENT_MOMO,
+                ])
 
-            case Order::STATUS_DELIVERED:
+                ->where('order_status', Order::STATUS_PENDING)
 
-                $data['delivered_at'] = now();
+                ->where('payment_status', Order::PAYMENT_PENDING)
 
-                break;
+                ->whereNotNull('payment_deadline')
 
-            case Order::STATUS_CANCELLED:
+                ->where(
+                    'payment_deadline',
+                    '<',
+                    now()
+                )
 
-                $data['cancelled_at'] = now();
+                ->lockForUpdate()
 
-                break;
+                ->get();
 
-            case Order::STATUS_RETURNED:
+            $count = 0;
 
-                $data['returned_at'] = now();
+            foreach ($orders as $order) {
 
-                break;
-        }
+                /*
+                |--------------------------------------------------------------
+                | RESTORE STOCK
+                |--------------------------------------------------------------
+                */
 
-        return $order->update($data);
+                foreach ($order->items as $item) {
+
+                    ProductVariant::where(
+                        'id',
+                        $item->product_variant_id
+                    )->increment(
+                        'stock',
+                        $item->quantity
+                    );
+                }
+
+                /*
+                |--------------------------------------------------------------
+                | UPDATE ORDER
+                |--------------------------------------------------------------
+                */
+
+                $order->update([
+
+                    'order_status'
+                    => Order::STATUS_CANCELLED,
+
+                    'payment_status'
+                    => Order::PAYMENT_FAILED,
+
+                    'cancelled_at'
+                    => now(),
+                ]);
+
+                /*
+                |--------------------------------------------------------------
+                | UPDATE PAYMENT TRANSACTION
+                |--------------------------------------------------------------
+                */
+
+                $order->paymentTransactions()
+                    ->where('status', 'pending')
+                    ->update([
+                        'status' => 'failed',
+                    ]);
+
+                $count++;
+            }
+
+            return $count;
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | CANCEL ORDERS
+    |--------------------------------------------------------------------------
+    */
+    public function cancelOrder(
+        Order $order,
+    ): bool {
+
+        return DB::transaction(function () use ($order) {
+
+            if (
+                in_array(
+                    $order->order_status,
+                    [
+                        Order::STATUS_DELIVERED,
+                        Order::STATUS_CANCELLED,
+                        Order::STATUS_RETURNED,
+                    ]
+                )
+            ) {
+                throw new \Exception(
+                    'Không thể hủy đơn hàng này'
+                );
+            }
+
+            /*
+            |-----------------------------------
+            | RESTORE STOCK
+            |-----------------------------------
+            */
+
+            $this->restoreStock($order);
+
+            $data = [
+
+                'order_status'
+                => Order::STATUS_CANCELLED,
+
+                'cancelled_at'
+                => now(),
+            ];
+
+            /*
+            |-----------------------------------
+            | PAYMENT
+            |-----------------------------------
+            */
+
+            if (
+                $order->payment_status
+                === Order::PAYMENT_PENDING
+            ) {
+
+                $data['payment_status']
+                    = Order::PAYMENT_FAILED;
+            }
+
+            $order->update($data);
+
+            /*
+            |-----------------------------------
+            | PAYMENT TRANSACTION
+            |-----------------------------------
+            */
+
+            $order->paymentTransactions()
+                ->where('status', 'pending')
+                ->update([
+                    'status' => 'failed',
+                ]);
+
+            return true;
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RETURN ORDERS
+    |--------------------------------------------------------------------------
+    */
+    public function returnOrder(
+        Order $order
+    ): bool {
+        return DB::transaction(function () use ($order) {
+
+            if (
+                $order->order_status
+                !== Order::STATUS_DELIVERED
+            ) {
+                throw new \Exception(
+                    'Chỉ được hoàn trả đơn đã giao'
+                );
+            }
+
+            /*
+        |-----------------------------------
+        | RESTORE STOCK
+        |-----------------------------------
+        */
+
+            $this->restoreStock($order);
+
+            $data = [
+
+                'order_status'
+                => Order::STATUS_RETURNED,
+
+                'returned_at'
+                => now(),
+            ];
+
+            /*
+        |-----------------------------------
+        | REFUND
+        |-----------------------------------
+        */
+
+            if (
+                $order->payment_status
+                === Order::PAYMENT_PAID
+            ) {
+
+                $data['payment_status']
+                    = Order::PAYMENT_REFUNDED;
+
+                $data['refunded_at']
+                    = now();
+            }
+
+            $order->update($data);
+
+            return true;
+        });
     }
 
     /*
@@ -250,27 +413,45 @@ class OrderService
     | UPDATE PAYMENT STATUS
     |--------------------------------------------------------------------------
     */
-
     public function updatePaymentStatus(
         Order $order,
         string $status
     ): bool {
 
+        if (
+            ! $order->canChangePaymentTo(
+                $status
+            )
+        ) {
+            throw new \Exception(
+                'Trạng thái thanh toán không hợp lệ'
+            );
+        }
+
         $data = [
-            'payment_status' => $status
+            'payment_status' => $status,
         ];
 
         switch ($status) {
 
             case Order::PAYMENT_PAID:
 
-                $data['paid_at'] = now();
+                $data['paid_at']
+                    = now();
+
+                break;
+
+            case Order::PAYMENT_FAILED:
+
+                $data['paid_at']
+                    = null;
 
                 break;
 
             case Order::PAYMENT_REFUNDED:
 
-                $data['refunded_at'] = now();
+                $data['refunded_at']
+                    = now();
 
                 break;
         }
@@ -278,67 +459,92 @@ class OrderService
         return $order->update($data);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | ORDER BADGE
-    |--------------------------------------------------------------------------
-    */
+    public function getAvailableStatuses(
+        Order $order
+    ): array {
 
-    private function orderBadge(
-        string $status
-    ): string {
-
-        return match ($status) {
-
-            Order::STATUS_PENDING =>
-            '<span class="badge badge-warning">Chờ xác nhận</span>',
-
-            Order::STATUS_CONFIRMED =>
-            '<span class="badge badge-primary">Đã xác nhận</span>',
-
-            Order::STATUS_SHIPPING =>
-            '<span class="badge badge-info">Đang giao</span>',
-
-            Order::STATUS_DELIVERED =>
-            '<span class="badge badge-success">Đã giao</span>',
-
-            Order::STATUS_CANCELLED =>
-            '<span class="badge badge-danger">Đã hủy</span>',
-
-            Order::STATUS_RETURNED =>
-            '<span class="badge badge-dark">Hoàn trả</span>',
-
-            default =>
-            '<span class="badge badge-secondary">Không xác định</span>',
-        };
+        return $order->availableOrderStatuses();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | PAYMENT BADGE
+    | HELPER
     |--------------------------------------------------------------------------
     */
 
-    private function paymentBadge(
+    // RESTORE STOCK
+    private function restoreStock(
+        Order $order
+    ): void {
+        foreach (
+            $order->items as $item
+        ) {
+
+            ProductVariant::query()
+                ->where(
+                    'id',
+                    $item->product_variant_id
+                )
+                ->increment(
+                    'stock',
+                    $item->quantity
+                );
+        }
+    }
+
+    // CHANGE NORMAL STATUS
+    private function changeNormalStatus(
+        Order $order,
         string $status
-    ): string {
+    ): bool {
+        $data = [
+            'order_status' => $status,
+        ];
 
-        return match ($status) {
+        switch ($status) {
 
-            Order::PAYMENT_PENDING =>
-            '<span class="badge badge-warning">Chờ thanh toán</span>',
+            case Order::STATUS_CONFIRMED:
 
-            Order::PAYMENT_PAID =>
-            '<span class="badge badge-success">Đã thanh toán</span>',
+                $data['confirmed_at']
+                    = now();
 
-            Order::PAYMENT_FAILED =>
-            '<span class="badge badge-danger">Thất bại</span>',
+                break;
 
-            Order::PAYMENT_REFUNDED =>
-            '<span class="badge badge-dark">Hoàn tiền</span>',
+            case Order::STATUS_SHIPPING:
 
-            default =>
-            '<span class="badge badge-secondary">Không xác định</span>',
-        };
+                $data['shipped_at']
+                    = now();
+
+                break;
+
+            case Order::STATUS_DELIVERED:
+
+                $data['delivered_at']
+                    = now();
+
+                /*
+                |-----------------------------------
+                | COD => AUTO PAID
+                |-----------------------------------
+                */
+
+                if (
+                    $order->payment_method
+                    === Order::PAYMENT_COD
+                    &&
+                    $order->isPendingPayment()
+                ) {
+
+                    $data['payment_status']
+                        = Order::PAYMENT_PAID;
+
+                    $data['paid_at']
+                        = $order->paid_at ?? now();
+                }
+
+                break;
+        }
+
+        return $order->update($data);
     }
 }

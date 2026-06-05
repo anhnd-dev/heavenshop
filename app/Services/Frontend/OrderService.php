@@ -9,6 +9,10 @@ use App\Models\ProductVariant;
 use App\Models\PaymentTransaction;
 use App\Models\CouponCustomer;
 use App\Models\CustomerAddress;
+use App\Models\Province;
+use App\Models\District;
+use App\Models\Ward;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -94,25 +98,34 @@ class OrderService
             $discount = 0;
             $couponId = null;
 
-            if ($couponSession && isset($couponSession['id'])) {
+            if (
+                $couponSession
+                && isset($couponSession['id'])
+            ) {
 
                 $coupon = Coupon::query()
                     ->lockForUpdate()
                     ->find($couponSession['id']);
 
-                if ($coupon && $coupon->isValid()) {
+                if (
+                    ! $coupon
+                    || ! $coupon->isValid($subtotal)
+                ) {
 
-                    // re-check min order
-                    if ($coupon->min_order_amount && $subtotal < $coupon->min_order_amount) {
-                        throw new \Exception('Đơn hàng không đủ điều kiện áp mã giảm giá');
-                    }
+                    session()->forget(
+                        'applied_coupon'
+                    );
+
+                    $coupon = null;
+                } else {
 
                     $discount = $this->couponService
-                        ->calculateDiscount($coupon, $subtotal);
+                        ->calculateDiscount(
+                            $coupon,
+                            $subtotal
+                        );
 
                     $couponId = $coupon->id;
-                } else {
-                    session()->forget('applied_coupon');
                 }
             }
 
@@ -177,6 +190,17 @@ class OrderService
             |--------------------------------------------------------------------------
             */
 
+            $province = Province::findOrFail(
+                $data['shipping_province']
+            );
+
+            $district = District::findOrFail(
+                $data['shipping_district']
+            );
+
+            $ward = Ward::findOrFail(
+                $data['shipping_ward']
+            );
             $order = Order::create([
 
                 'order_code' => $this->generateCode(),
@@ -188,9 +212,9 @@ class OrderService
                 'shipping_name' => $data['shipping_name'],
                 'shipping_phone' => $data['shipping_phone'],
                 'shipping_email' => $data['shipping_email'] ?? null,
-                'shipping_province' => $data['shipping_province'],
-                'shipping_district' => $data['shipping_district'],
-                'shipping_ward' => $data['shipping_ward'],
+                'shipping_province' => $province?->name,
+                'shipping_district' => $district?->name,
+                'shipping_ward' => $ward?->name,
                 'shipping_address' => $data['shipping_address'],
 
                 // payment
@@ -204,7 +228,15 @@ class OrderService
                 'shipping_fee' => $shippingFee,
                 'grand_total' => $grandTotal,
 
-                'payment_deadline' => now()->addMinutes(15),
+                'payment_deadline' => in_array(
+                    $data['payment_method'],
+                    [
+                        Order::PAYMENT_VNPAY,
+                        Order::PAYMENT_MOMO,
+                    ]
+                )
+                    ? now()->addMinutes(15)
+                    : null,
                 'note' => $data['note'] ?? null,
             ]);
 
@@ -279,11 +311,6 @@ class OrderService
 
             if ($data['payment_method'] === Order::PAYMENT_COD) {
 
-                $order->update([
-                    'payment_status' => Order::PAYMENT_PENDING,
-                    'order_status' =>  Order::STATUS_CONFIRMED,
-                ]);
-
                 PaymentTransaction::create([
                     'order_id' => $order->id,
                     'gateway' => 'cod',
@@ -292,6 +319,7 @@ class OrderService
                 ]);
 
                 $this->clearSelectedCart();
+
                 session()->forget('applied_coupon');
             }
 
@@ -348,10 +376,21 @@ class OrderService
     // =========================
     private function generateCode(): string
     {
-        return 'ORD-'
-            . now()->format('ymd')
-            . '-'
-            . strtoupper(Str::random(6));
+        do {
+
+            $code =
+                'ORD-'
+                . now()->format('ymd')
+                . '-'
+                . strtoupper(Str::random(6));
+        } while (
+            Order::where(
+                'order_code',
+                $code
+            )->exists()
+        );
+
+        return $code;
     }
 
     /*

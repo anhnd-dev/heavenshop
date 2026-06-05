@@ -83,7 +83,7 @@
         'title' => __('admin.coupon.add_coupon'),
         'formId' => 'add_coupon_form',
         'submitId' => 'add_coupon_btn',
-        'submitText' => __('admin.common.add'),
+        'submitText' => __('admin.action.add'),
         'body' => view('admin.pages.coupon.components.form-fields', ['prefix' => 'add'])->render(),
     ])
 
@@ -101,7 +101,7 @@
             ],
         ],
         'submitId' => 'edit_coupon_btn',
-        'submitText' => __('admin.common.update'),
+        'submitText' => __('admin.action.update'),
         'body' => view('admin.pages.coupon.components.form-fields', ['prefix' => 'edit'])->render(),
     ])
 @endsection

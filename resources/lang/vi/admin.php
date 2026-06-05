@@ -91,23 +91,12 @@ return [
         'status' => 'Trạng thái',
         'description' => 'Mô tả',
 
-        'add' => 'Thêm mới',
-        'update' => 'Cập nhật',
-        'close' => 'Đóng',
-
-        'search' => 'Tìm kiếm',
-        'show' => 'Hiển thị',
-        'hide' => 'Ẩn',
-
         'slug' => 'Slug',
         'enter_slug' => 'Nhập slug',
 
         'created_at' => 'Ngày tạo',
 
-        'restore_all' => 'Khôi phục tất cả',
-        'delete_multiple_temps' => 'Xóa tạm nhiều',
-        'delete_many_permanently' => 'Xóa vĩnh viễn nhiều',
-        'trash_log' => 'Thùng rác',
+
 
         'gdpr_cookie' => 'Cookie GDPR',
         'general_setting' => 'Cài đặt chung',
@@ -139,14 +128,24 @@ return [
         'close' => 'Đóng',
 
         'search' => 'Tìm kiếm',
+        'hide' => 'Ẩn',
         'show' => 'Hiển thị',
 
-        'record' => 'bản ghi',
+        'record' => 'Bản ghi',
 
         'loading' => 'Đang tải...',
         'submitting' => 'Đang gửi...',
         'adding' => 'Đang thêm...',
         'updating' => 'Đang cập nhật...',
+
+        'delete_text' => 'Bạn có chắc chắn muốn xóa dữ liệu này?',
+        'delete_all_text' => 'Bạn có chắc chắn muốn xóa các mục đã chọn?',
+
+        'restore_text' => 'Bạn có chắc chắn muốn khôi phục dữ liệu này?',
+        'restore_all_text' => 'Bạn có chắc chắn muốn khôi phục các mục đã chọn?',
+
+        'force_delete_text' => 'Dữ liệu sẽ bị xóa vĩnh viễn và không thể khôi phục.',
+        'force_delete_all_text' => 'Các dữ liệu đã chọn sẽ bị xóa vĩnh viễn và không thể khôi phục.',
 
         'to' => 'đến',
         'of' => 'trong',
@@ -154,8 +153,6 @@ return [
         'no_data' => 'Không có dữ liệu',
 
         'submit' => 'Xác nhận',
-
-        'hide' => 'Ẩn',
     ],
 
     /*
@@ -567,6 +564,7 @@ return [
         ],
 
         'deleted' => 'Đã xóa!',
+        'success' => 'Thành công',
         'errors' => 'Lỗi!',
         'cancelled' => 'Đã hủy!',
 

@@ -2,6 +2,9 @@
 
 namespace App\Services\Frontend;
 
+use App\Models\CustomerCartItem;
+use App\Models\ProductVariant;
+
 class CartService
 {
     public function getCart(): array
@@ -12,6 +15,8 @@ class CartService
     public function putCart(array $cart): void
     {
         session()->put('cart', $cart);
+
+        $this->syncToDatabase();
     }
 
     public function selectedItems(): array
@@ -72,5 +77,152 @@ class CartService
         }
 
         $this->putCart($cart);
+    }
+
+    public function loadFromDatabase(): void
+    {
+        if (!auth('customer')->check()) {
+            return;
+        }
+
+        $customerId = auth('customer')->id();
+
+        $items = CustomerCartItem::query()
+            ->with([
+                'variant.product.variants.color',
+                'variant.product.variants.size',
+                'variant.color',
+                'variant.size'
+            ])
+            ->where('customer_id', $customerId)
+            ->get();
+
+        $cart = [];
+
+        foreach ($items as $item) {
+
+            $variant = $item->variant;
+
+            if (!$variant) {
+                continue;
+            }
+
+            $cart[$variant->id] = [
+
+                'variant_id' => $variant->id,
+
+                'product_id' => $variant->product_id,
+
+                'product_name' => $variant->product->name,
+
+                'product_slug' => $variant->product->slug,
+
+                'image' => $variant->image
+                    ?? $variant->product->image,
+
+                'price' => $variant->price,
+
+                'quantity' => $item->quantity,
+
+                'stock' => $variant->stock,
+
+                'selected' => $item->selected,
+
+                'color' => optional($variant->color)->name,
+
+                'size' => optional($variant->size)->name,
+
+                'variants' => $variant->product
+                    ->variants
+                    ->map(function ($v) {
+
+                        return [
+
+                            'id' => $v->id,
+
+                            'color_id' => $v->color_id,
+
+                            'color_name' => optional($v->color)->name,
+
+                            'size_id' => $v->size_id,
+
+                            'size_name' => optional($v->size)->name,
+
+                            'price' => $v->price,
+
+                            'stock' => $v->stock,
+
+                            'image' => $v->image
+                                ?? $v->product->image,
+                        ];
+                    })
+                    ->values()
+                    ->toArray()
+            ];
+        }
+
+        session()->put('cart', $cart);
+    }
+
+    public function syncToDatabase(): void
+    {
+        if (!auth('customer')->check()) {
+            return;
+        }
+
+        $customerId = auth('customer')->id();
+
+        $cart = $this->getCart();
+
+        CustomerCartItem::query()
+            ->where('customer_id', $customerId)
+            ->delete();
+
+        foreach ($cart as $item) {
+
+            CustomerCartItem::updateOrCreate([
+
+                'customer_id' => $customerId,
+
+                'product_variant_id'
+                => $item['variant_id'],
+
+                'quantity'
+                => $item['quantity'],
+
+                'selected'
+                => $item['selected']
+            ]);
+        }
+    }
+
+    public function mergeCartAfterLogin()
+    {
+        $sessionCart = session('cart', []);
+
+        $this->loadFromDatabase();
+
+        $dbCart = session('cart', []);
+
+        foreach ($sessionCart as $variantId => $item) {
+
+            if (isset($dbCart[$variantId])) {
+
+                $variant = ProductVariant::find($variantId);
+
+                if ($variant) {
+
+                    $dbCart[$variantId]['quantity'] = min(
+                        $dbCart[$variantId]['quantity']
+                            + $item['quantity'],
+                        $variant->stock
+                    );
+                }
+            }
+        }
+
+        session()->put('cart', $dbCart);
+
+        $this->syncToDatabase();
     }
 }

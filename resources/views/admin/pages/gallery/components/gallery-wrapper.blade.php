@@ -43,7 +43,7 @@
 
                                 <i class="far fa-plus-square"></i>
 
-                                {{ __('admin.common.add') }}
+                                {{ __('admin.action.add') }}
 
                             </a>
 
@@ -52,7 +52,7 @@
 
                                 <i class="fab fa-cloudversify"></i>
 
-                                {{ __('admin.common.restore_all') }}
+                                {{ __('admin.action.restore_all') }}
 
                             </a>
 
@@ -62,7 +62,7 @@
 
                                 <i class="fas fa-trash-alt"></i>
 
-                                {{ __('admin.common.delete_multiple_temps') }}
+                                {{ __('admin.action.delete_temps') }}
 
                             </a>
 
@@ -71,7 +71,7 @@
 
                                 <i class="fas fa-trash-alt"></i>
 
-                                {{ __('admin.common.delete_many_permanently') }}
+                                {{ __('admin.action.delete_permanently') }}
 
                             </a>
 
@@ -86,7 +86,7 @@
 
                         <label class="custom-control-label" for="includeGalleryCheckboxTrash">
 
-                            {{ __('admin.common.trash_log') }}
+                            {{ __('admin.action.trash_record') }}
 
                         </label>
 

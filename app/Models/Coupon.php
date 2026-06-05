@@ -77,26 +77,46 @@ class Coupon extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function isValid($orderAmount = null): bool
-    {
-        if (!$this->is_active) return false;
+    public function isValid(
+        ?float $orderAmount = null
+    ): bool {
 
-        if ($this->start_date && now()->lt($this->start_date)) {
+        if (! $this->is_active) {
             return false;
         }
 
-        if ($this->end_date && now()->gt($this->end_date)) {
+        if (
+            $this->start_date
+            && now()->lt($this->start_date)
+        ) {
             return false;
         }
 
-        if (!$this->is_unlimited && $this->used_count >= $this->quantity) {
+        if (
+            $this->end_date
+            && now()->gt($this->end_date)
+        ) {
             return false;
         }
 
-        if ($orderAmount !== null && $this->min_order_amount) {
-            if ($orderAmount < $this->min_order_amount) {
-                return false;
-            }
+        if (
+            ! $this->is_unlimited
+            &&
+            $this->quantity !== null
+            &&
+            $this->used_count >= $this->quantity
+        ) {
+            return false;
+        }
+
+        if (
+            $orderAmount !== null
+            &&
+            $this->min_order_amount
+            &&
+            $orderAmount < $this->min_order_amount
+        ) {
+            return false;
         }
 
         return true;

@@ -65,7 +65,7 @@
         'formId' => 'add_category_form',
         'enctype' => 'multipart/form-data',
         'submitId' => 'add_category_btn',
-        'submitText' => __('admin.common.add'),
+        'submitText' => __('admin.action.add'),
         'body' => view('admin.pages.category.components.form-fields', ['prefix' => 'add'])->render(),
     ])
 
@@ -84,7 +84,7 @@
             ],
         ],
         'submitId' => 'edit_category_btn',
-        'submitText' => __('admin.common.update'),
+        'submitText' => __('admin.action.update'),
         'body' => view('admin.pages.category.components.form-fields', ['prefix' => 'edit'])->render(),
     ])
 @endsection

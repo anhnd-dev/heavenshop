@@ -135,6 +135,15 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')
                 ->default(0);
 
+            $table->unique(
+                [
+                    'product_id',
+                    'color_id',
+                    'sort_order'
+                ],
+                'product_gallery_unique_sort'
+            );
+
             $table->softDeletes();
             $table->timestamps();
         });

@@ -6,28 +6,6 @@
     <link rel="stylesheet" href="{{ asset('backend/vendors/select2/css/select2-bootstrap.min.css') }}">
 @endpush
 
-
-@push('styles')
-    <style>
-        .dropdown-item.text-red {
-            color: rgba(255, 0, 0, 0.7);
-        }
-
-        .dropdown-item.text-red:hover {
-            color: rgba(255, 0, 0, 1);
-        }
-
-        .select2-results__group {
-            font-weight: 600;
-            color: #495057;
-        }
-
-        .select2-results__option[role="option"] {
-            padding-left: 30px;
-        }
-    </style>
-@endpush
-
 @section('content')
     <div class="container-fluid site-width">
 
@@ -57,7 +35,7 @@
                                 <a class="dropdown-item" id="restoreAll" href="javascript:void(0)" style="display: none">
 
                                     <i class="fab fa-cloudversify"></i>
-                                    {{ __('admin.common.restore_all') }}
+                                    {{ __('admin.action.restore_all') }}
                                 </a>
 
                                 <div class="dropdown-divider"></div>
@@ -65,14 +43,14 @@
                                 <a class="dropdown-item text-red" id="deleteMultiple" href="javascript:void(0)">
 
                                     <i class="fas fa-trash-alt"></i>
-                                    {{ __('admin.common.delete_multiple_temps') }}
+                                    {{ __('admin.action.delete_temps') }}
                                 </a>
 
                                 <a class="dropdown-item text-red" id="forceDeleteMultiple" href="javascript:void(0)"
                                     style="display: none">
 
                                     <i class="fas fa-trash-alt"></i>
-                                    {{ __('admin.common.delete_many_permanently') }}
+                                    {{ __('admin.action.delete_permanently') }}
                                 </a>
 
                             </div>
@@ -85,7 +63,7 @@
 
                             <label class="custom-control-label" for="includeTrashedCheckbox" style="padding-top: 2px">
 
-                                {{ __('admin.common.trash_log') }}
+                                {{ __('admin.action.trash_record') }}
                             </label>
 
                         </div>
@@ -94,7 +72,7 @@
 
                     @include('admin.components.datatable', [
                         'tableId' => 'order_datatable',
-
+                    
                         'columns' => [
                             __('admin.order.code'),
                             __('admin.order.customer'),

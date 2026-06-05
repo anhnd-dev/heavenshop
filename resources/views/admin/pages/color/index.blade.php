@@ -60,7 +60,7 @@
         'title' => __('admin.color.add_color'),
         'formId' => 'add_color_form',
         'submitId' => 'add_color_btn',
-        'submitText' => __('admin.common.add'),
+        'submitText' => __('admin.action.add'),
         'body' => view('admin.pages.color.components.form-fields', ['prefix' => 'add'])->render(),
     ])
 
@@ -77,7 +77,7 @@
             ],
         ],
         'submitId' => 'edit_color_btn',
-        'submitText' => __('admin.common.update'),
+        'submitText' => __('admin.action.update'),
         'body' => view('admin.pages.color.components.form-fields', ['prefix' => 'edit'])->render(),
     ])
 @endsection

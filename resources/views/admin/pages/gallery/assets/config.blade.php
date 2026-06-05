@@ -8,6 +8,10 @@
                 'product' => '__PRODUCT_ID__',
             ]),
     
+            'edit' => route('admin.product.gallery.edit', [
+                'product' => '__PRODUCT_ID__',
+            ]),
+    
             // =========================
             // STORE
             // =========================
@@ -60,6 +64,16 @@
         'assets' => [
             'gallery' => asset('uploads/gallery'),
             'defaultImage' => asset('default.png'),
+        ],
+    
+        'action' => [
+            'add' => __('admin.action.add'),
+            'adding' => __('admin.action.adding'),
+            'update' => __('admin.action.update'),
+            'updating' => __('admin.action.updating'),
+    
+            'deleteText' => __('admin.action.delete_text'),
+            'restoreText' => __('admin.action.restore_text'),
         ],
     
         'csrf' => csrf_token(),

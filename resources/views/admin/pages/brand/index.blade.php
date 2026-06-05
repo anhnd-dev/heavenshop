@@ -48,7 +48,7 @@
         'formId' => 'add_brand_form',
         'enctype' => 'multipart/form-data',
         'submitId' => 'add_brand_btn',
-        'submitText' => __('admin.common.add'),
+        'submitText' => __('admin.action.add'),
         'body' => view('admin.pages.brand.components.form-fields', ['prefix' => 'add'])->render(),
     ])
 
@@ -66,7 +66,7 @@
             ],
         ],
         'submitId' => 'edit_brand_btn',
-        'submitText' => __('admin.common.update'),
+        'submitText' => __('admin.action.update'),
         'body' => view('admin.pages.brand.components.form-fields', ['prefix' => 'edit'])->render(),
     ])
 @endsection

@@ -279,8 +279,9 @@
                 $("#edit_url").val(res.url);
                 $("#edit_position").val(res.position);
                 $("#edit_sort_order").val(res.sort_order);
-                $("#edit_start_at").val(res.start_at);
-                $("#edit_end_at").val(res.end_at);
+
+                $("#edit_start_at").val(formatDateTimeLocal(res.start_at));
+                $("#edit_end_at").val(formatDateTimeLocal(res.end_at));
 
                 $("#edit_image_preview").attr("src", imageUrl);
 
@@ -313,6 +314,12 @@
                     this.reload();
                 }
             });
+        },
+
+        formatDateTimeLocal(dateString) {
+            if (!dateString) return "";
+
+            return dateString.substring(0, 19);
         },
 
         // =========================
