@@ -5,6 +5,7 @@ namespace App\Services\Frontend;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Frontend;
 use App\Models\Product;
 use App\Models\Size;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,12 @@ class CollectionService
         Request $request,
         string $path
     ): array {
+
+        $shippingFreeThreshold = Frontend::getSetting(
+            'shipping_free_threshold',
+            0
+        );
+
 
         // =====================================================
         // CATEGORY
@@ -151,22 +158,22 @@ class CollectionService
         // =====================================================
 
         $relatedCategories = $category->children()
-
-            ->select(
-                'id',
-                'name',
-                'slug',
-                'parent_id'
-            )
-
-            ->withCount([
-                'products as products_count' => function ($q) {
-
-                    $q->where('is_active', true);
-                }
-            ])
-
+            ->select('id', 'name', 'slug', 'parent_id')
             ->get();
+
+        $productCounts = Product::query()
+            ->selectRaw('category_id, COUNT(*) as total')
+            ->where('is_active', true)
+            ->groupBy('category_id')
+            ->pluck('total', 'category_id');
+
+        $relatedCategories->each(function ($item) use ($productCounts) {
+
+            $ids = $item->getAllChildrenIds();
+
+            $item->products_count = collect($ids)
+                ->sum(fn($id) => $productCounts[$id] ?? 0);
+        });
 
         // =====================================================
         // FILTER DATA
@@ -268,6 +275,8 @@ class CollectionService
             'q_sizes' => $filters['q_sizes'],
 
             'activeCategoryIds' => [$category->id],
+
+            'shippingFreeThreshold' => $shippingFreeThreshold
         ];
     }
 

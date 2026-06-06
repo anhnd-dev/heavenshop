@@ -171,7 +171,8 @@
                 $firstItem = $order->items->first();
             @endphp
 
-            <div class="order-card">
+            <div class="order-card {{ $highlight == $order->order_code ? 'highlight' : '' }}"
+                data-order-code="{{ $order->order_code }}">
 
                 {{-- Header --}}
                 <div class="order-card-header">
@@ -373,3 +374,29 @@
     </div>
 
 @endsection
+
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const highlight = "{{ request('highlight') }}";
+
+            if (highlight) {
+                const el = document.querySelector(`[data-order-code="${highlight}"]`);
+
+                if (el) {
+                    el.classList.add("highlight");
+
+                    el.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+                    setTimeout(() => {
+                        el.classList.remove("highlight");
+                    }, 6000);
+                }
+            }
+        });
+    </script>
+@endpush

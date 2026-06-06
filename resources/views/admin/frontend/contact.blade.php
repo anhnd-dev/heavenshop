@@ -9,7 +9,7 @@
 @endpush
 
 @php
-    $data = $contact ? json_decode($contact->data_value) : (object) [];
+    $data = (object) ($contact?->data_value ?? []);
 @endphp
 
 @section('content')
@@ -24,7 +24,9 @@
 
                     <ol class="breadcrumb bg-transparent align-self-center m-0 p-0">
                         <li class="breadcrumb-item">{{ __('admin.breadcrumbs.manage') }}</li>
-                        <li class="breadcrumb-item active"><a href="{{ route('admin.frontend.contact') }}">{{ __('admin.breadcrumbs.contact_us') }}</a></li>
+                        <li class="breadcrumb-item active"><a
+                                href="{{ route('admin.frontend.contact') }}">{{ __('admin.breadcrumbs.contact_us') }}</a>
+                        </li>
                     </ol>
                 </div>
             </div>
@@ -37,36 +39,45 @@
                 <div class="card">
                     <form id="contact_form" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="image_url_old" value="{{ isset($data->image_url) ? $data->image_url : '' }}">
+                        <input type="hidden" name="image_url_old"
+                            value="{{ isset($data->image_url) ? $data->image_url : '' }}">
                         <input type="hidden" name="map_url_old" value="{{ isset($data->map_url) ? $data->map_url : '' }}">
 
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12 mb-4">
                                     <div class="form-group">
-                                        <label class="form-control-label font-weight-bold">{{ __('admin.contact.title') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ __('admin.contact.enter_title') }}"
-                                            name="title" value="{{ @$data->title }}" required />
+                                        <label
+                                            class="form-control-label font-weight-bold">{{ __('admin.contact.title') }}</label>
+                                        <input type="text" class="form-control"
+                                            placeholder="{{ __('admin.contact.enter_title') }}" name="title"
+                                            value="{{ @$data->title }}" required />
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-control-label font-weight-bold">{{ __('admin.contact.address') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ __('admin.contact.enter_address') }}"
-                                            name="address" value="{{ @$data->address }}" required />
+                                        <label
+                                            class="form-control-label font-weight-bold">{{ __('admin.contact.address') }}</label>
+                                        <textarea class="form-control" name="address" cols="30" rows="10">{{ @$data->address }}</textarea>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-control-label font-weight-bold">{{ __('admin.contact.email') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ __('admin.contact.enter_email') }}"
-                                            name="email" value="{{ @$data->email }}" required />
+                                        <label
+                                            class="form-control-label font-weight-bold">{{ __('admin.contact.email') }}</label>
+                                        <input type="text" class="form-control"
+                                            placeholder="{{ __('admin.contact.enter_email') }}" name="email"
+                                            value="{{ @$data->email }}" required />
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-control-label font-weight-bold">{{ __('admin.contact.phone_number') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ __('admin.contact.enter_phone_number') }}"
-                                            name="phone_number" value="{{ @$data->phone_number }}" required />
+                                        <label
+                                            class="form-control-label font-weight-bold">{{ __('admin.contact.phone_number') }}</label>
+                                        <input type="text" class="form-control"
+                                            placeholder="{{ __('admin.contact.enter_phone_number') }}" name="phone_number"
+                                            value="{{ @$data->phone_number }}" required />
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-control-label font-weight-bold">{{ __('admin.contact.question') }}</label>
-                                        <input type="text" class="form-control" placeholder="{{ __('admin.contact.enter_question') }}"
-                                            name="question" value="{{ @$data->question }}" required />
+                                        <label
+                                            class="form-control-label font-weight-bold">{{ __('admin.contact.question') }}</label>
+                                        <input type="text" class="form-control"
+                                            placeholder="{{ __('admin.contact.enter_question') }}" name="question"
+                                            value="{{ @$data->question }}" required />
                                     </div>
 
                                 </div>
@@ -79,12 +90,16 @@
                                             data-img="{{ isset($data->image_url) ? getImage(imagePath()['contact']['path'] . '/' . $data->image_url) : '' }}">
                                             @if (!isset($data->image_url))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">{{ __('admin.contact.image_url') }}</p>
+                                                <p class="mt-2 ml-2" style="font-weight: 600">
+                                                    {{ __('admin.contact.image_url') }}</p>
                                             @endif
                                         </div>
-                                        <button type="button" class="btn btn-success btn-block select-image mb-2">{{ __('admin.contact.select_image') }}</button>
-                                        <small class="text-facebook" style="font-size: 0.8rem;">{{ __('admin.ext.supported_file') }}
-                                            <b>{{ __('admin.ext.jpeg') }}, {{ __('admin.ext.jpg') }}, {{ __('admin.ext.png') }}</b>.
+                                        <button type="button"
+                                            class="btn btn-success btn-block select-image mb-2">{{ __('admin.contact.select_image') }}</button>
+                                        <small class="text-facebook"
+                                            style="font-size: 0.8rem;">{{ __('admin.ext.supported_file') }}
+                                            <b>{{ __('admin.ext.jpeg') }}, {{ __('admin.ext.jpg') }},
+                                                {{ __('admin.ext.png') }}</b>.
                                             {{ __('admin.ext.resize_text') }}
                                         </small>
                                     </div>
@@ -98,12 +113,15 @@
                                             data-img="{{ isset($data->map_url) ? getImage(imagePath()['contact']['path'] . '/' . $data->map_url) : '' }}">
                                             @if (!isset($data->map_url))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">{{ __('admin.contact.map_url') }}</p>
+                                                <p class="mt-2 ml-2" style="font-weight: 600">
+                                                    {{ __('admin.contact.map_url') }}</p>
                                             @endif
                                         </div>
-                                        <button type="button" class="btn btn-success btn-block select-image mb-2">{{ __('admin.contact.select_image') }}</button>
+                                        <button type="button"
+                                            class="btn btn-success btn-block select-image mb-2">{{ __('admin.contact.select_image') }}</button>
                                         <small class="text-facebook" style="font-size: 0.8rem;">@lang('Supported files'):
-                                            <b>{{ __('admin.ext.jpeg') }}, {{ __('admin.ext.jpg') }}, {{ __('admin.ext.png') }}</b>.
+                                            <b>{{ __('admin.ext.jpeg') }}, {{ __('admin.ext.jpg') }},
+                                                {{ __('admin.ext.png') }}</b>.
                                             {{ __('admin.ext.resize_text') }}
                                         </small>
                                     </div>

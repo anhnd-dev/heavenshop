@@ -1,7 +1,7 @@
 @extends('admin.layouts.base')
 
 @php
-    $data = $logoIcon ? json_decode($logoIcon->data_value) : (object) [];
+    $data = (object) ($logoIcon?->data_value ?? []);
 @endphp
 
 @section('content')
@@ -40,21 +40,15 @@
                     <form id="logo_icon_form" enctype="multipart/form-data">
                         @csrf
 
-                        <input type="hidden" name="logo_white_old"
-                            value="{{ isset($data->logo_white) ? $data->logo_white : '' }}">
-                        <input type="hidden" name="logo_black_old"
-                            value="{{ isset($data->logo_black) ? $data->logo_black : '' }}">
-                        <input type="hidden" name="logo_white_2x_old"
-                            value="{{ isset($data->logo_white_2x) ? $data->logo_white_2x : '' }}">
-                        <input type="hidden" name="logo_black_2x_old"
-                            value="{{ isset($data->logo_black_2x) ? $data->logo_black_2x : '' }}">
-                        <input type="hidden" name="favicon_old" value="{{ isset($data->favicon) ? $data->favicon : '' }}">
-                        <input type="hidden" name="favicon_57x_old"
-                            value="{{ isset($data->favicon_57x) ? $data->favicon_57x : '' }}">
-                        <input type="hidden" name="favicon_72x_old"
-                            value="{{ isset($data->favicon_72x) ? $data->favicon_72x : '' }}">
-                        <input type="hidden" name="favicon_114x_old"
-                            value="{{ isset($data->favicon_114x) ? $data->favicon_114x : '' }}">
+                        <input type="hidden" name="logo_white_old" value="{{ $data->logo_white ?? '' }}">
+                        <input type="hidden" name="logo_black_old" value="{{ $data->logo_black ?? '' }}">
+                        <input type="hidden" name="logo_white_2x_old" value="{{ $data->logo_white_2x ?? '' }}">
+                        <input type="hidden" name="logo_black_2x_old" value="{{ $data->logo_black_2x ?? '' }}">
+
+                        <input type="hidden" name="favicon_old" value="{{ $data->favicon ?? '' }}">
+                        <input type="hidden" name="favicon_57x_old" value="{{ $data->favicon_57x ?? '' }}">
+                        <input type="hidden" name="favicon_72x_old" value="{{ $data->favicon_72x ?? '' }}">
+                        <input type="hidden" name="favicon_114x_old" value="{{ $data->favicon_114x ?? '' }}">
 
                         <div class="card-body">
                             <div class="row">
@@ -66,15 +60,17 @@
                                             data-img="{{ isset($data->logo_white) ? getImage(imagePath()['logoIcon']['path'] . '/' . $data->logo_white) : '' }}">
                                             @if (!isset($data->logo_white))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">
-                                                    {{ __('admin.logo_icon.logo_white') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.logo_white') }}
+                                                </p>
                                             @endif
                                         </div>
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-logo mb-2">{{ __('admin.logo_icon.select_logo') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>
@@ -87,15 +83,17 @@
                                             data-img="{{ isset($data->logo_black) ? getImage(imagePath()['logoIcon']['path'] . '/' . $data->logo_black) : '' }}">
                                             @if (!isset($data->logo_black))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">
-                                                    {{ __('admin.logo_icon.logo_black') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.logo_black') }}
+                                                </p>
                                             @endif
                                         </div>
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-logo mb-2">{{ __('admin.logo_icon.select_logo') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>
@@ -108,15 +106,17 @@
                                             data-img="{{ isset($data->logo_white_2x) ? getImage(imagePath()['logoIcon']['path'] . '/' . $data->logo_white_2x) : '' }}">
                                             @if (!isset($data->logo_white_2x))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">
-                                                    {{ __('admin.logo_icon.logo_white_2x') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.logo_white_2x') }}
+                                                </p>
                                             @endif
                                         </div>
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-logo mb-2">{{ __('admin.logo_icon.select_logo') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>
@@ -129,14 +129,17 @@
                                             data-img="{{ isset($data->logo_black_2x) ? getImage(imagePath()['logoIcon']['path'] . '/' . $data->logo_black_2x) : '' }}">
                                             @if (!isset($data->logo_black_2x))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">{{ __('admin.logo_icon.logo_black_2x') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.logo_black_2x') }}
+                                                </p>
                                             @endif
                                         </div>
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-logo mb-2">{{ __('admin.logo_icon.select_logo') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>
@@ -149,14 +152,17 @@
                                             data-img="{{ isset($data->favicon) ? getImage(imagePath()['favicon']['path'] . '/' . $data->favicon) : '' }}">
                                             @if (!isset($data->favicon))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">{{ __('admin.logo_icon.favicon') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.favicon') }}
+                                                </p>
                                             @endif
                                         </div>
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-favicon mb-2">{{ __('admin.logo_icon.select_favicon') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>
@@ -169,14 +175,17 @@
                                             data-img="{{ isset($data->favicon_57x) ? getImage(imagePath()['favicon']['path'] . '/' . $data->favicon_57x) : '' }}">
                                             @if (!isset($data->favicon_57x))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">{{ __('admin.logo_icon.favicon_57x') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.favicon_57x') }}
+                                                </p>
                                             @endif
                                         </div>
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-favicon mb-2">{{ __('admin.logo_icon.select_favicon') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>
@@ -189,14 +198,17 @@
                                             data-img="{{ isset($data->favicon_72x) ? getImage(imagePath()['favicon']['path'] . '/' . $data->favicon_72x) : '' }}">
                                             @if (!isset($data->favicon_72x))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">{{ __('admin.logo_icon.favicon_72x') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.favicon_72x') }}
+                                                </p>
                                             @endif
                                         </div>
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-favicon mb-2">{{ __('admin.logo_icon.select_favicon') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>
@@ -209,14 +221,18 @@
                                             data-img="{{ isset($data->favicon_114x) ? getImage(imagePath()['favicon']['path'] . '/' . $data->favicon_114x) : '' }}">
                                             @if (!isset($data->favicon_114x))
                                                 <i class="mdi mdi-cloud-upload"></i>
-                                                <p class="mt-2 ml-2" style="font-weight: 600">{{ __('admin.logo_icon.favicon_114x') }}</p>
+                                                <p class="mt-2 ml-2 font-weight-bold">
+                                                    {{ __('admin.logo_icon.favicon_114x') }}
+                                                </p>
                                             @endif
                                         </div>
+
                                         <button type="button"
                                             class="btn btn-success btn-block select-image-favicon mb-2">{{ __('admin.logo_icon.select_favicon') }}</button>
                                         <small class="text-facebook"
                                             style="font-size: 0.8rem;">{{ __('admin.logo_icon.files_supported_formats') }}:
-                                            <b>{{ __('admin.logo_icon.extension.jpeg') }}, {{ __('admin.logo_icon.extension.jpg') }},
+                                            <b>{{ __('admin.logo_icon.extension.jpeg') }},
+                                                {{ __('admin.logo_icon.extension.jpg') }},
                                                 {{ __('admin.logo_icon.extension.png') }}</b>.
                                         </small>
                                     </div>

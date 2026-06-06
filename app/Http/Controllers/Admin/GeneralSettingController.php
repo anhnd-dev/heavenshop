@@ -2,170 +2,255 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Frontend;
-use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
+use App\Traits\ImageUploadTrait;
 
-class GeneralSettingController extends Controller
+class GeneralSettingController extends BaseAdminController
 {
-    protected $request;
+    use ImageUploadTrait;
 
-    public function __construct(Request $request)
+    private const FAVICON_FIELDS = [
+        'favicon',
+        'favicon_57x',
+        'favicon_72x',
+        'favicon_114x',
+    ];
+
+    private const LOGO_FIELDS = [
+        'logo_white',
+        'logo_black',
+        'logo_white_2x',
+        'logo_black_2x',
+    ];
+
+    public function __construct(
+        protected Request $request
+    ) {}
+
+    /*
+    |--------------------------------------------------------------------------
+    | General Setting
+    |--------------------------------------------------------------------------
+    */
+
+    public function general()
     {
-        $this->request = $request;
+        $setting = Frontend::query()
+            ->where('data_key', Frontend::SETTING)
+            ->first();
+
+        return view(
+            'admin.setting.general',
+            compact('setting')
+        );
     }
 
-    public function general() // :GET
+    public function generalSubmit()
     {
-        $setting = Frontend::where('data_key', 'setting.data')->first();
-        return view('admin.setting.general', compact('setting'));
-    }
-
-    public function generalSubmit() // :POST
-    {
-        DB::beginTransaction();
-
         try {
-            $data = [
-                'shipping_free_threshold' => $this->request->shipping_free_threshold,
-            ];
 
-            // Retrieve or create setting data
-            $setting = Frontend::firstOrNew(['data_key' => 'setting.data']);
-            $setting->data_value = json_encode($data);
-            $setting->save();
+            $this->transaction(function () {
 
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => "Cấu hình đã được thêm hoặc cập nhật thành công."]);
+                Frontend::updateOrCreate(
+                    [
+                        'data_key' => Frontend::SETTING,
+                    ],
+                    [
+                        'data_value' => [
+                            'shipping_free_threshold'
+                            => $this->request->shipping_free_threshold,
+                        ],
+                        'is_active' => true,
+                    ]
+                );
+            });
+
+            return $this->successResponse(
+                'Cấu hình đã được cập nhật thành công.'
+            );
         } catch (\Throwable $th) {
-            return response()->json(['status' => 500, 'message' => 'Đã xảy ra lỗi khi thêm hoặc cập nhật cấu hình']);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi cập nhật cấu hình.'
+            );
         }
     }
 
-    public function optimize() // :GET
+    /*
+    |--------------------------------------------------------------------------
+    | Cookie
+    |--------------------------------------------------------------------------
+    */
+
+    public function cookie()
     {
-        Artisan::call('optimize:clear');
-        toastr()->success("Cache cleared successfully");
-        return back();
+        $cookie = Frontend::query()
+            ->where('data_key', Frontend::COOKIE)
+            ->first();
+
+        return view(
+            'admin.setting.cookie',
+            compact('cookie')
+        );
     }
 
-    public function cookie() // :GET
+    public function cookieSubmit()
     {
-        $cookie = Frontend::where('data_key', 'cookie.data')->first();
-        return view('admin.setting.cookie', compact('cookie'));
-    }
-
-    public function cookieSubmit() // :POST
-    {
-        DB::beginTransaction();
-
         try {
-            $data = [
-                'link' => $this->request->link,
-                'status' => $this->request->status === "on" ? 1 : 0,
-                'description' => $this->request->description
-            ];
 
-            // Retrieve or create cookie data
-            $cookie = Frontend::firstOrNew(['data_key' => 'cookie.data']);
-            $cookie->data_value = json_encode($data);
-            $cookie->save();
+            $this->transaction(function () {
 
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => "Cookie đã được thêm hoặc cập nhật thành công."]);
+                Frontend::updateOrCreate(
+                    [
+                        'data_key' => Frontend::COOKIE,
+                    ],
+                    [
+                        'data_value' => [
+                            'link' => $this->request->link,
+                            'status' => $this->request->status === 'on',
+                            'description' => $this->request->description,
+                        ],
+                        'is_active' => true,
+                    ]
+                );
+            });
+
+            return $this->successResponse(
+                'Cookie đã được cập nhật thành công.'
+            );
         } catch (\Throwable $th) {
-            return response()->json(['status' => 500, 'message' => 'Đã xảy ra lỗi khi thêm hoặc cập nhật cookie']);
+
+            return $this->errorResponse(
+                'Đã xảy ra lỗi khi cập nhật cookie.'
+            );
         }
     }
 
-    public function logoIcon() // :GET
+    /*
+    |--------------------------------------------------------------------------
+    | Logo & Favicon
+    |--------------------------------------------------------------------------
+    */
+
+    public function logoIcon()
     {
-        $logoIcon = Frontend::where('data_key', 'logo_icon.data')->first();
-        return view('admin.setting.logo_icon', compact('logoIcon'));
+        $logoIcon = Frontend::query()
+            ->where('data_key', Frontend::LOGO_ICON)
+            ->first();
+
+        return view(
+            'admin.setting.logo_icon',
+            compact('logoIcon')
+        );
     }
 
     public function logoIconSubmit()
     {
-        DB::beginTransaction();
-
         try {
-            $imageData = [];
-            $logoPath = public_path('uploads/logoIcon/');
-            $faviconPath = public_path('uploads/favicon/');
 
-            $faviconSizes = ['favicon', 'favicon_57x', 'favicon_72x', 'favicon_114x'];
+            $this->transaction(function () {
 
-            foreach ($faviconSizes as $size) {
-                if ($this->request->hasFile($size)) {
-                    $imageData[$size] = $this->uploadImage($this->request->file($size), $faviconPath);
-                    if (isset($this->request->{$size . '_old'})) {
-                        $this->deleteImage($this->request->{$size . '_old'}, $faviconPath);
-                    }
-                } else {
-                    $imageData[$size] = $this->request->{$size . '_old'};
-                }
-            }
+                $imageData = [];
 
-            $logoFields = ['logo_white', 'logo_black', 'logo_white_2x', 'logo_black_2x'];
+                $this->processImages(
+                    self::FAVICON_FIELDS,
+                    'favicon',
+                    $imageData
+                );
 
-            foreach ($logoFields as $field) {
-                if ($this->request->hasFile($field)) {
-                    $imageData[$field] = $this->uploadImage($this->request->file($field), $logoPath);
-                    if (isset($this->request->{$field . '_old'})) {
-                        $this->deleteImage($this->request->{$field . '_old'}, $logoPath);
-                    }
-                } else {
-                    $imageData[$field] = $this->request->{$field . '_old'};
-                }
-            }
+                $this->processImages(
+                    self::LOGO_FIELDS,
+                    'logoIcon',
+                    $imageData
+                );
 
-            $logoIcon = Frontend::firstOrNew(['data_key' => 'logo_icon.data']);
-            $logoIconData = $logoIcon->exists ? json_decode($logoIcon->data_value, true) : [];
+                $logoIcon = Frontend::firstOrNew([
+                    'data_key' => Frontend::LOGO_ICON,
+                ]);
 
-            foreach ($logoIconData as $key => $value) {
-                if (isset($imageData[$key]) && $value !== $imageData[$key]) {
-                    $this->deleteImage($value, $key === 'favicon' ? $faviconPath : $logoPath);
-                }
-            }
+                $oldData = $logoIcon->data_value ?? [];
 
-            // Merge new data with existing data
-            $updatedData = array_merge($logoIconData, $imageData);
+                $this->deleteReplacedFiles(
+                    $oldData,
+                    $imageData
+                );
 
-            // Update or create logoIcon data in the database
-            $logoIcon->data_value = json_encode($updatedData);
-            $logoIcon->save();
+                $logoIcon->fill([
+                    'data_value' => $imageData,
+                    'is_active' => true,
+                ]);
 
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => 'Logo & favicon data has been successfully updated.']);
+                $logoIcon->save();
+            });
+
+            return $this->successResponse(
+                'Logo & favicon đã được cập nhật thành công.'
+            );
         } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['status' => 500, 'message' => 'Failed to update Logo & favicon data.']);
+
+            return $this->errorResponse(
+                'Không thể cập nhật logo & favicon.'
+            );
         }
     }
 
-    protected function uploadImage($file, $path)
+    /*
+    |--------------------------------------------------------------------------
+    | Optimize
+    |--------------------------------------------------------------------------
+    */
+
+    public function optimize()
     {
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $file->move($path, $fileName);
-        return $fileName;
+        Artisan::call('optimize:clear');
+
+        toastr()->success(
+            'Cache cleared successfully'
+        );
+
+        return back();
     }
 
-    protected function deleteImage($file, $path)
-    {
-        $filePath = $path . $file;
+    private function processImages(
+        array $fields,
+        string $folder,
+        array &$imageData
+    ): void {
 
-        if (file_exists($filePath) && is_readable($filePath)) {
-            if (unlink($filePath)) {
-                usleep(50000);
-                return true;
-            } else {
-                return false;
+        foreach ($fields as $field) {
+
+            $imageData[$field] = $this->request->hasFile($field)
+                ? $this->uploadFile(
+                    $this->request->file($field),
+                    $folder
+                )
+                : $this->request->{$field . '_old'};
+        }
+    }
+
+    private function deleteReplacedFiles(
+        array $oldData,
+        array $newData
+    ): void {
+
+        foreach ($oldData as $key => $oldFile) {
+
+            if (
+                blank($oldFile) ||
+                !isset($newData[$key]) ||
+                $oldFile === $newData[$key]
+            ) {
+                continue;
             }
-        } else {
-            return true;
+
+            $this->deleteFile(
+                $oldFile,
+                in_array($key, self::FAVICON_FIELDS)
+                    ? 'favicon'
+                    : 'logoIcon'
+            );
         }
     }
 }

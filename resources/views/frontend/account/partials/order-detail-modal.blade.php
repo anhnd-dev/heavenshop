@@ -224,11 +224,9 @@
 
             </div>
 
-            @if ($order->canCancel())
+            @if ($order->canCustomerCancel())
                 <button class="cancel-order-btn" data-id="{{ $order->id }}">
-
                     Hủy đơn hàng
-
                 </button>
             @endif
 

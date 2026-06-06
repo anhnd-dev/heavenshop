@@ -257,6 +257,10 @@ File: Main Style
     line-height: 31px;
 }
 
+#header-fix .logo-bar .horizontal-logo img {
+    margin-left: 18px;
+}
+
 #header-fix .logo-bar .horizontal-logo svg {
     margin-top: -3px;
 }
@@ -290,7 +294,7 @@ File: Main Style
 }
 
 #header-fix nav {
-    height: 65px;
+    height: auto;
 }
 
 #header-fix a,

@@ -30,6 +30,14 @@ return [
             'title' => 'Miễn phí vận chuyển',
             'content' => 'Miễn phí vận chuyển cho đơn hàng đầu tiên'
         ],
+        'seller' => [
+            'title' => 'bán chạy',
+            'content' => 'Sản phẩm'
+        ],
+        'featured' => [
+            'title' => 'nổi bật',
+            'content' => 'Sản phẩm'
+        ],
         'refund' => [
             'title' => '15 ngày hoàn trả',
             'content' => 'Đảm bảo hoản tiền'

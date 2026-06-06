@@ -40,6 +40,7 @@ return new class extends Migration
             */
 
             $table->string('transaction_id', 100)
+                ->nullable()
                 ->unique();
 
             $table->string('transaction_code')

@@ -141,7 +141,7 @@ class OrderService
             if ($customer) {
 
                 // CASE 1: chọn address có sẵn
-                if ($addressId) {
+                if (!empty($addressId)) {
                     $address = CustomerAddress::where('id', $addressId)
                         ->where('customer_id', $customer->id)
                         ->first();

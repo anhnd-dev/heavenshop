@@ -270,6 +270,8 @@
                 method: "GET",
                 data: { id },
             }).done((res) => {
+                console.log(res);
+
                 const imageUrl = res.image
                     ? `${window.sliderConfig.assets.slider}/${res.image}`
                     : window.sliderConfig.assets.defaultImage;
@@ -280,8 +282,13 @@
                 $("#edit_position").val(res.position);
                 $("#edit_sort_order").val(res.sort_order);
 
-                $("#edit_start_at").val(formatDateTimeLocal(res.start_at));
-                $("#edit_end_at").val(formatDateTimeLocal(res.end_at));
+                $("#edit_start_at").val(
+                    res.start_at ? res.start_at.slice(0, 16) : "",
+                );
+
+                $("#edit_end_at").val(
+                    res.end_at ? res.end_at.slice(0, 16) : "",
+                );
 
                 $("#edit_image_preview").attr("src", imageUrl);
 
@@ -314,12 +321,6 @@
                     this.reload();
                 }
             });
-        },
-
-        formatDateTimeLocal(dateString) {
-            if (!dateString) return "";
-
-            return dateString.substring(0, 19);
         },
 
         // =========================

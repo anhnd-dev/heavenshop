@@ -31,18 +31,14 @@
                 </div>
                 <a class="navbar-brand" href="{{ route('home') }}">
                     @if ($logoIcon)
-                        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black) }}"
-                            data-at2x="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black_2x) }}"
+                        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/' . ($logoIcon['logo_black'] ?? '')) }}"
+                            data-at2x="{{ getImage(imagePath()['logoIcon']['path'] . '/' . ($logoIcon['logo_black_2x'] ?? '')) }}"
                             alt class="default-logo" />
-                        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black) }}"
-                            data-at2x="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black_2x) }}"
-                            alt class="alt-logo" />
-                        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black) }}"
-                            data-at2x="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black_2x) }}"
+                        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/' . ($logoIcon['logo_black'] ?? '')) }}"
+                            data-at2x="{{ getImage(imagePath()['logoIcon']['path'] . '/' . ($logoIcon['logo_black_2x'] ?? '')) }}"
                             alt class="mobile-logo" />
                     @else
                         <img src="" alt="" class="default-logo" />
-                        <img src="" alt="" class="alt-logo" />
                         <img src="" alt="" class="mobile-logo" />
                     @endif
 

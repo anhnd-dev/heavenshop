@@ -2,6 +2,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('frontend/css/product/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/css/collection/style.css') }}">
 @endpush
 
 @section('content')
@@ -11,8 +12,8 @@
         <div class="container" style="max-width:1245px;margin-top:45px;">
 
             {{-- =========================
-            BREADCRUMB
-        ========================= --}}
+                BREADCRUMB
+            ========================= --}}
             <ul class="product-breadcrumb">
 
                 <li>
@@ -34,8 +35,8 @@
             <div class="product-detail-wrapper">
 
                 {{-- =========================
-                LEFT
-            ========================= --}}
+                    LEFT
+                ========================= --}}
                 <div class="product-left">
 
                     <div class="product-gallery-wrapper">
@@ -68,8 +69,8 @@
                 </div>
 
                 {{-- =========================
-                RIGHT
-            ========================= --}}
+                    RIGHT
+                ========================= --}}
                 <div class="product-right">
 
                     <div class="product-info">
@@ -121,10 +122,6 @@
                                     </div>
                                 @endif
 
-                            </div>
-
-                            <div class="product-freeship">
-                                🚚 Freeship
                             </div>
 
                         </div>
@@ -262,8 +259,8 @@
             </div>
 
             {{-- =========================
-            PRODUCT TABS
-        ========================= --}}
+                PRODUCT TABS
+            ========================= --}}
             <div class="product-tabs-wrapper">
 
                 {{-- TAB HEAD --}}
@@ -323,8 +320,8 @@
             </div>
 
             {{-- =========================
-            RELATED PRODUCTS
-        ========================= --}}
+                RELATED PRODUCTS
+            ========================= --}}
             @if ($relatedProducts->count())
                 <div class="related-products-wrapper">
 
@@ -338,97 +335,199 @@
 
                     <div class="related-products-grid">
 
-                        @foreach ($relatedProducts->take(4) as $related)
+                        @forelse ($relatedProducts as $relatedProduct)
                             @php
 
-                                $relatedMinPrice = $related->variants->min('price');
+                                $relatedPrice = $relatedProduct->variants_min_price;
 
-                                $relatedOldPrice = $related->variants->max('sale_price');
+                                $relatedSalePrice = $relatedProduct->variants_min_sale_price;
 
-                                $relatedDiscount = 0;
+                                $relatedFinalPrice =
+                                    $relatedSalePrice && $relatedSalePrice < $relatedPrice
+                                        ? $relatedSalePrice
+                                        : $relatedPrice;
 
-                                if ($relatedOldPrice && $relatedMinPrice) {
-                                    $relatedDiscount = round(
-                                        (($relatedOldPrice - $relatedMinPrice) / $relatedOldPrice) * 100,
+                                $relatedDiscountPercent = 0;
+
+                                if ($relatedSalePrice && $relatedSalePrice < $relatedPrice) {
+                                    $discountPercent = round(
+                                        (($relatedPrice - $relatedSalePrice) / $relatedPrice) * 100,
                                     );
                                 }
 
-                                $relatedColors = $related->variants->pluck('color')->filter()->unique('id')->values();
+                                $relatedColors = collect($relatedProduct->variants)->groupBy('color_id');
+
+                                $relatedSizes = collect($relatedProduct->variants)->groupBy('size_id');
                             @endphp
 
-                            <div class="related-product-card">
+                            <li class="grid-item">
 
-                                {{-- IMAGE --}}
-                                <a href="{{ route('product.show', $related->slug) }}" class="related-product-image">
+                                <div class="shop-box">
 
-                                    @if ($relatedDiscount > 0)
-                                        <div class="related-discount-badge">
+                                    {{-- IMAGE --}}
+                                    <div class="shop-image">
 
-                                            -{{ $relatedDiscount }}%
+                                        @if ($relatedDiscountPercent > 0)
+                                            <div class="product-badge">
+
+                                                -{{ $relatedDiscountPercent }}%
+
+                                            </div>
+                                        @endif
+
+                                        <a href="{{ route('product.show', $relatedProduct->slug) }}">
+
+                                            <img src="{{ asset('uploads/product/' . $relatedProduct->image) }}"
+                                                alt="{{ $relatedProduct->name }}">
+
+                                        </a>
+
+                                        {{-- QUICK SIZE --}}
+                                        @if ($relatedSizes->count())
+                                            <div class="quick-size">
+
+                                                <div class="quick-size-title">
+
+                                                    <span>
+                                                        Thêm nhanh vào giỏ hàng
+                                                    </span>
+
+                                                    <button type="button" class="add-to-cart"
+                                                        data-product="{{ $relatedProduct->id }}">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
+
+                                                </div>
+
+                                                <div class="quick-size-grid">
+
+                                                    @foreach ($relatedSizes as $sizeId => $variants)
+                                                        @php
+                                                            $relatedVariant = $variants->first();
+
+                                                            $hasStock = $variants->sum('stock') > 0;
+                                                        @endphp
+
+                                                        <button type="button"
+                                                            class="size-item select-size {{ !$hasStock ? 'disabled' : '' }}"
+                                                            data-product="{{ $relatedProduct->id }}"
+                                                            data-size="{{ $sizeId }}"
+                                                            {{ !$hasStock ? 'disabled' : '' }}>
+
+                                                            {{ $relatedVariant->size->name ?? '' }}
+
+                                                        </button>
+                                                    @endforeach
+
+                                                </div>
+
+                                            </div>
+                                        @endif
+
+                                        {{-- PROMO --}}
+                                        <div class="product-promo">
+
+                                            FREESHIP
+
+                                            <span>
+                                                ĐƠN TỪ {{ number_format($free_ship / 1000, 0) }}K
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                    {{-- COLORS --}}
+                                    @if ($relatedColors->count())
+                                        <div class="product-colors">
+
+                                            @foreach ($relatedColors->take(5) as $colorId => $variants)
+                                                @php
+                                                    $relatedVariant = $variants->first();
+
+                                                    $hasStock = $variants->sum('stock') > 0;
+                                                @endphp
+
+                                                <button type="button"
+                                                    class="color-dot select-color {{ !$hasStock ? 'disabled' : '' }}"
+                                                    data-product="{{ $relatedProduct->id }}"
+                                                    data-color="{{ $colorId }}"
+                                                    style="background: {{ $relatedVariant->color->code ?? '#ddd' }}"
+                                                    {{ !$hasStock ? 'disabled' : '' }}>
+                                                </button>
+                                            @endforeach
+
+                                            @if ($relatedColors->count() > 5)
+                                                <span class="more-color">
+
+                                                    +{{ $relatedColors->count() - 5 }}
+
+                                                </span>
+                                            @endif
 
                                         </div>
                                     @endif
 
-                                    <button class="related-wishlist-btn">
+                                    {{-- INFO --}}
+                                    <div class="shop-footer">
 
-                                        <i class="fa-regular fa-heart"></i>
+                                        <a href="{{ route('product.show', $relatedProduct->slug) }}"
+                                            class="product-name">
 
-                                    </button>
+                                            {{ shortenText($relatedProduct->name, 45) }}
 
-                                    <img src="{{ asset('uploads/product/' . $related->image) }}"
-                                        alt="{{ $related->name }}">
+                                        </a>
 
-                                    <div class="related-product-freeship">
+                                        <div class="wrap-price">
 
-                                        <span>FREESHIP</span>
+                                            @if ($relatedSalePrice && $relatedSalePrice < $relatedPrice)
+                                                <span class="sale-price">
 
-                                        <span class="related-freeship-price">
-                                            ĐƠN TỪ 499K
-                                        </span>
+                                                    {{ number_format($relatedSalePrice, 0, ',', '.') }}đ
 
-                                    </div>
+                                                </span>
 
-                                </a>
+                                                <span class="origin-price">
 
-                                {{-- COLORS --}}
-                                <div class="related-product-colors">
+                                                    {{ number_format($relatedPrice, 0, ',', '.') }}đ
 
-                                    @foreach ($relatedColors->take(4) as $color)
-                                        <span class="related-color-item" style="background: {{ $color->code }}">
-                                        </span>
-                                    @endforeach
+                                                </span>
+                                            @else
+                                                <span class="sale-price">
 
-                                </div>
+                                                    {{ number_format($relatedFinalPrice, 0, ',', '.') }}đ
 
-                                {{-- NAME --}}
-                                <a href="{{ route('product.show', $related->slug) }}" class="related-product-name">
-
-                                    {{ $related->name }}
-
-                                </a>
-
-                                {{-- PRICE --}}
-                                <div class="related-product-price-wrap">
-
-                                    <div class="related-product-price">
-
-                                        {{ number_format($relatedMinPrice, 0, ',', '.') }}đ
-
-                                    </div>
-
-                                    @if ($relatedOldPrice)
-                                        <div class="related-product-old-price">
-
-                                            {{ number_format($relatedOldPrice, 0, ',', '.') }}đ
+                                                </span>
+                                            @endif
 
                                         </div>
-                                    @endif
+
+                                    </div>
 
                                 </div>
 
-                            </div>
-                        @endforeach
+                            </li>
 
+                        @empty
+
+                            <li class="grid-item w-100">
+
+                                <div class="empty-product">
+
+                                    <div class="empty-product-icon">
+
+                                        <i class="fa-solid fa-box-open"></i>
+
+                                    </div>
+
+                                    <h5>
+                                        Đang gợi ý thêm sản phẩm
+                                    </h5>
+
+                                </div>
+
+                            </li>
+                        @endforelse
                     </div>
 
                 </div>
@@ -597,6 +696,109 @@
             );
 
             updateVariant();
+        });
+
+        // =====================================
+        // SELECT SIZE
+        // =====================================
+
+        $(document).on('click', '.select-size:not(.disabled)', function() {
+
+            let parent = $(this).closest('.shop-box');
+
+            parent.find('.select-size')
+                .removeClass('active');
+
+            $(this).addClass('active');
+
+        });
+
+        // =====================================
+        // SELECT COLOR
+        // =====================================
+
+        $(document).on('click', '.select-color:not(.disabled)', function() {
+
+            let parent = $(this).closest('.shop-box');
+
+            parent.find('.select-color')
+                .removeClass('active');
+
+            $(this).addClass('active');
+
+        });
+
+        // =========================================
+        // ADD TO CART
+        // =========================================
+
+        $(document).on('click', '.add-to-cart', function() {
+
+            let parent = $(this).closest('.shop-box');
+
+            let productId = $(this).data('product');
+
+            let sizeId = parent.find('.select-size.active').data('size');
+
+            let colorId = parent.find('.select-color.active').data('color');
+
+
+            if (!colorId || !sizeId) {
+
+                toastr.warning('Vui lòng chọn màu và kích thước');
+
+                return;
+            }
+
+            let button = $(this);
+
+            button.prop('disabled', true);
+
+            $.ajax({
+
+                url: '/cart/add',
+
+                type: 'POST',
+
+                data: {
+
+                    product_id: productId,
+
+                    color_id: colorId,
+
+                    size_id: sizeId,
+
+                    quantity: 1,
+
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+
+                success: function(response) {
+
+                    toastr.success(response.message);
+
+                    // reload mini cart
+                    loadHeaderCart();
+
+                    // reset active nếu muốn
+                    parent.find('.select-size').removeClass('active');
+                    parent.find('.select-color').removeClass('active');
+
+                },
+
+                error: function(xhr) {
+
+                    toastr.error(
+                        xhr.responseJSON?.message ||
+                        'Không thể thêm giỏ hàng'
+                    );
+                },
+
+                complete: function() {
+
+                    button.prop('disabled', false);
+                }
+            });
         });
 
         // =========================

@@ -41,4 +41,8 @@ class CheckoutController extends Controller
             ], 400);
         }
     }
+
+    /**
+     * ORDER SUCCESS
+     */
 }

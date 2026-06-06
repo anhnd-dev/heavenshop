@@ -1,6 +1,16 @@
 @extends('admin.layouts.auth')
 
 @section('content')
+    @php
+        $logo = $logoIcon ?? [];
+
+        $default = getImage(imagePath()['image']['default']);
+
+        $logoWhite = !empty($logo['logo_white'] ?? null)
+            ? getImage(imagePath()['logoIcon']['path'] . '/' . $logo['logo_white'])
+            : $default;
+    @endphp
+
     <section class="login-block">
         <!-- Container-fluid starts -->
         <div class="container">
@@ -11,16 +21,7 @@
                     <form class="md-float-material form-material" action="{{ route('admin.postLogin') }}" method="POST">
                         @csrf
                         <div class="text-center">
-                            @php
-                                if ($logoIcon && $logoIcon->logo_white) {
-                                    $logoWhitePath = getImage(
-                                        imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_white,
-                                    );
-                                } else {
-                                    $logoWhitePath = getImage(imagePath()['image']['default']);
-                                }
-                            @endphp
-                            <img src="{{ $logoWhitePath }}" alt="logo.png" width="100px">
+                            <img src="{{ $logoWhite }}" alt="logo.png" width="100px">
                         </div>
                         <div class="auth-box card">
                             <div class="card-block">
@@ -69,18 +70,6 @@
                                         <p class="text-inverse text-left"><a href="{{ route('home') }}"><b
                                                     class="f-w-600">Back
                                                     to website</b></a></p>
-                                    </div>
-                                    <div class="col-md-4 mt-4">
-                                        @php
-                                            if ($logoIcon && $logoIcon->logo_black) {
-                                                $logoBlackPath = getImage(
-                                                    imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black,
-                                                );
-                                            } else {
-                                                $logoBlackPath = getImage(imagePath()['image']['default']);
-                                            }
-                                        @endphp
-                                        <img src="{{ $logoBlackPath }}" alt="small-logo.png" width="100">
                                     </div>
                                 </div>
                             </div>

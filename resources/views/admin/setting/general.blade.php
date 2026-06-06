@@ -1,9 +1,5 @@
 @extends('admin.layouts.base')
 
-@php
-    $data = $setting ? json_decode($setting->data_value) : (object) [];
-@endphp
-
 @section('content')
     <div class="container-fluid site-width">
         <!-- START: Breadcrumbs-->
@@ -16,7 +12,8 @@
 
                     <ol class="breadcrumb bg-transparent align-self-center m-0 p-0">
                         <li class="breadcrumb-item">{{ __('admin.common.manage') }}</li>
-                        <li class="breadcrumb-item active"><a href="{{ route('admin.setting.general') }}">{{ __('admin.common.general_setting') }}</a>
+                        <li class="breadcrumb-item active"><a
+                                href="{{ route('admin.setting.general') }}">{{ __('admin.common.general_setting') }}</a>
                         </li>
                     </ol>
                 </div>
@@ -36,13 +33,15 @@
                                     <div class="form-group">
                                         <label>{{ __('admin.general_setting.shipping_free_threshold') }}</label>
                                         <input type="text" name="shipping_free_threshold" class="form-control"
-                                            value="{{ @$data->shipping_free_threshold }}" placeholder="Enter shipping free threshold">
+                                            value="{{ $setting?->data_value['shipping_free_threshold'] ?? '' }}"
+                                            placeholder="Enter shipping free threshold">
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button type="submit" id="general_setting_btn" class="btn btn btn-primary btn-block">{{ __('admin.event.submit') }}</button>
+                            <button type="submit" id="general_setting_btn"
+                                class="btn btn btn-primary btn-block">{{ __('admin.event.submit') }}</button>
                         </div>
                     </form>
                 </div>

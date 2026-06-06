@@ -8,7 +8,8 @@
             <li class="dropdown {{ set_active(['admin.dashboard']) }}">
                 <a href="#"><i class="icon-home mr-1"></i>{{ __('admin.sidebar.dashboard') }}</a>
                 <ul>
-                    <li class="dropdown"><a href="#"><i class="mdi mdi-view-dashboard"></i>Dashboard</a>
+                    <li class="dropdown"><a href="#"><i
+                                class="mdi mdi-view-dashboard"></i>{{ __('admin.sidebar.statistical') }}</a>
                         <ul class="sub-menu">
                             <li><a href="{{ route('admin.dashboard') }}"><i class="icon-energy"></i> Light</a></li>
                             <li><a href="layout-vertical-semidark.html"><i class="icon-disc"></i> Semi Dark</a>
@@ -58,20 +59,17 @@
 
                 <ul>
                     <li><a href="{{ route('admin.setting.general') }}"><i
-                                class="icon-support"></i>{{ __('admin.sidebar.general_setting') }}</a>
-                    </li>
+                                class="icon-support"></i>{{ __('admin.sidebar.general_setting') }}</a></li>
+
+                    <li><a href="{{ route('admin.setting.cookie') }}"><i
+                                class="mdi mdi-cookie"></i>{{ __('admin.common.gdpr_cookie') }}</a></li>
+
                     <li><a href="{{ route('admin.setting.logo.icon') }}"><i
                                 class="mdi mdi-puzzle"></i>{{ __('admin.common.logo_and_favicon') }}</a></li>
+
                     <li><a href="{{ route('admin.frontend.seo') }}"><i
                                 class="icon-globe"></i>{{ __('admin.sidebar.seo_manager') }}</a></li>
-                    {{-- <li class="dropdown">
-                        <a href="#"><i class="icon-envelope"></i>Email Manager</a>
-                        <ul class="sub-menu">
-                            <li><a href="chart-morris.html"><i class="icon-energy"></i> Morris Chart</a></li>
-                            <li><a href="chart-chartist.html"><i class="icon-disc"></i> Chartist js</a></li>
-                            <li><a href="chart-echart.html"><i class="icon-frame"></i> eCharts</a></li>
-                        </ul>
-                    </li> --}}
+
                 </ul>
             </li>
 
@@ -100,8 +98,7 @@
                 <a href="#"><i class="icon-size-actual mr-1"></i>{{ __('admin.sidebar.extend') }}</a>
 
                 <ul>
-                    <li><a href="{{ route('admin.setting.cookie') }}"><i
-                                class="mdi mdi-cookie"></i>{{ __('admin.common.gdpr_cookie') }}</a></li>
+
                     <li><a href="{{ route('admin.system.info') }}"><i
                                 class="mdi mdi-server"></i>{{ __('admin.sidebar.system_info') }}</a></li>
                     <li><a href="{{ route('admin.setting.optimize') }}"><i

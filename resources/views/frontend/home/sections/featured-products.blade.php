@@ -1,234 +1,223 @@
-<section class="ps-7 pe-7 pb-3 lg-ps-3 lg-pe-3 md-pb-5 xs-px-0">
-    <div class="container">
-        <div class="row mb-5 xs-mb-8">
-            <div class="col-12 text-center">
-                <h2 class="alt-font text-dark-gray mb-0 ls-minus-2px">
-                    Featured
-                    <span class="text-highlight fw-600">products<span
-                            class="bg-base-color h-5px bottom-2px"></span></span>
-                </h2>
+@if ($featuredProducts->isNotEmpty())
+    <section class="ps-7 pe-7 pb-3 lg-ps-3 lg-pe-3 md-pb-5 xs-px-0">
+        <div class="container">
+            <div class="row mb-5 xs-mb-8">
+                <div class="col-12 text-center">
+                    <h2 class="alt-font text-dark-gray mb-0 ls-minus-2px">
+                        @if (app()->getLocale() === 'en')
+                            {{ __('frontend.home.featured.title') }}
+                            <span class="text-highlight fw-600">
+                                {{ __('frontend.home.featured.content') }}
+                                <span class="bg-base-color h-5px bottom-2px"></span>
+                            </span>
+                        @else
+                            {{ __('frontend.home.featured.content') }}
+                            <span class="text-highlight fw-600">
+                                {{ __('frontend.home.featured.title') }}
+                                <span class="bg-base-color h-5px bottom-2px"></span>
+                            </span>
+                        @endif
+                    </h2>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <ul class="shop-modern shop-wrapper grid-loading grid grid-5col lg-grid-3col sm-grid-2col xs-grid-1col gutter-extra-large text-center"
-                    data-anime='{ "el": "childs", "translateY": [-15, 0], "opacity": [0,1], "duration": 300, "delay": 0, "staggervalue": 100, "easing": "easeOutQuad" }'>
-                    <li class="grid-sizer"></li>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="shop-modern shop-wrapper grid-loading grid grid-5col lg-grid-3col sm-grid-2col xs-grid-1col gutter-extra-large text-center"
+                        data-anime='{ "el": "childs", "translateY": [-15, 0], "opacity": [0,1], "duration": 300, "delay": 0, "staggervalue": 100, "easing": "easeOutQuad" }'>
+                        <li class="grid-sizer"></li>
 
-                    <li class="grid-item">
-                        <div class="shop-box mb-10px">
-                            <div class="shop-image mb-20px">
-                                <a href="single-product.html">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-product-09.jpg') }}" alt />
-                                    <span class="lable new">New</span>
-                                    <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                </a>
-                                <div class="shop-buttons-wrap">
-                                    <a href="single-product.html"
-                                        class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                        <i class="feather icon-feather-shopping-bag"></i><span
-                                            class="quick-view-text button-text">Add to cart</span>
-                                    </a>
-                                </div>
-                                <div class="shop-hover d-flex justify-content-center">
-                                    <ul>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                title="Add to wishlist"><i
-                                                    class="feather icon-feather-heart fs-16"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i
-                                                    class="feather icon-feather-eye fs-16"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="shop-footer text-center">
-                                <a href="single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Textured
-                                    sweater</a>
-                                <div class="price lh-22 fs-16">
-                                    <del>$200.00</del>$189.00
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                        @forelse ($featuredProducts as $product)
+                            @php
 
-                    <li class="grid-item">
-                        <div class="shop-box mb-10px">
-                            <div class="shop-image mb-20px">
-                                <a href="single-product.html">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-product-10.jpg') }}" alt />
-                                    <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                </a>
-                                <div class="shop-buttons-wrap">
-                                    <a href="single-product.html"
-                                        class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                        <i class="feather icon-feather-shopping-bag"></i><span
-                                            class="quick-view-text button-text">Add to cart</span>
-                                    </a>
-                                </div>
-                                <div class="shop-hover d-flex justify-content-center">
-                                    <ul>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                title="Add to wishlist"><i
-                                                    class="feather icon-feather-heart fs-16"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i
-                                                    class="feather icon-feather-eye fs-16"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="shop-footer text-center">
-                                <a href="single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Traveller
-                                    shirt</a>
-                                <div class="price lh-22 fs-16">
-                                    <del>$350.00</del>$289.00
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                                $price = $product->variants_min_price;
 
-                    <li class="grid-item">
-                        <div class="shop-box mb-10px">
-                            <div class="shop-image mb-20px">
-                                <a href="single-product.html">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-product-11.jpg') }}" alt />
-                                    <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                </a>
-                                <div class="shop-buttons-wrap">
-                                    <a href="single-product.html"
-                                        class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                        <i class="feather icon-feather-shopping-bag"></i><span
-                                            class="quick-view-text button-text">Add to cart</span>
-                                    </a>
-                                </div>
-                                <div class="shop-hover d-flex justify-content-center">
-                                    <ul>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                title="Add to wishlist"><i
-                                                    class="feather icon-feather-heart fs-16"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left" title="Quick shop"><i
-                                                    class="feather icon-feather-eye fs-16"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="shop-footer text-center">
-                                <a href="single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Crewneck
-                                    sweatshirt</a>
-                                <div class="price lh-22 fs-16">
-                                    <del>$220.00</del>$199.00
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                                $salePrice = $product->variants_min_sale_price;
 
-                    <li class="grid-item">
-                        <div class="shop-box mb-10px">
-                            <div class="shop-image mb-20px">
-                                <a href="single-product.html">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-product-12.jpg') }}" alt />
-                                    <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                </a>
-                                <div class="shop-buttons-wrap">
-                                    <a href="single-product.html"
-                                        class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                        <i class="feather icon-feather-shopping-bag"></i><span
-                                            class="quick-view-text button-text">Add to cart</span>
-                                    </a>
-                                </div>
-                                <div class="shop-hover d-flex justify-content-center">
-                                    <ul>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                title="Add to wishlist"><i
-                                                    class="feather icon-feather-heart fs-16"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="shop-footer text-center">
-                                <a href="single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Skinny
-                                    trousers</a>
-                                <div class="price lh-22 fs-16">
-                                    <del>$300.00</del>$259.00
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                                $finalPrice = $salePrice && $salePrice < $price ? $salePrice : $price;
 
-                    <li class="grid-item">
-                        <div class="shop-box mb-10px">
-                            <div class="shop-image mb-20px">
-                                <a href="single-product.html">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-product-08.jpg') }}" alt />
-                                    <div class="shop-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                </a>
-                                <div class="shop-buttons-wrap">
-                                    <a href="single-product.html"
-                                        class="alt-font btn btn-small btn-box-shadow btn-white btn-round-edge left-icon add-to-cart">
-                                        <i class="feather icon-feather-shopping-bag"></i><span
-                                            class="quick-view-text button-text">Add to cart</span>
-                                    </a>
+                                $discountPercent = 0;
+
+                                if ($salePrice && $salePrice < $price) {
+                                    $discountPercent = round((($price - $salePrice) / $price) * 100);
+                                }
+
+                                $colors = collect($product->variants)->groupBy('color_id');
+
+                                $sizes = collect($product->variants)->groupBy('size_id');
+                            @endphp
+
+                            <li class="grid-item">
+
+                                <div class="shop-box">
+
+                                    {{-- IMAGE --}}
+                                    <div class="shop-image">
+
+                                        @if ($discountPercent > 0)
+                                            <div class="product-badge">
+
+                                                -{{ $discountPercent }}%
+
+                                            </div>
+                                        @endif
+
+                                        <a href="{{ route('product.show', $product->slug) }}">
+
+                                            <img src="{{ asset('uploads/product/' . $product->image) }}"
+                                                alt="{{ $product->name }}">
+
+                                        </a>
+
+                                        {{-- QUICK SIZE --}}
+                                        @if ($sizes->count())
+                                            <div class="quick-size">
+
+                                                <div class="quick-size-title">
+
+                                                    <span>
+                                                        Thêm nhanh vào giỏ hàng
+                                                    </span>
+
+                                                    <button type="button" class="add-to-cart"
+                                                        data-product="{{ $product->id }}">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </button>
+
+                                                </div>
+
+                                                <div class="quick-size-grid">
+
+                                                    @foreach ($sizes as $sizeId => $variants)
+                                                        @php
+                                                            $variant = $variants->first();
+
+                                                            $hasStock = $variants->sum('stock') > 0;
+                                                        @endphp
+
+                                                        <button type="button"
+                                                            class="size-item select-size {{ !$hasStock ? 'disabled' : '' }}"
+                                                            data-product="{{ $product->id }}"
+                                                            data-size="{{ $sizeId }}"
+                                                            {{ !$hasStock ? 'disabled' : '' }}>
+
+                                                            {{ $variant->size->name ?? '' }}
+
+                                                        </button>
+                                                    @endforeach
+
+                                                </div>
+
+                                            </div>
+                                        @endif
+
+                                        {{-- PROMO --}}
+                                        <div class="product-promo">
+
+                                            FREESHIP
+
+                                            <span>
+                                                ĐƠN TỪ {{ number_format($free_ship / 1000, 0) }}K
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                    {{-- COLORS --}}
+                                    @if ($colors->count())
+                                        <div class="product-colors">
+
+                                            @foreach ($colors->take(5) as $colorId => $variants)
+                                                @php
+                                                    $variant = $variants->first();
+
+                                                    $hasStock = $variants->sum('stock') > 0;
+                                                @endphp
+
+                                                <button type="button"
+                                                    class="color-dot select-color {{ !$hasStock ? 'disabled' : '' }}"
+                                                    data-product="{{ $product->id }}"
+                                                    data-color="{{ $colorId }}"
+                                                    style="background: {{ $variant->color->code ?? '#ddd' }}"
+                                                    {{ !$hasStock ? 'disabled' : '' }}>
+                                                </button>
+                                            @endforeach
+
+                                            @if ($colors->count() > 5)
+                                                <span class="more-color">
+
+                                                    +{{ $colors->count() - 5 }}
+
+                                                </span>
+                                            @endif
+
+                                        </div>
+                                    @endif
+
+                                    {{-- INFO --}}
+                                    <div class="shop-footer">
+
+                                        <a href="{{ route('product.show', $product->slug) }}" class="product-name">
+
+                                            {{ shortenText($product->name, 45) }}
+
+                                        </a>
+
+                                        <div class="wrap-price">
+
+                                            @if ($salePrice && $salePrice < $price)
+                                                <span class="sale-price">
+
+                                                    {{ number_format($salePrice, 0, ',', '.') }}đ
+
+                                                </span>
+
+                                                <span class="origin-price">
+
+                                                    {{ number_format($price, 0, ',', '.') }}đ
+
+                                                </span>
+                                            @else
+                                                <span class="sale-price">
+
+                                                    {{ number_format($finalPrice, 0, ',', '.') }}đ
+
+                                                </span>
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
                                 </div>
-                                <div class="shop-hover d-flex justify-content-center">
-                                    <ul>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                title="Add to wishlist"><i
-                                                    class="feather icon-feather-heart fs-16"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="w-40px h-40px bg-white text-dark-gray d-flex align-items-center justify-content-center rounded-circle ms-5px me-5px"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                title="Quick shop"><i class="feather icon-feather-eye fs-16"></i></a>
-                                        </li>
-                                    </ul>
+
+                            </li>
+
+                        @empty
+
+                            <li class="grid-item w-100">
+
+                                <div class="empty-product">
+
+                                    <div class="empty-product-icon">
+
+                                        <i class="fa-solid fa-box-open"></i>
+
+                                    </div>
+
+                                    <h5>
+                                        Đang cập nhật sản phẩm nổi bật
+                                    </h5>
+
                                 </div>
-                            </div>
-                            <div class="shop-footer text-center">
-                                <a href="single-product.html" class="alt-font text-dark-gray fs-19 fw-500">Sleeve
-                                    sweater</a>
-                                <div class="price lh-22 fs-16">
-                                    <del>$250.00</del>$239.00
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+
+                            </li>
+                        @endforelse
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+@endif

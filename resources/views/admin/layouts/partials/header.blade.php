@@ -4,8 +4,8 @@
             <div class="navbar-header  h-100 h4 mb-0 align-self-center logo-bar text-left">
                 <a href="{{ route('admin.dashboard') }}" class="horizontal-logo text-left">
                     @php
-                        if ($logoIcon && $logoIcon->logo_black) {
-                            $logoBlackPath = getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_black);
+                        if ($logoIcon && $logoIcon['logo_black']) {
+                            $logoBlackPath = getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon['logo_black']);
                             $size = '100px';
                         } else {
                             $logoBlackPath = getImage(imagePath()['image']['default']);

@@ -42,7 +42,7 @@ class CollectionController extends Controller
 
         return view(
             'frontend.collection.show',
-            $data
+            $data,
         );
     }
 }

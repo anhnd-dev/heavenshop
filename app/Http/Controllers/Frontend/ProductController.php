@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Frontend;
 use App\Models\Product;
 
 class ProductController extends Controller
@@ -162,17 +163,49 @@ class ProductController extends Controller
         // =========================
         // RELATED
         // =========================
-        $relatedProducts = Product::with([
-            'brand',
-            'variants',
-            'variants.color',
-        ])
+
+        $relatedProducts = Product::query()
+            ->with([
+                'brand:id,name',
+                'variants' => function ($q) {
+                    $q->select([
+                        'id',
+                        'product_id',
+                        'color_id',
+                        'size_id',
+                        'price',
+                        'sale_price',
+                        'stock',
+                    ])
+                        ->where('is_active', true);
+                },
+                'variants.color:id,name,code',
+                'variants.size:id,name',
+            ])
+            ->withMin([
+                'variants as variants_min_price' => function ($q) {
+                    $q->where('is_active', true)
+                        ->where('stock', '>', 0);
+                }
+            ], 'price')
+            ->withMin([
+                'variants as variants_min_sale_price' => function ($q) {
+                    $q->where('is_active', true)
+                        ->where('stock', '>', 0)
+                        ->whereNotNull('sale_price');
+                }
+            ], 'sale_price')
             ->active()
             ->where('id', '!=', $product->id)
             ->where('category_id', $product->category_id)
             ->latest()
             ->take(4)
             ->get();
+
+        $free_ship = Frontend::getSetting(
+            'shipping_free_threshold',
+            0
+        );
 
         // =========================
         // VIEW
@@ -193,6 +226,8 @@ class ProductController extends Controller
             'maxPrice',
 
             'oldPrice',
+
+            'free_ship',
 
             'discountPercent',
 

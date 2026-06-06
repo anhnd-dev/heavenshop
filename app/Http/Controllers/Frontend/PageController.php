@@ -4,32 +4,48 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Models\Frontend;
 use App\Http\Controllers\Controller;
+use Illuminate\View\View;
 
 class PageController extends Controller
 {
-    public function contact() // :GET
+    public function contact(): View
     {
-        $contact = Frontend::where('data_key', 'contact_us.content')->first();
-        return view('frontend.pages.contact', compact('contact'));
+        $contact = Frontend::query()
+            ->where('data_key', Frontend::CONTACT)
+            ->active()
+            ->first();
+
+        return view('frontend.contact.index', compact('contact'));
     }
 
-    public function about() // :GET
+    public function about(): View
     {
-        // $contact = Frontend::where('data_key', 'contact_us.content')->first();
         return view('frontend.pages.about');
     }
 
-    public function policy($slug)
+    public function policy(string $slug): View
     {
-        $policy = Frontend::where('data_key', 'policy.element')
-            ->where('status', 1)
-            ->whereJsonContains('data_value->slug', $slug)
-            ->first();
+        $policy = Frontend::query()
+            ->where('data_key', 'Frontend::POLICY')
+            ->active()
+            ->whereJsonContains(
+                'data_value->slug',
+                $slug
+            )
+            ->firstOrFail();
 
-        return view('frontend.pages.policy.' . strtr($slug, "-", "_"), ['policy' => $policy]);
+        $view = 'frontend.pages.policy.' .
+            str_replace('-', '_', $slug);
+
+        abort_unless(
+            view()->exists($view),
+            404
+        );
+
+        return view($view, compact('policy'));
     }
 
-    public function faqs() // :GET
+    public function faqs(): View
     {
         return view('frontend.pages.faqs');
     }

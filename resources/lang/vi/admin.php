@@ -29,6 +29,7 @@ return [
 
     'sidebar' => [
         'dashboard' => 'Bảng điều khiển',
+        'statistical' => 'Thống kê',
 
         // Catalog
         'category' => 'Danh mục',

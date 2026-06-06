@@ -4,8 +4,8 @@
             <div class="col-12 col-md-auto sm-mb-15px text-center text-md-start">
                 <a href="{{ route('home') }}" class="footer-logo">
                     @if ($logoIcon)
-                        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_white) }}"
-                            data-at2x="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon->logo_white_2x) }}"
+                        <img src="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon['logo_white']) }}"
+                            data-at2x="{{ getImage(imagePath()['logoIcon']['path'] . '/' . $logoIcon['logo_white_2x']) }}"
                             alt class="default-logo" />
                     @endif
                 </a>
@@ -79,13 +79,13 @@
                 @if ($contact)
                     <div>
                         <i class="feather icon-feather-phone-call fs-16 text-white me-10px xs-me-5px"></i><a
-                            href="tel:{{ $contact->phone_number }}">{{ $contact->phone_number }}</a>
+                            href="tel:{{ $contact['phone_number'] }}">{{ $contact['phone_number'] }}</a>
                     </div>
                     <div class="mb-15px">
                         <i class="feather icon-feather-mail fs-16 text-white me-10px xs-me-5px"></i><a
                             href="cdn-cgi/l/email-protection.html#c1a8afa7ae81a5aeaca0a8afefa2aeac"
                             class="text-decoration-line-bottom"><span class="__cf_email__"
-                                data-cfemail="355c5b535a75515a58545c5b1b565a58">{{ $contact->email }}</span></a>
+                                data-cfemail="355c5b535a75515a58545c5b1b565a58">{{ $contact['email'] }}</span></a>
                     </div>
                 @endif
                 <span class="fw-500 d-block text-white mb-5px fs-17">{{ __('frontend.footer.connect_with_us') }}</span>

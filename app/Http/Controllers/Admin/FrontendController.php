@@ -2,153 +2,208 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\SeoRequest;
+use App\Http\Requests\Admin\Frontend\SeoRequest;
+use App\Http\Requests\Admin\Frontend\ContactRequest;
+
 use App\Models\Frontend;
+use App\Traits\ImageUploadTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class FrontendController extends Controller
+class FrontendController extends BaseAdminController
 {
-    protected $request;
+    use ImageUploadTrait;
 
-    public function __construct(Request $request)
+    private const CONTACT_IMAGE_FIELDS = [
+        'image_url',
+        'map_url',
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEO
+    |--------------------------------------------------------------------------
+    */
+
+    public function seo()
     {
-        $this->request = $request;
+        $seo = Frontend::query()
+            ->where('data_key', Frontend::SEO)
+            ->first();
+
+        return view(
+            'admin.frontend.seo',
+            compact('seo')
+        );
     }
 
-    public function seo() // :GET
+    public function seoSubmit(SeoRequest $request)
     {
-        $seo = Frontend::where('data_key', 'seo.data')->first();
-        return view('admin.frontend.seo', compact('seo'));
-    }
-
-    public function seoSubmit() // :POST
-    {
-        DB::beginTransaction();
-
         try {
-            // Prepare data
-            $data = [
-                'keywords' => $this->request->keywords,
-                'description' => $this->request->description,
-                'social_title' => $this->request->social_title,
-                'social_description' => $this->request->social_description,
-            ];
 
-            $seoPath = public_path('uploads/seo/');
+            $this->transaction(function () use ($request) {
 
-            // Handle image upload
-            if ($this->request->hasFile('image')) {
-                $image_new = $this->uploadImage($this->request->file('image'), $seoPath);
-                $data['image'] = $image_new;
-            } else {
-                $data['image'] = $this->request->image_old;
-            }
+                $seo = Frontend::firstOrNew([
+                    'data_key' => Frontend::SEO,
+                ]);
 
-            // Retrieve or create SEO data
-            $seo = Frontend::firstOrNew(['data_key' => 'seo.data']);
-            $seoData = $seo->exists ? json_decode($seo->data_value, true) : [];
+                $oldData = $seo->data_value ?? [];
 
-            // Delete existing image if any
-            if (isset($seoData['image']) && $seoData['image'] !== $data['image']) {
-                $this->deleteImage($seoData['image'], $seoPath);
-            }
+                $data = [
+                    'keywords' => $request->keywords,
+                    'description' => $request->description,
+                    'social_title' => $request->social_title,
+                    'social_description' => $request->social_description,
+                    'image' => $request->image_old,
+                ];
 
-            // Merge new data with existing data
-            $updatedData = array_merge($seoData, $data);
+                if ($request->hasFile('image')) {
 
-            // Update or create SEO data in the database
-            $seo->data_value = json_encode($updatedData);
-            $seo->save();
+                    $data['image'] = $this->uploadFile(
+                        $request->file('image'),
+                        'seo'
+                    );
+                }
 
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => 'SEO data has been successfully updated.']);
+                if (
+                    !empty($oldData['image']) &&
+                    $oldData['image'] !== $data['image']
+                ) {
+                    $this->deleteFile(
+                        $oldData['image'],
+                        'seo'
+                    );
+                }
+
+                $seo->fill([
+                    'data_value' => $data,
+                    'is_active' => true,
+                ]);
+
+                $seo->save();
+            });
+
+            return $this->successResponse(
+                'SEO data has been successfully updated.'
+            );
         } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['status' => 500, 'message' => 'Failed to update SEO data.']);
+
+            return $this->errorResponse(
+                'Failed to update SEO data.'
+            );
         }
     }
 
-    public function contact() // :GET
+    /*
+    |--------------------------------------------------------------------------
+    | Contact
+    |--------------------------------------------------------------------------
+    */
+
+    public function contact()
     {
-        $contact = Frontend::where('data_key', 'contact_us.content')->first();
-        return view('admin.frontend.contact', compact('contact'));
+        $contact = Frontend::query()
+            ->where('data_key', Frontend::CONTACT)
+            ->first();
+
+        return view(
+            'admin.frontend.contact',
+            compact('contact')
+        );
     }
 
-    public function contactSubmit() // :POST
+    public function contactSubmit(ContactRequest $request)
     {
-        DB::beginTransaction();
-
         try {
-            $data = [
-                'title' => $this->request->title,
-                'address' => $this->request->address,
-                'email' => $this->request->email,
-                'phone_number' => $this->request->phone_number,
-                'question' => $this->request->question,
-            ];
 
-            $contactPath = public_path('uploads/contact/');
+            $this->transaction(function () use ($request) {
 
-            $fields = ['image_url', 'map_url'];
+                $contact = Frontend::firstOrNew([
+                    'data_key' => Frontend::CONTACT,
+                ]);
 
-            foreach ($fields as $field) {
-                if ($this->request->hasFile($field)) {
-                    $data[$field] = $this->uploadImage($this->request->file($field), $contactPath);
-                    // Xóa hình ảnh cũ nếu nó tồn tại
-                    if (isset($this->request->{$field . '_old'})) {
-                        $this->deleteImage($this->request->{$field . '_old'}, $contactPath);
-                    }
-                } else {
-                    $data[$field] = $this->request->{$field . '_old'};
-                }
-            }
+                $oldData = $contact->data_value ?? [];
 
-            $contact = Frontend::firstOrNew(['data_key' => 'contact_us.content']);
-            $contactData = $contact->exists ? json_decode($contact->data_value, true) : [];
+                $data = [
+                    'title' => $request->title,
+                    'address' => $request->address,
+                    'email' => $request->email,
+                    'phone_number' => $request->phone_number,
+                    'question' => $request->question,
+                ];
 
-            foreach ($fields as $field) {
-                if (isset($contactData[$field]) && $contactData[$field] !== $data[$field]) {
-                    $this->deleteImage($contactData[$field], $contactPath);
-                }
-            }
+                $this->processContactImages(
+                    $request,
+                    $data
+                );
 
-            // Hợp nhất dữ liệu mới với dữ liệu hiện có
-            $updatedData = array_merge($contactData, $data);
+                $this->deleteOldContactImages(
+                    $oldData,
+                    $data
+                );
 
-            // Cập nhật hoặc tạo dữ liệu SEO trong cơ sở dữ liệu
-            $contact->data_value = json_encode($updatedData);
-            $contact->save();
+                $contact->fill([
+                    'data_value' => $data,
+                    'is_active' => true,
+                ]);
 
-            DB::commit();
-            return response()->json(['status' => 200, 'message' => __('admin.notify.contact.updated')]);
+                $contact->save();
+            });
+
+            return $this->successResponse(
+                __('admin.notify.contact.updated')
+            );
         } catch (\Throwable $th) {
-            DB::rollback();
-            return response()->json(['status' => 500, 'message' => __('admin.notify.contact.err_updated')]);
+
+            return $this->errorResponse(
+                __('admin.notify.contact.err_updated')
+            );
         }
     }
 
-    protected function uploadImage($file, $path)
-    {
-        $image_new = time() . '_' . $file->getClientOriginalName();
-        $file->move($path, $image_new);
-        return $image_new;
+    /*
+    |--------------------------------------------------------------------------
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    private function processContactImages(
+        ContactRequest $request,
+        array &$data
+    ): void {
+
+        foreach (self::CONTACT_IMAGE_FIELDS as $field) {
+
+            if ($request->hasFile($field)) {
+
+                $data[$field] = $this->uploadFile(
+                    $request->file($field),
+                    'contact'
+                );
+            } else {
+
+                $data[$field] = $request->{$field . '_old'};
+            }
+        }
     }
 
-    protected function deleteImage($file, $path)
-    {
-        $filePath = $path . $file;
+    private function deleteOldContactImages(
+        array $oldData,
+        array $newData
+    ): void {
 
-        if (file_exists($filePath) && is_readable($filePath)) {
-            if (unlink($filePath)) {
-                usleep(50000);
-                return true;
-            } else {
-                return false;
+        foreach (self::CONTACT_IMAGE_FIELDS as $field) {
+
+            if (
+                empty($oldData[$field]) ||
+                $oldData[$field] === ($newData[$field] ?? null)
+            ) {
+                continue;
             }
-        } else {
-            return true;
+
+            $this->deleteFile(
+                $oldData[$field],
+                'contact'
+            );
         }
     }
 }

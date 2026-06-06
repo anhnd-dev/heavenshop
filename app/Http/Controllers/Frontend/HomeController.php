@@ -10,6 +10,7 @@ use App\Models\Slider;
 use App\Models\Product;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
+use App\Models\Frontend;
 
 class HomeController extends Controller
 {
@@ -28,15 +29,40 @@ class HomeController extends Controller
                 'is_active' => 1,
             ])
             ->whereNull('parent_id')
-            ->latest()
             ->take(3)
             ->get();
 
         $brands = Brand::whereNull('deleted_at')->take(5)->get();
 
-        $bestSellers = Product::where('sold_count', '>=', 100)->orderBy('sold_count', 'desc')->limit(10)->get();
+        $free_ship = Frontend::getSetting(
+            'shipping_free_threshold',
+            0
+        );
 
-        $featuredProducts = Product::where('is_featured', true)->limit(5)->get();
+        $bestSellers = Product::query()
+            ->withMin('variants', 'price')
+            ->withMin('variants', 'sale_price')
+            ->orderByDesc('sold_count')
+            ->take(10)
+            ->get();
+
+        // $bestSellers = Product::query()
+        //     ->select('products.*')
+        //     ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+        //     ->join('order_items', 'product_variants.id', '=', 'order_items.product_variant_id')
+        //     ->groupBy('products.id')
+        //     ->orderByRaw('SUM(order_items.quantity) DESC')
+        //     ->limit(10)
+        //     ->get();
+
+        $featuredProducts = Product::query()
+            ->withMin('variants', 'price')
+            ->withMin('variants', 'sale_price')
+            ->where('is_featured', true)
+            ->where('is_active', true)
+            ->latest()
+            ->take(5)
+            ->get();
 
         $blogs = Blog::whereNull('deleted_at')->inRandomOrder()->take(5)->get();
 
@@ -45,6 +71,6 @@ class HomeController extends Controller
             ->inRandomOrder()
             ->first(['start_date', 'end_date', 'code']);
 
-        return view('frontend.home.index', compact('sliders', 'categories', 'brands', 'bestSellers', 'blogs', 'coupon'));
+        return view('frontend.home.index', compact('sliders', 'categories', 'brands', 'free_ship', 'bestSellers', 'featuredProducts', 'blogs', 'coupon'));
     }
 }

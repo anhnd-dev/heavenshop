@@ -24,7 +24,11 @@ class BaseAdminController extends Controller
 
             DB::rollBack();
 
-            Log::error($th);
+            Log::error($th->getMessage(), [
+                'file' => $th->getFile(),
+                'line' => $th->getLine(),
+                'trace' => $th->getTraceAsString(),
+            ]);
 
             throw $th;
         }

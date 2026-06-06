@@ -9,132 +9,153 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        /*
+        $this->registerHeaderData();
+        $this->registerFooterData();
+        $this->registerSocialIcons();
+        $this->registerCookie();
+    }
+
+    /*
     |--------------------------------------------------------------------------
-    | Header, SEO & Logo
+    | Shared: SEO + Logo (Admin + Frontend)
     |--------------------------------------------------------------------------
     */
+    private function registerHeaderData(): void
+    {
         View::composer(
             [
-                'frontend.layouts.partials.seo',
                 'frontend.layouts.partials.header',
-                'frontend.layouts.partials.header_cart',
-                'admin.layouts.partials.seo',
                 'admin.layouts.partials.header',
-
+                'frontend.layouts.partials.seo',
+                'admin.layouts.partials.seo',
             ],
             function ($view) {
 
-                $frontendData = Frontend::query()
-                    ->whereIn('data_key', [
-                        'seo.data',
-                        'logo_icon.data',
-                    ])
-                    ->get()
-                    ->keyBy('data_key');
+                $frontend = $this->getFrontendByKeys([
+                    Frontend::SEO,
+                    Frontend::LOGO_ICON,
+                ]);
 
-                $seo = optional($frontendData->get('seo.data'), function ($item) {
-                    return json_decode($item->data_value);
-                });
+                $menuCategories = Category::query()
+                    ->whereNull('parent_id')
+                    ->where('type', 'product')
+                    ->where('is_active', true)
+                    ->with('childrenRecursive')
+                    ->orderBy('name')
+                    ->get();
 
-                $logoIcon = optional($frontendData->get('logo_icon.data'), function ($item) {
-                    return json_decode($item->data_value);
-                });
-
-                $view->with(compact('seo', 'logoIcon'));
+                $view->with([
+                    'seo' => $frontend[Frontend::SEO] ?? null,
+                    'logoIcon' => $frontend[Frontend::LOGO_ICON] ?? null,
+                    'menuCategories' => $menuCategories,
+                ]);
             }
         );
+    }
 
-        /*
+    /*
     |--------------------------------------------------------------------------
-    | Footer
+    | Footer Data
     |--------------------------------------------------------------------------
     */
+    private function registerFooterData(): void
+    {
         View::composer('frontend.layouts.partials.footer', function ($view) {
 
-            $frontendData = Frontend::query()
-                ->whereIn('data_key', [
-                    'logo_icon.data',
-                    'contact_us.content',
-                ])
-                ->get()
-                ->keyBy('data_key');
+            $data = $this->getFrontendByKeys([
+                Frontend::LOGO_ICON,
+                Frontend::CONTACT,
+            ]);
 
-            $logoIcon = optional($frontendData->get('logo_icon.data'), function ($item) {
-                return json_decode($item->data_value);
-            });
+            $socialIcons = $this->getSocialIcons();
+            $categories = $this->getProductCategories();
 
-            $contact = optional($frontendData->get('contact_us.content'), function ($item) {
-                return json_decode($item->data_value);
-            });
-
-            $socialIcons = Frontend::query()
-                ->where('data_key', 'social_icon.element')
-                ->where('is_active', true)
-                ->latest()
-                ->take(4)
-                ->get();
-
-            $categories = Category::query()
-                ->where('type', 'product')
-                ->where('is_active', true)
-                ->take(5)
-                ->get();
-
-            $view->with(compact(
-                'logoIcon',
-                'contact',
-                'socialIcons',
-                'categories'
-            ));
+            $view->with([
+                'logoIcon' => $data[Frontend::LOGO_ICON] ?? null,
+                'contact' => $data[Frontend::CONTACT] ?? null,
+                'socialIcons' => $socialIcons,
+                'categories' => $categories,
+            ]);
         });
+    }
 
-        /*
+    /*
     |--------------------------------------------------------------------------
-    | Social Icons
+    | Social Icons (Reusable)
     |--------------------------------------------------------------------------
     */
+    private function registerSocialIcons(): void
+    {
         View::composer('frontend.layouts.partials.social', function ($view) {
-
-            $socialIcons = Frontend::query()
-                ->where('data_key', 'social_icon.element')
-                ->where('is_active', true)
-                ->latest()
-                ->take(4)
-                ->get();
-
-            $view->with(compact('socialIcons'));
+            $view->with([
+                'socialIcons' => $this->getSocialIcons(),
+            ]);
         });
+    }
 
-        /*
+    /*
     |--------------------------------------------------------------------------
-    | Menu Categories
+    | Cookie Data
     |--------------------------------------------------------------------------
     */
-        View::composer('frontend.layouts.partials.header', function ($view) {
-
-            $menuCategories = Category::query()
-                ->whereNull('parent_id')
-                ->where('type', 'product')
-                ->where('is_active', true)
-                ->with('childrenRecursive')
-                ->orderBy('name')
-                ->get();
-
-            $view->with(compact('menuCategories'));
+    private function registerCookie(): void
+    {
+        View::composer('frontend.layouts.partials.cookie', function ($view) {
+            $view->with([
+                'cookie' => $this->getCookie(),
+            ]);
         });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    private function getFrontendByKeys(array $keys): array
+    {
+        return Frontend::query()
+            ->whereIn('data_key', $keys)
+            ->where('is_active', true)
+            ->get()
+            ->mapWithKeys(fn($item) => [
+                $item->data_key => $item->data_value
+            ])
+            ->toArray();
+    }
+
+    private function getSocialIcons()
+    {
+        return Frontend::query()
+            ->where('data_key', 'social_icon.element')
+            ->where('is_active', true)
+            ->latest()
+            ->take(4)
+            ->get();
+    }
+
+    private function getCookie(): array
+    {
+        return Frontend::query()
+            ->where('data_key', Frontend::COOKIE)
+            ->where('is_active', true)
+            ->value('data_value') ?? [];
+    }
+
+    private function getProductCategories()
+    {
+        return Category::query()
+            ->where('type', 'product')
+            ->where('is_active', true)
+            ->take(5)
+            ->get();
     }
 }

@@ -85,7 +85,9 @@
                     {{-- PRODUCT CONTAINER --}}
                     <div id="product-container">
 
-                        @include('frontend.collection.partials.products')
+                        @include('frontend.collection.partials.products', [
+                            'free_ship' => $shippingFreeThreshold,
+                        ])
 
                     </div>
 

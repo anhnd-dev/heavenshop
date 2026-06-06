@@ -16,7 +16,8 @@
     </div>
 
     {{-- PRODUCTS --}}
-    <ul class="shop-modern shop-wrapper grid grid-4col xl-grid-3col sm-grid-2col xs-grid-2col gutter-large text-start">
+    <ul class="shop-modern shop-wrapper grid grid-4col xl-grid-3col sm-grid-2col xs-grid-2col gutter-large text-start"
+        data-anime='{ "el": "childs", "translateY": [-15, 0], "opacity": [0,1], "duration": 300, "delay": 0, "staggervalue": 100, "easing": "easeOutQuad" }'>
 
         <li class="grid-sizer"></li>
 
@@ -108,7 +109,7 @@
                             FREESHIP
 
                             <span>
-                                ĐƠN TỪ 499K
+                                ĐƠN TỪ {{ number_format($free_ship / 1000, 0) }}K
                             </span>
 
                         </div>

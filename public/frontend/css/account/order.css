@@ -155,6 +155,13 @@
     transition: all 0.3s ease;
 }
 
+.order-card .highlight {
+    border: 2px solid #ff9800;
+    background: #fff7e6;
+    box-shadow: 0 6px 18px rgba(255, 152, 0, 0.15);
+    transition: 0.3s;
+}
+
 .order-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);

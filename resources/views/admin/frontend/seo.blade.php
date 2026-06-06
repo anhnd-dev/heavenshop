@@ -5,7 +5,7 @@
 @endpush
 
 @php
-    $data = $seo ? json_decode($seo->data_value) : (object) [];
+    $data = (object) ($seo?->data_value ?? []);
 @endphp
 
 @section('content')
@@ -20,7 +20,8 @@
 
                     <ol class="breadcrumb bg-transparent align-self-center m-0 p-0">
                         <li class="breadcrumb-item">Manage</li>
-                        <li class="breadcrumb-item active"><a href="{{ route('admin.seo') }}">SEO Configuration</a></li>
+                        <li class="breadcrumb-item active"><a href="{{ route('admin.frontend.seo') }}">SEO Configuration</a>
+                        </li>
                     </ol>
                 </div>
             </div>
@@ -33,7 +34,7 @@
                 <div class="card">
                     <form id="seo_form" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="image_old" value="{{ isset($data->image) ? $data->image : '' }}">
+                        <input type="hidden" name="image_old" value="{{ $data->image ?? '' }}">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
@@ -41,7 +42,7 @@
                                         <input type="file" name="image" id="file" accept=".png, .jpg, .jpeg"
                                             hidden>
                                         <div class="img-area img-thumbnail img-custom"
-                                            data-img="{{ isset($data->image) ? getImage(imagePath()['seo']['path'] . '/' . $data->image) : '' }}">
+                                            data-img="{{ !empty($data->image) ? getImage(imagePath()['seo']['path'] . '/' . $data->image) : '' }}">
                                             @if (!isset($data->image))
                                                 <i class="mdi mdi-cloud-upload"></i>
                                                 <h3>Upload Image</h3>
@@ -110,7 +111,7 @@
     <script>
         $(document).ready(function() {
             $('.select2-auto-tokenize').select2({
-                dropdownParent: $('.card-body'),
+                dropdownParent: $('#seo_form'),
                 tags: true,
                 tokenSeparators: [',']
             });
@@ -122,15 +123,17 @@
             const imgArea = document.querySelector('.img-area');
 
             // Kiểm tra và gán tên file ảnh từ cơ sở dữ liệu khi tải lại trang
-            const imageNameFromDatabase = imgArea.dataset.img;
-            const img = document.createElement('img');
+            const imageUrl = imgArea.dataset.img;
 
-            if (imageNameFromDatabase) {
-                img.src = imageNameFromDatabase;
+            if (imageUrl) {
+
+                const img = document.createElement('img');
+
+                img.src = imageUrl;
+
                 imgArea.appendChild(img);
+
                 imgArea.classList.add('active');
-            } else {
-                img.src = "";
             }
 
             selectImage.addEventListener('click', function() {
@@ -155,7 +158,7 @@
                     } else {
                         alert("Image size more than 2MB");
                         this.value =
-                        ''; // Xóa giá trị của trường nhập để cho phép người dùng chọn một tệp ảnh khác
+                            ''; // Xóa giá trị của trường nhập để cho phép người dùng chọn một tệp ảnh khác
                     }
                 }
             });
@@ -165,10 +168,12 @@
             e.preventDefault();
 
             const fd = new FormData(this);
-            $("#seo_btn").text("Submitting...");
+            $("#seo_btn")
+                .prop("disabled", true)
+                .text("Submitting...");
 
             $.ajax({
-                url: "{{ route('admin.seo.submit') }}",
+                url: "{{ route('admin.frontend.seo.submit') }}",
                 method: "POST",
                 data: fd,
                 cache: false,
@@ -178,11 +183,28 @@
             }).done(function(res) {
                 if (res.status == 200) {
                     toastr.success(res.message);
-                    $("#seo_btn").text("Submit");
+                    $("#seo_btn")
+                        .prop("disabled", false)
+                        .text("Submit");
                 }
             }).fail(function(xhr, status, error) {
-                var errors = xhr.responseJSON;
-                toastr.error(errors.message);
+                if (xhr.status === 422) {
+
+                    const errors = xhr.responseJSON.errors;
+
+                    Object.values(errors).forEach(function(error) {
+
+                        toastr.error(error[0]);
+
+                    });
+
+                    return;
+                }
+
+                toastr.error(
+                    xhr.responseJSON?.message ??
+                    'Đã xảy ra lỗi'
+                );
             });
         })
     </script>

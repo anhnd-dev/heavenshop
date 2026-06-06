@@ -4,10 +4,6 @@
     <link rel="stylesheet" href="{{ asset('backend/vendors/bootstrap4-toggle/css/bootstrap4-toggle.min.css') }}" />
 @endpush
 
-@php
-    $data = $cookie ? json_decode($cookie->data_value) : (object) [];
-@endphp
-
 @section('content')
     <div class="container-fluid site-width">
         <!-- START: Breadcrumbs-->
@@ -20,7 +16,8 @@
 
                     <ol class="breadcrumb bg-transparent align-self-center m-0 p-0">
                         <li class="breadcrumb-item">{{ __('admin.common.manage') }}</li>
-                        <li class="breadcrumb-item active"><a href="{{ route('admin.setting.cookie') }}">{{ __('admin.common.gdpr_cookie') }}</a>
+                        <li class="breadcrumb-item active"><a
+                                href="{{ route('admin.setting.cookie') }}">{{ __('admin.common.gdpr_cookie') }}</a>
                         </li>
                     </ol>
                 </div>
@@ -40,7 +37,7 @@
                                     <div class="form-group">
                                         <label>{{ __('admin.cookie.policy_link') }}</label>
                                         <input type="text" name="link" class="form-control"
-                                            value="{{ @$data->link }}" placeholder="Policy Link">
+                                            value="{{ $cookie?->data_value['link'] ?? '' }}" placeholder="Policy Link">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -48,17 +45,18 @@
                                         <label>{{ __('admin.common.status') }}</label>
                                         <input type="checkbox" data-toggle="toggle" data-on="Enable" data-off="Disabled"
                                             data-onstyle="success" data-offstyle="danger"
-                                            @if (@$data->status) checked @endif name="status">
+                                            @if ($cookie?->data_value['status']) checked @endif name="status">
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>{{ __('admin.common.description') }}</label>
-                                <textarea class="form-control" rows="10" name="description" placeholder="Description">@php echo @$data->description @endphp</textarea>
+                                <textarea class="form-control" rows="10" name="description" placeholder="Description">@php echo $cookie?->data_value['description'] ?? '' @endphp</textarea>
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button type="submit" id="cookie_btn" class="btn btn btn-primary btn-block">{{ __('admin.event.submit') }}</button>
+                            <button type="submit" id="cookie_btn"
+                                class="btn btn btn-primary btn-block">{{ __('admin.event.submit') }}</button>
                         </div>
                     </form>
                 </div>

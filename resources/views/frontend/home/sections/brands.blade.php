@@ -5,7 +5,8 @@
             @foreach ($brands as $brand)
                 <div class="col text-center sm-mb-30px">
                     <a href="#">
-                        <img src="{{ asset('uploads/brand/'.$brand->image) }}" class="h-30px" alt="{{ $brand->name }}" />
+                        <img src="{{ asset('uploads/brand/' . $brand->image) }}" class="h-60px"
+                            alt="{{ $brand->name }}" />
                     </a>
                 </div>
             @endforeach

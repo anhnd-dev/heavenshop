@@ -20,19 +20,14 @@ class LoginController extends Controller
      */
     public function getLogin(): View
     {
-        $logoIcon = Frontend::where(
-            'data_key',
-            'logo_icon.data'
-        )->first();
+        $logoIcon = Frontend::query()
+            ->where('data_key', 'logo_icon.data')
+            ->where('is_active', true)
+            ->value('data_value') ?? [];
 
-        $logoIcon = $logoIcon
-            ? json_decode($logoIcon->data_value)
-            : null;
-
-        return view(
-            'admin.auth.login',
-            compact('logoIcon')
-        );
+        return view('admin.auth.login', [
+            'logoIcon' => $logoIcon
+        ]);
     }
 
     /**

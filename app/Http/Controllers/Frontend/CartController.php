@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\CustomerCartItem;
 use Illuminate\Http\Request;
 
 use App\Models\Product;
@@ -506,6 +507,11 @@ class CartController extends Controller
             'cart',
             'applied_coupon'
         ]);
+
+        if (auth('customer')->check()) {
+            CustomerCartItem::where('customer_id', auth('customer')->id())
+                ->delete();
+        }
 
         return response()->json([
             'status' => 200,

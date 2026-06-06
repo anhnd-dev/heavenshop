@@ -180,18 +180,11 @@ class CartService
 
         foreach ($cart as $item) {
 
-            CustomerCartItem::updateOrCreate([
-
+            CustomerCartItem::create([
                 'customer_id' => $customerId,
-
-                'product_variant_id'
-                => $item['variant_id'],
-
-                'quantity'
-                => $item['quantity'],
-
-                'selected'
-                => $item['selected']
+                'product_variant_id' => $item['variant_id'],
+                'quantity' => $item['quantity'],
+                'selected' => $item['selected'],
             ]);
         }
     }
@@ -206,18 +199,31 @@ class CartService
 
         foreach ($sessionCart as $variantId => $item) {
 
+            $variant = ProductVariant::find($variantId);
+
+            if (!$variant) {
+                continue;
+            }
+
+            // Đã có trong DB
             if (isset($dbCart[$variantId])) {
 
-                $variant = ProductVariant::find($variantId);
+                $dbCart[$variantId]['quantity'] = min(
+                    $dbCart[$variantId]['quantity']
+                        + $item['quantity'],
+                    $variant->stock
+                );
+            }
 
-                if ($variant) {
+            // Chưa có trong DB
+            else {
 
-                    $dbCart[$variantId]['quantity'] = min(
-                        $dbCart[$variantId]['quantity']
-                            + $item['quantity'],
-                        $variant->stock
-                    );
-                }
+                $item['quantity'] = min(
+                    $item['quantity'],
+                    $variant->stock
+                );
+
+                $dbCart[$variantId] = $item;
             }
         }
 

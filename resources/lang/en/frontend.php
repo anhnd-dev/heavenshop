@@ -30,6 +30,14 @@ return [
             'title' => 'Free shipping',
             'content' => 'Free shipping on first order'
         ],
+        'seller' => [
+            'title' => 'Best Seller',
+            'content' => 'Products'
+        ],
+        'featured' => [
+            'title' => 'Featured',
+            'content' => 'Products'
+        ],
         'refund' => [
             'title' => '15 days returns',
             'content' => 'Moneyback guarantee'

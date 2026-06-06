@@ -116,6 +116,16 @@ class Category extends Model
         return $breadcrumbs;
     }
 
+    public function getProductsCountRecursive(): int
+    {
+        $categoryIds = $this->getAllChildrenIds();
+
+        return Product::query()
+            ->where('is_active', true)
+            ->whereIn('category_id', $categoryIds)
+            ->count();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Blogs
