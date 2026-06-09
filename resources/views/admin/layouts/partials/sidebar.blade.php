@@ -5,16 +5,23 @@
         <!-- START: Menu-->
         <ul id="side-menu" class="sidebar-menu">
 
-            <li class="dropdown {{ set_active(['admin.dashboard']) }}">
+            <li class="dropdown {{ set_active(['admin.dashboard.overview']) }}">
                 <a href="#"><i class="icon-home mr-1"></i>{{ __('admin.sidebar.dashboard') }}</a>
                 <ul>
-                    <li class="dropdown"><a href="#"><i
-                                class="mdi mdi-view-dashboard"></i>{{ __('admin.sidebar.statistical') }}</a>
+                    <li class="dropdown">
+                        <a href="#"><i class="icofont-chart-pie" style="margin-right: 10px;"></i>
+                            {{ __('admin.sidebar.statistical') }}</a>
                         <ul class="sub-menu">
-                            <li><a href="{{ route('admin.dashboard') }}"><i class="icon-energy"></i> Light</a></li>
-                            <li><a href="layout-vertical-semidark.html"><i class="icon-disc"></i> Semi Dark</a>
+                            <li><a href="{{ route('admin.dashboard.overview') }}"><i class="mdi mdi-view-dashboard"></i>
+                                    Tổng quan</a></li>
+                            <li><a href="{{ route('admin.dashboard.revenue') }}"><i class="icon-disc"></i> Doanh thu</a>
                             </li>
-                            <li><a href="layout-vertical-dark.html"><i class="icon-frame"></i> Dark</a></li>
+                            <li><a href="{{ route('admin.dashboard.orders') }}"><i class="icon-frame"></i> Đơn hàng</a>
+                            </li>
+                            <li><a href="{{ route('admin.dashboard.products') }}"><i class="icon-frame"></i> Sản
+                                    phẩm</a></li>
+                            <li><a href="{{ route('admin.dashboard.customers') }}"><i class="icon-frame"></i> Khách
+                                    hàng</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -286,6 +286,10 @@ File: Main Style
     }
 }
 
+.bg-none {
+    background: none;
+}
+
 #header-fix .collapse-menu-bar {
     width: 50px;
     border-right: 1px solid var(--bordercolor);

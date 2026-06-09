@@ -87,12 +87,13 @@ Route::middleware(
     // require __DIR__ . '/role.php';
     // require __DIR__ . '/permission.php';
 
-
     require __DIR__ . '/frontend.php';
 
     require __DIR__ . '/slider.php';
 
     require __DIR__ . '/setting.php';
+
+    require __DIR__ . '/site.php';
 
     // require __DIR__ . '/delivery.php';
     // require __DIR__ . '/comment.php';

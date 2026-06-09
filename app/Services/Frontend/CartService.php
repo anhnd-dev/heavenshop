@@ -3,6 +3,7 @@
 namespace App\Services\Frontend;
 
 use App\Models\CustomerCartItem;
+use App\Models\Frontend;
 use App\Models\ProductVariant;
 
 class CartService
@@ -42,11 +43,16 @@ class CartService
         $subtotal = $subtotal
             ?? $this->subtotalSelected();
 
+        $free_ship = Frontend::getSetting(
+            'shipping_free_threshold',
+            0
+        );
+
         if ($subtotal <= 0) {
             return 0;
         }
 
-        return $subtotal >= 299000
+        return $subtotal >= $free_ship
             ? 0
             : 30000;
     }

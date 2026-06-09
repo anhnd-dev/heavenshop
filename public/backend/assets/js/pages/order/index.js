@@ -65,6 +65,13 @@
                         searchable: false,
 
                         render(_, __, full) {
+                            if (
+                                full.order_status_value !== "cancelled" &&
+                                !self.el.includeTrashed.is(":checked")
+                            ) {
+                                return "";
+                            }
+
                             return `
                                 <div class="form-check custom-checkbox ms-2">
                                     <input type="checkbox"
@@ -134,23 +141,41 @@
                 window.location.href = url;
             });
 
-            window.setupDeleteHandler(
-                ".deleteOrderBtn",
-                window.orderConfig.routes.delete,
-                () => self.reload(),
-            );
+            window.setupAjaxActionHandler({
+                button: ".deleteOrderBtn",
 
-            window.setupRestoreHandler(
-                ".restoreOrderBtn",
-                window.orderConfig.routes.restore,
-                () => self.reload(),
-            );
+                route: window.orderConfig.routes.delete,
 
-            window.setupForceHandler(
-                ".forceOrderBtn",
-                window.orderConfig.routes.forceDelete,
-                () => self.reload(),
-            );
+                method: "DELETE",
+
+                confirmText: "Bạn có chắc muốn chuyển đơn hàng vào thùng rác?",
+
+                getData: ($btn) => ({
+                    id: $btn.data("id"),
+                }),
+
+                callback: () => {
+                    self.reload();
+                },
+            });
+
+            window.setupAjaxActionHandler({
+                button: ".restoreOrderBtn",
+
+                route: window.orderConfig.routes.restore,
+
+                method: "POST",
+
+                confirmText: "Bạn có chắc muốn khôi phục đơn hàng?",
+
+                getData: ($btn) => ({
+                    id: $btn.data("id"),
+                }),
+
+                callback: () => {
+                    self.reload();
+                },
+            });
         },
 
         reload() {

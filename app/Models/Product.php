@@ -70,6 +70,13 @@ class Product extends Model
         return $this->belongsToMany(Coupon::class, 'product_coupon');
     }
 
+    public function orderItems()
+    {
+        return $this->hasMany(
+            OrderItem::class
+        );
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accessors

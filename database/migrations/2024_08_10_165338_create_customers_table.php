@@ -35,9 +35,6 @@ return new class extends Migration
             $table->string('avatar')
                 ->nullable();
 
-            $table->text('address')
-                ->nullable();
-
             $table->enum('gender', [
                 'male',
                 'female'

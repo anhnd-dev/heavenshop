@@ -24,11 +24,9 @@ class CollectionService
             0
         );
 
-
         // =====================================================
         // CATEGORY
         // =====================================================
-
         $category = Category::query()
 
             ->select(
@@ -47,19 +45,16 @@ class CollectionService
         // =====================================================
         // CATEGORY IDS
         // =====================================================
-
         $categoryIds = $category->getAllChildrenIds();
 
         // =====================================================
         // FILTERS
         // =====================================================
-
         $filters = $this->getFilters($request);
 
         // =====================================================
         // PRODUCTS QUERY
         // =====================================================
-
         $query = Product::query()
 
             ->select([
@@ -73,11 +68,8 @@ class CollectionService
             ])
 
             ->with([
-
                 'brand:id,name',
-
                 'category:id,name,slug',
-
                 'variants' => function ($q) {
 
                     $q->select([
@@ -89,12 +81,9 @@ class CollectionService
                         'sale_price',
                         'stock',
                     ])
-
                         ->where('is_active', true);
                 },
-
                 'variants.color:id,name,code',
-
                 'variants.size:id,name',
             ])
 
@@ -116,9 +105,7 @@ class CollectionService
             ], 'sale_price')
 
             ->where('is_active', true)
-
             ->whereIn('category_id', $categoryIds)
-
             ->whereHas('variants', function ($q) {
 
                 $q->where('is_active', true)
@@ -128,7 +115,6 @@ class CollectionService
         // =====================================================
         // APPLY FILTERS
         // =====================================================
-
         $this->applyFilters(
             query: $query,
             filters: $filters
@@ -137,7 +123,6 @@ class CollectionService
         // =====================================================
         // APPLY SORT
         // =====================================================
-
         $this->applySorting(
             query: $query,
             order: $filters['order']
@@ -146,7 +131,6 @@ class CollectionService
         // =====================================================
         // PRODUCTS
         // =====================================================
-
         $products = $query
 
             ->paginate($filters['psize'])
@@ -156,7 +140,6 @@ class CollectionService
         // =====================================================
         // RELATED CATEGORIES
         // =====================================================
-
         $relatedCategories = $category->children()
             ->select('id', 'name', 'slug', 'parent_id')
             ->get();
@@ -178,7 +161,6 @@ class CollectionService
         // =====================================================
         // FILTER DATA
         // =====================================================
-
         $brands = Cache::remember(
             'collection_brands',
             now()->addHours(12),

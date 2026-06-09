@@ -19,7 +19,7 @@ class CheckAdminSession
         if (!Auth::guard('admin')->check()) {
             return $next($request);
         } else {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.dashboard.overview');
         }
     }
 }

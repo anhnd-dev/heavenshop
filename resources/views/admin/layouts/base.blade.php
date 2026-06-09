@@ -153,7 +153,7 @@
     <!-- END: Page Vendor JS-->
 
     <!-- Page JS-->
-    <script src="{{ asset('backend/assets/js/home.script.js') }}"></script>
+    {{-- <script src="{{ asset('backend/assets/js/home.script.js') }}"></script> --}}
     {{-- <script src="{{ asset('backend/assets/js/lockscreen.js') }}"></script> --}}
     <!-- END: Page JS-->
 

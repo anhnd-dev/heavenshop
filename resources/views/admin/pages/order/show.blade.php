@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-    <div class="container-fluid site-width">
+    <div class="container-fluid site-width" style="padding-top: 42px">
 
         <div class="card order-card mb-4">
 

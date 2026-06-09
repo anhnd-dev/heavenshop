@@ -48,6 +48,7 @@
                 type: "POST",
 
                 data: {
+                    _token: $('meta[name="csrf-token"]').attr("content"),
                     id: this.el.orderId.val(),
                     status: status,
                 },
@@ -81,6 +82,7 @@
                 type: "POST",
 
                 data: {
+                    _token: $('meta[name="csrf-token"]').attr("content"),
                     id: this.el.orderId.val(),
                     status: status,
                 },

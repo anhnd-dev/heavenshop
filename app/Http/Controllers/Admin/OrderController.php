@@ -23,7 +23,9 @@ class OrderController extends BaseAdminController
         if ($request->ajax()) {
 
             return $this->orderService
-                ->getDataTable();
+                ->getDataTable(
+                    $request->boolean('include_trashed')
+                );
         }
 
         return view(
@@ -106,6 +108,42 @@ class OrderController extends BaseAdminController
 
             return $this->successResponse(
                 'Cập nhật trạng thái thanh toán thành công'
+            );
+        });
+    }
+
+    public function destroy(Request $request)
+    {
+        return $this->transaction(function () use ($request) {
+
+            $order = Order::findOrFail(
+                $request->id
+            );
+
+            $this->orderService->delete(
+                $order
+            );
+
+            return $this->successResponse(
+                'Đã chuyển đơn hàng vào thùng rác'
+            );
+        });
+    }
+
+    public function restore(
+        Request $request
+    ) {
+        return $this->transaction(function () use ($request) {
+
+            $order = Order::onlyTrashed()
+                ->findOrFail($request->id);
+
+            $this->orderService->restore(
+                (int) $request->id
+            );
+
+            return $this->successResponse(
+                'Khôi phục đơn hàng thành công'
             );
         });
     }

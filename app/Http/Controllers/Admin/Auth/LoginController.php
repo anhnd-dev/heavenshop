@@ -113,7 +113,7 @@ class LoginController extends Controller
         return match (true) {
 
             $user->hasRole('super-admin')
-            => 'admin.dashboard',
+            => 'admin.dashboard.overview',
 
             // $user->hasRole('manager')
             // => 'manager.dashboard',

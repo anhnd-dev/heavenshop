@@ -14,19 +14,22 @@ class OrderService
     | DATATABLE
     |--------------------------------------------------------------------------
     */
-    public function getDataTable()
+    public function getDataTable(bool $includeTrashed = false)
     {
         $query = Order::query()
             ->with([
                 'customer'
             ]);
 
+        if ($includeTrashed) {
+            $query->onlyTrashed();
+        }
+
         /*
         |--------------------------------------------------------------------------
         | SEARCH
         |--------------------------------------------------------------------------
         */
-
         if (request()->filled('keyword')) {
 
             $keyword = request('keyword');
@@ -120,19 +123,67 @@ class OrderService
                 )->format('d/m/Y H:i');
             })
 
-            ->addColumn('action', function ($order) {
+            ->addColumn('order_status_value', function ($order) {
+                return $order->order_status;
+            })
 
-                return '
+            ->addColumn('action', function ($order) use ($includeTrashed) {
+
+                if ($includeTrashed) {
+
+                    return '
+                        <a href="' . route(
+                        'admin.order.show',
+                        ['id' => $order->id]
+                    ) . '"
+                        class="btn btn-info shadow btn-xs sharp mr-1">
+
+                            <i class="fas fa-eye"></i>
+
+                        </a>
+
+                        <button type="button"
+                            data-id="' . $order->id . '"
+                            class="restoreOrderBtn btn btn-success shadow btn-xs sharp mr-1">
+
+                            <i class="fas fa-trash-restore"></i>
+
+                        </button>
+                    ';
+                }
+
+                $html = '
                     <a href="' . route(
                     'admin.order.show',
                     ['id' => $order->id]
                 ) . '"
-                    class="btn btn-info shadow btn-xs sharp">
+                    class="btn btn-info shadow btn-xs sharp mr-1">
 
                         <i class="fas fa-eye"></i>
 
                     </a>
                 ';
+
+                /*
+                |--------------------------------------------------------------------------
+                | CHỈ CHO XÓA ĐƠN ĐÃ HỦY
+                |--------------------------------------------------------------------------
+                */
+                if (
+                    $order->order_status === Order::STATUS_CANCELLED
+                ) {
+                    $html .= '
+                        <button type="button"
+                            data-id="' . $order->id . '"
+                            class="deleteOrderBtn btn btn-danger shadow btn-xs sharp">
+
+                            <i class="fa fa-trash"></i>
+
+                        </button>
+                    ';
+                }
+
+                return $html;
             })
 
             ->rawColumns([
@@ -546,5 +597,41 @@ class OrderService
         }
 
         return $order->update($data);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE
+    |--------------------------------------------------------------------------
+    */
+    public function delete(
+        Order $order
+    ): bool {
+
+        if (
+            $order->order_status
+            !== Order::STATUS_CANCELLED
+        ) {
+            throw new \Exception(
+                'Chỉ được xóa đơn hàng đã hủy'
+            );
+        }
+
+        return $order->delete();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | RESTORE
+    |--------------------------------------------------------------------------
+    */
+    public function restore(
+        int $id
+    ): bool {
+
+        $order = Order::onlyTrashed()
+            ->findOrFail($id);
+
+        return (bool) $order->restore();
     }
 }
