@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Services\Admin\OrderService;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends BaseAdminController
 {
@@ -56,7 +57,51 @@ class OrderController extends BaseAdminController
         );
     }
 
-    public function print() {}
+    public function print($id)
+    {
+        $order = Order::with([
+            'customer',
+            'coupon',
+            'items'
+        ])->findOrFail($id);
+
+        $pdf = Pdf::loadView(
+            'admin.pages.order.invoice',
+            compact('order')
+        );
+
+        return $pdf->stream(
+            "invoice-{$order->order_code}.pdf"
+        );
+    }
+
+    public function packingSlip($id)
+    {
+        $order = Order::query()
+            ->with('items')
+            ->select([
+                'id',
+                'order_code',
+                'shipping_name',
+                'shipping_phone',
+                'shipping_address',
+                'shipping_ward',
+                'shipping_district',
+                'shipping_province',
+                'note',
+                'created_at',
+            ])
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView(
+            'admin.pages.order.packing-slip',
+            compact('order')
+        );
+
+        return $pdf->stream(
+            "packing-slip-{$order->order_code}.pdf"
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------

@@ -40,8 +40,7 @@ return new class extends Migration
             */
 
             $table->string('transaction_id', 100)
-                ->nullable()
-                ->unique();
+                ->nullable();
 
             $table->string('transaction_code')
                 ->nullable();
@@ -100,6 +99,11 @@ return new class extends Migration
             $table->index('gateway');
 
             $table->index('status');
+
+            $table->unique([
+                'gateway',
+                'transaction_id'
+            ]);
         });
     }
 

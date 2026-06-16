@@ -35,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
                 'admin.layouts.partials.header',
                 'frontend.layouts.partials.seo',
                 'admin.layouts.partials.seo',
+                'admin.pages.order.invoice',
+                'admin.pages.order.packing-slip'
             ],
             function ($view) {
 
@@ -79,6 +81,7 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with([
                 'logoIcon' => $data[Frontend::LOGO_ICON] ?? null,
+                'favicon' => $data[Frontend::LOGO_ICON] ?? null,
                 'contact' => $data[Frontend::CONTACT] ?? null,
                 'socialIcons' => $socialIcons,
                 'categories' => $categories,

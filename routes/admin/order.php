@@ -14,6 +14,8 @@ Route::prefix('order')
 
         Route::get('/print/{id}', 'print')->name('print');
 
+        Route::get('/packing-slip/{id}', 'packingSlip')->name('packingSlip');
+
         Route::post('/edit', 'edit')->name('edit');
 
         Route::post('/updateStatus', 'updateStatus')->name('updateStatus');

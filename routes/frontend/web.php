@@ -69,4 +69,6 @@ Route::middleware(
     require __DIR__ . '/blog.php';
 
     require __DIR__ . '/page.php';
+
+    require __DIR__ . '/payment.php';
 });

@@ -74,6 +74,15 @@
 
                         </a>
 
+                        <a href="{{ route('admin.order.packingSlip', $order->id) }}" target="_blank"
+                            class="btn btn-warning ml-2">
+
+                            <i class="fas fa-box"></i>
+
+                            Phiếu giao hàng
+
+                        </a>
+
                     </div>
 
                 </div>
