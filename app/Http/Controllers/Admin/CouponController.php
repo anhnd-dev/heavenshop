@@ -176,16 +176,18 @@ class CouponController extends BaseAdminController
     /**
      * Khôi phục tất cả
      */
-    public function restoreAll()
+    public function restoreAll(Request $request)
     {
         try {
 
-            return $this->transaction(function () {
+            return $this->transaction(function () use ($request) {
 
-                $this->couponService->restoreAll();
+                $restoreCount = $this->couponService->restoreAll(
+                    $request->ids
+                );
 
                 return $this->successResponse(
-                    'Khôi phục tất cả coupon thành công'
+                    "{$restoreCount} mã giảm giá đã được khôi phục thành công"
                 );
             });
         } catch (\Throwable $th) {

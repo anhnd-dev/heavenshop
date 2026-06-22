@@ -142,22 +142,23 @@ class ProductController extends Controller
         // =========================
         // PRICE
         // =========================
-        $minPrice = $product->variants->min('price');
+        $price = $product->variants->min('price');
 
-        $maxPrice = $product->variants->max('price');
+        $salePrice = $product->variants
+            ->whereNotNull('sale_price')
+            ->min('sale_price');
 
-        $oldPrice = $product->variants->max('sale_price');
+        $finalPrice = $salePrice ?? $price;
+
+        $oldPrice = $salePrice ? $price : null;
 
         // =========================
         // DISCOUNT
         // =========================
         $discountPercent = 0;
 
-        if ($oldPrice && $minPrice) {
-
-            $discountPercent = round(
-                (($oldPrice - $minPrice) / $oldPrice) * 100
-            );
+        if ($salePrice && $price) {
+            $discountPercent = round((($price - $salePrice) / $price) * 100);
         }
 
         // =========================
@@ -222,10 +223,8 @@ class ProductController extends Controller
 
             'mainImage',
 
-            'minPrice',
-            'maxPrice',
-
             'oldPrice',
+            'finalPrice',
 
             'free_ship',
 

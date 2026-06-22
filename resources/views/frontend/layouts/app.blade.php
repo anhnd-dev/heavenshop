@@ -168,6 +168,57 @@
         .mini-cart-remove:hover {
             color: #ef4444;
         }
+
+        #search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, .1);
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 99999;
+            display: none;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .search-result-item:hover {
+            background: #f8f8f8;
+        }
+
+        .search-result-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .search-result-item h6 {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .search-result-item p {
+            margin: 0;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .search-empty {
+            padding: 15px;
+            text-align: center;
+        }
     </style>
 
     @stack('styles')
@@ -215,6 +266,7 @@
     <script src="{{ asset('frontend/js/header-cart.js') }}"></script>
     <script src="{{ asset('frontend/js/auth-modal.js') }}"></script>
     <script src="{{ asset('frontend/js/location.js') }}"></script>
+    <script src="{{ asset('frontend/js/search.js') }}"></script>
 
     {!! Toastr::message() !!}
 

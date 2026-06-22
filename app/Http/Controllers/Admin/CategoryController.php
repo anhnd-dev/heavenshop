@@ -147,12 +147,12 @@ class CategoryController extends BaseAdminController
 
             return $this->transaction(function () use ($request) {
 
-                $count = $this->categoryService->deleteAll(
+                $deleteCount = $this->categoryService->deleteAll(
                     $request->ids
                 );
 
                 return $this->successResponse(
-                    "{$count} danh mục đã được chuyển vào thùng rác"
+                    "{$deleteCount} danh mục đã được chuyển vào thùng rác"
                 );
             });
         } catch (\Throwable $th) {
@@ -189,18 +189,20 @@ class CategoryController extends BaseAdminController
     }
 
     /**
-     * Khôi phục tất cả danh mục
+     * Khôi phục tất cả danh mục đã chọn
      */
-    public function restoreAll()
+    public function restoreAll(Request $request)
     {
         try {
 
-            return $this->transaction(function () {
+            return $this->transaction(function () use ($request) {
 
-                $this->categoryService->restoreAll();
+                $restoreCount = $this->categoryService->restoreAll(
+                    $request->ids
+                );
 
                 return $this->successResponse(
-                    'Khôi phục tất cả danh mục thành công'
+                    "{$restoreCount} danh mục đã được khôi phục thành công"
                 );
             });
         } catch (\Throwable $th) {

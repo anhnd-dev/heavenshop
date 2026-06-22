@@ -176,9 +176,9 @@
                     </ul>
 
                     <ul class="navbar-nav alt-font navbar-right justify-content-start">
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a href="{{ route('blog.index') }}" class="nav-link">{{ __('frontend.header.blog') }}</a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
                             <a href="{{ route('contact') }}" class="nav-link">{{ __('frontend.header.contact') }}</a>
                         </li>
@@ -223,26 +223,38 @@
                             </ul>
                         </div>
                     </div>
+
                     <div class="header-search-icon icon alt-font">
-                        <a href="javascript:void(0)" class="search-form-icon header-search-form"><i
-                                class="feather icon-feather-search me-5px"></i><span
-                                class="d-none d-xxl-inline-block">{{ __('frontend.header.search.title') }}</span></a>
+                        <a href="javascript:void(0)" class="search-form-icon header-search-form">
+                            <i class="feather icon-feather-search me-5px"></i>
+                            <span class="d-none d-xxl-inline-block">
+                                {{ __('frontend.header.search.title') }}
+                            </span>
+                        </a>
+
                         <div class="search-form-wrapper">
                             <button title="Close" type="button" class="search-close alt-font">
                                 ×
                             </button>
-                            <form id="search-form" role="search" method="get" class="search-form text-left"
-                                action="https://craftohtml.themezaa.com/search-result.html">
-                                <div class="search-form-box">
+
+                            <form class="search-form text-left">
+                                <div class="search-form-box position-relative">
+
                                     <h2 class="text-dark-gray text-center mb-4 fw-600 alt-font ls-minus-1px">
                                         {{ __('frontend.header.search.search_title') }}
                                     </h2>
-                                    <input class="search-input alt-font" id="search-form-input5e219ef164995"
+
+                                    <input class="search-input alt-font" id="search-input" type="text"
                                         placeholder="{{ __('frontend.header.search.search_placeholder') }}"
-                                        name="s" value type="text" autocomplete="off" />
-                                    <button type="submit" class="search-button">
-                                        <i class="feather icon-feather-search" aria-hidden="true"></i>
+                                        autocomplete="off">
+
+                                    <button type="button" class="search-button">
+                                        <i class="feather icon-feather-search"></i>
                                     </button>
+
+                                    {{-- Kết quả tìm kiếm --}}
+                                    <div id="search-results"></div>
+
                                 </div>
                             </form>
                         </div>

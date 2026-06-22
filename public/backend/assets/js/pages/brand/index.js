@@ -33,8 +33,16 @@
             this.el.addBtn = "#add_brand_btn";
             this.el.editBtn = "#edit_brand_btn";
 
+            this.el.deleteMultipleBtn = "#deleteMultiple";
+
+            this.el.restoreAllBtn = "#restoreAll";
+
+            this.el.forceDeleteMultipleBtn = "#forceDeleteMultiple";
+
             this.el.addModal = "#addBrandModal";
             this.el.editModal = "#editBrandModal";
+
+            this.el.checkAll = $("#checkAll");
         },
 
         // =========================
@@ -132,6 +140,11 @@
                 self.reload();
             });
 
+            // check all
+            this.el.checkAll.on("click", function () {
+                $(".checkbox_ids").prop("checked", $(this).prop("checked"));
+            });
+
             // slug generator
             if (window.bindSlugGenerator) {
                 window.bindSlugGenerator(
@@ -157,82 +170,178 @@
         // CRUD BINDINGS (external services)
         // =========================
         bindCrud() {
+            /*
+            |--------------------------------------------------------------------------
+            | Add
+            |--------------------------------------------------------------------------
+            */
+
             window.setupFormHandler({
                 form: this.el.addForm,
                 button: this.el.addBtn,
                 modal: this.el.addModal,
+
                 route: window.brandConfig.routes.store,
+
                 method: "POST",
-                callback: () => this.initDataTable(),
+
+                buttonLoadingText: "Đang thêm...",
+                buttonDefaultText: "Thêm",
+
+                callback: () => this.reload(),
             });
 
-            if (window.setupEditHandler) {
-                window.setupEditHandler(
-                    this.el.editForm,
-                    this.el.editBtn,
-                    this.el.editModal,
-                    window.brandConfig.routes.update,
-                    () => this.initDataTable(),
-                );
-            }
+            /*
+            |--------------------------------------------------------------------------
+            | Edit
+            |--------------------------------------------------------------------------
+            */
+            window.setupFormHandler({
+                form: this.el.editForm,
+                button: this.el.editBtn,
+                modal: this.el.editModal,
 
-            if (window.setupDeleteHandler) {
-                window.setupDeleteHandler(
-                    ".deleteIcon",
-                    window.brandConfig.routes.delete,
-                    () => this.initDataTable(),
-                );
-            }
+                route: window.brandConfig.routes.update,
 
-            if (window.setupDeleteMultipleHandler) {
-                window.setupDeleteMultipleHandler(
-                    "#deleteMultiple",
-                    window.brandConfig.routes.deleteAll,
-                    () => this.initDataTable(),
-                );
-            }
+                method: "PUT",
 
-            if (window.setupRestoreHandler) {
-                window.setupRestoreHandler(
-                    ".restoreIcon",
-                    window.brandConfig.routes.restore,
-                    () => this.initDataTable(),
-                );
-            }
+                buttonLoadingText: "Đang cập nhật...",
+                buttonDefaultText: "Cập nhật",
 
-            if (window.setupRestoreAllHandler) {
-                window.setupRestoreAllHandler(
-                    "#restoreAll",
-                    window.brandConfig.routes.restoreAll,
-                    () => this.initDataTable(),
-                );
-            }
+                callback: () => this.reload(),
+            });
 
-            if (window.setupForceHandler) {
-                window.setupForceHandler(
-                    ".forceIcon",
-                    window.brandConfig.routes.forceDelete,
-                    () => this.initDataTable(),
-                );
-            }
+            /*
+            |--------------------------------------------------------------------------
+            | Delete One
+            |--------------------------------------------------------------------------
+            */
 
-            if (window.setupForceMultipleHandler) {
-                window.setupForceMultipleHandler(
-                    "#forceDeleteMultiple",
-                    window.brandConfig.routes.forceDeleteAll,
-                    () => this.initDataTable(),
-                );
-            }
+            window.setupAjaxActionHandler({
+                button: ".deleteIcon",
+
+                route: window.brandConfig.routes.delete,
+
+                method: "DELETE",
+
+                getData: ($btn) => ({
+                    id: $btn.attr("id"),
+                }),
+
+                confirmText: "Bạn có chắc muốn xóa danh mục này?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Delete Multiple
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupBulkActionHandler({
+                button: this.el.deleteMultipleBtn,
+
+                route: window.brandConfig.routes.deleteAll,
+
+                method: "DELETE",
+
+                confirmText: "Bạn có chắc muốn xóa các danh mục đã chọn?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Restore One
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupAjaxActionHandler({
+                button: ".restoreIcon",
+
+                route: window.brandConfig.routes.restore,
+
+                method: "POST",
+
+                getData: ($btn) => ({
+                    id: $btn.attr("id"),
+                }),
+
+                confirmText: "Khôi phục danh mục này?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Restore Multiple
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupBulkActionHandler({
+                button: this.el.restoreAllBtn,
+
+                route: window.brandConfig.routes.restoreAll,
+
+                method: "POST",
+
+                confirmText: "Khôi phục các danh mục đã chọn?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Force Delete One
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupAjaxActionHandler({
+                button: ".forceIcon",
+
+                route: window.brandConfig.routes.forceDelete,
+
+                method: "DELETE",
+
+                getData: ($btn) => ({
+                    id: $btn.attr("id"),
+                }),
+
+                confirmText: "Bạn có chắc muốn xóa vĩnh viễn danh mục này?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Force Delete Multiple
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupBulkActionHandler({
+                button: this.el.forceDeleteMultipleBtn,
+
+                route: window.categoryConfig.routes.forceDeleteAll,
+
+                method: "DELETE",
+
+                confirmText:
+                    "Bạn có chắc muốn xóa vĩnh viễn các danh mục đã chọn?",
+
+                callback: () => this.reload(),
+            });
         },
 
+        // =========================
+        // RESET
+        // =========================
         bindModalReset() {
-            // Add modal
-            $("#addBrandModal").on("hidden.bs.modal", () => {
+            $(this.el.addModal).on("hidden.bs.modal", () => {
                 this.resetAddForm();
             });
 
-            // Edit modal
-            $("#editBrandModal").on("hidden.bs.modal", () => {
+            $(this.el.editModal).on("hidden.bs.modal", () => {
                 this.resetEditForm();
             });
         },
@@ -290,7 +399,7 @@
         // RESET FORM
         // =========================
         resetAddForm() {
-            $("#add_brand_form")[0].reset();
+            $(this.el.addForm)[0].reset();
 
             // reset image preview
             $("#add_image_preview").attr(
@@ -302,7 +411,7 @@
         },
 
         resetEditForm() {
-            $("#edit_brand_form")[0].reset();
+            $(this.el.editForm)[0].reset();
 
             $("#brand_id").val("");
 

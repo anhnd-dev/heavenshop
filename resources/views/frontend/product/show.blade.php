@@ -100,9 +100,7 @@
 
                             @if ($oldPrice)
                                 <div class="product-old-price">
-
                                     {{ number_format($oldPrice, 0, ',', '.') }}đ
-
                                 </div>
                             @endif
 
@@ -110,7 +108,7 @@
 
                                 <div class="product-price">
 
-                                    {{ number_format($minPrice, 0, ',', '.') }}đ
+                                    {{ number_format($finalPrice, 0, ',', '.') }}đ
 
                                 </div>
 
@@ -886,20 +884,15 @@
             );
 
             $('.product-price').text(
-                Number(variant.price)
+                Number(variant.sale_price ?? variant.price)
                 .toLocaleString('vi-VN') + 'đ'
             );
 
             if (variant.sale_price) {
-
                 $('.product-old-price').text(
-                    Number(variant.sale_price)
+                    Number(variant.price)
                     .toLocaleString('vi-VN') + 'đ'
                 );
-
-            } else {
-
-                $('.product-old-price').text('');
             }
 
             if (currentStock <= 0) {

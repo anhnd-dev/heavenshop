@@ -242,9 +242,11 @@ class CouponService
     /**
      * Restore All
      */
-    public function restoreAll(): void
-    {
-        Coupon::onlyTrashed()
+    public function restoreAll(
+        array $ids
+    ): int {
+        return Coupon::onlyTrashed()
+            ->whereIn('id', $ids)
             ->restore();
     }
 

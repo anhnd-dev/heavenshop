@@ -384,9 +384,11 @@ class CategoryService
     |--------------------------------------------------------------------------
     */
 
-    public function restoreAll(): void
-    {
-        Category::onlyTrashed()
+    public function restoreAll(
+        array $ids
+    ): int {
+        return Category::onlyTrashed()
+            ->whereIn('id', $ids)
             ->restore();
     }
 

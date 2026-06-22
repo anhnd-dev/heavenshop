@@ -179,16 +179,18 @@ class ColorController extends BaseAdminController
     /**
      * Khôi phục tất cả danh mục
      */
-    public function restoreAll()
+    public function restoreAll(Request $request)
     {
         try {
 
-            return $this->transaction(function () {
+            return $this->transaction(function () use ($request) {
 
-                $this->colorService->restoreAll();
+                $restoreCount = $this->colorService->restoreAll(
+                    $request->ids
+                );
 
                 return $this->successResponse(
-                    'Khôi phục tất cả màu sắc thành công'
+                    "{$restoreCount} màu sắc đã được khôi phục thành công"
                 );
             });
         } catch (\Throwable $th) {

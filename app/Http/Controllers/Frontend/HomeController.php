@@ -11,6 +11,7 @@ use App\Models\Product;
 use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\Frontend;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -71,6 +72,45 @@ class HomeController extends Controller
             ->inRandomOrder()
             ->first(['start_date', 'end_date', 'code']);
 
-        return view('frontend.home.index', compact('sliders', 'categories', 'brands', 'free_ship', 'bestSellers', 'featuredProducts', 'blogs', 'coupon'));
+        $collections = Category::query()
+            ->where('type', 'product')
+            ->where('is_active', 1)
+            ->whereIn('parent_id', function ($query) {
+                $query->select('id')
+                    ->from('categories')
+                    ->whereNull('parent_id');
+            })
+            ->get();
+
+        return view('frontend.home.index', compact('sliders', 'categories', 'brands', 'free_ship', 'bestSellers', 'featuredProducts', 'blogs', 'coupon', 'collections'));
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->keyword;
+
+        $products = Product::query()
+            ->where('is_active', true)
+            ->where(function ($query) use ($keyword) {
+
+                $query->where('name', 'like', "%{$keyword}%")
+
+                    ->orWhereHas('variants', function ($q) use ($keyword) {
+                        $q->where('sku', 'like', "%{$keyword}%");
+                    });
+            })
+            ->limit(10)
+            ->get()
+            ->map(function ($product) {
+
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'image_url' => asset('/uploads/product/' . $product->image),
+                ];
+            });
+
+        return response()->json($products);
     }
 }

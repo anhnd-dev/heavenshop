@@ -10,7 +10,9 @@
 
         <div class="checkout-auth-header">
 
-            <img src="{{ asset('frontend/images/logo.png') }}" alt="Logo">
+            @if ($logoIcon['favicon'])
+                <img src="{{ getImage(imagePath()['favicon']['path'] . '/' . ($logoIcon['favicon'] ?? '')) }}">
+            @endif
 
             <h2 id="auth-modal-title">
                 Đăng nhập để tiếp tục đặt hàng

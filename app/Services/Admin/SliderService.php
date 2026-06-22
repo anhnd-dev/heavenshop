@@ -170,9 +170,12 @@ class SliderService
     /**
      * Restore All
      */
-    public function restoreAll(): void
-    {
-        Slider::onlyTrashed()
+
+    public function restoreAll(
+        array $ids
+    ): int {
+        return Slider::onlyTrashed()
+            ->whereIn('id', $ids)
             ->restore();
     }
 

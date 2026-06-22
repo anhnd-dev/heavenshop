@@ -23,7 +23,7 @@
 
     @include('frontend.home.sections.ads')
 
-    @include('frontend.home.sections.magazine')
+    {{-- @include('frontend.home.sections.magazine') --}}
 @endsection
 
 @push('scripts')

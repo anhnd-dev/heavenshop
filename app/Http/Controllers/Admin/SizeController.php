@@ -179,16 +179,18 @@ class SizeController extends BaseAdminController
     /**
      * Khôi phục tất cả
      */
-    public function restoreAll()
+    public function restoreAll(Request $request)
     {
         try {
 
-            return $this->transaction(function () {
+            return $this->transaction(function () use ($request) {
 
-                $this->sizeService->restoreAll();
+                $restoreCount = $this->sizeService->restoreAll(
+                    $request->ids
+                );
 
                 return $this->successResponse(
-                    'Khôi phục tất cả kích cỡ thành công'
+                    "{$restoreCount} kích thước đã được khôi phục thành công"
                 );
             });
         } catch (\Throwable $th) {

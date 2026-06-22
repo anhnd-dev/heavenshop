@@ -46,11 +46,15 @@ return [
             'title' => 'Thanh toán an toàn',
             'content' => 'Thanh toán được bảo vệ 100%'
         ],
+        'blog' => [
+            'title' => 'thời trang',
+            'content' => 'Tạp chí'
+        ],
         'support' => [
             'title' => 'Hỗ trợ trực tuyến',
             'content' => 'Hỗ trợ 24/7 các ngày trong tuần'
         ],
-        'promotion' => 'Giảm thêm 25% cho những phong cách ăn mặc theo bộ hoặc cặp đôi. Sử dụng mã:',
+        'promotion' => 'Giảm thêm cho những phong cách ăn mặc theo bộ hoặc cặp đôi. Sử dụng mã:',
         'swipe_slide' => [
             'order' => 'Nhận 20% giảm giá cho đơn hàng đầu tiên của bạn',
             'collection' => 'Bộ sưu tập cốt lõi thời trang',
@@ -83,8 +87,8 @@ return [
         'join_discount' => 'Tham gia ngay bây giờ và được giảm thêm 20%!',
         'reCapcha' => 'Trang web này được bảo vệ bởi reCAPTCHA và Google',
         'and' => 'và',
-        'copyright' => '© 2024 được cung cấp bởi',
-        'copyright_name' => 'Lifestyle'
+        'copyright' => '© 2026 được cung cấp bởi',
+        'copyright_name' => 'Heavenshop'
     ],
 
     'breadcrumbs' => [

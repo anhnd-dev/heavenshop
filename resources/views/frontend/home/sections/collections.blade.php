@@ -3,271 +3,75 @@
         <div class="row align-items-center">
             <div class="col-lg-3 ps-5 pe-5 xl-pe-0 lg-ps-0 text-center text-lg-start md-mb-40px">
                 <div class="mb-10px">
-                    <span class="text-dark-gray fw-500 text-highlight">Lookbook 2023<span
+                    <span class="text-dark-gray fw-500 text-highlight">Bộ sưu tập 2026<span
                             class="bg-base-color h-8px bottom-0px"></span></span>
                 </div>
-                <h2 class="alt-font lh-50 text-dark-gray ls-minus-1px mb-15px">
-                    New arrival <span class="fw-600">collection</span>
-                </h2>
                 <p class="xs-pe-15px xs-ps-15px">
-                    Flash summer sale 70% off on selected collection for him.
+                    Khuyến mãi mùa hè chớp nhoáng: giảm giá 70% cho một số sản phẩm dành cho nam.
                 </p>
-                <a href="shop.html" class="btn btn-dark-gray btn-box-shadow btn-medium">View collection</a>
+                <a href="{{ route('collection.show', 'nam') }}" class="btn btn-dark-gray btn-box-shadow btn-medium">Xem bộ
+                    sưu tập</a>
             </div>
             <div class="col-12 col-lg-9 position-relative">
                 <div
                     class="outside-box-right-10 lg-outside-box-right-20 md-outside-box-right-25 xs-outside-box-right-0">
                     <div class="swiper slider-three-slide"
                         data-slider-options='{ "slidesPerView": 1, "spaceBetween": 30, "loop": true, "autoplay": { "delay": 4000, "disableOnInteraction": false }, "pagination": { "el": ".slider-four-slide-pagination-1", "clickable": true, "dynamicBullets": false }, "keyboard": { "enabled": true, "onlyInViewport": true }, "breakpoints": { "1400": { "slidesPerView": 4 }, "1024": { "slidesPerView": 3 }, "768": { "slidesPerView": 3 }, "576": { "slidesPerView": 2 }, "320": { "slidesPerView": 1 } }, "effect": "slide" }'>
+
                         <div class="swiper-wrapper">
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-01.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
+                            @foreach ($collections as $collection)
+                                <div class="swiper-slide">
                                     <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
-                                        <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Ethnic wear</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Outfits
-                                                matching</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
-                                        </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
-                                    </div>
-                                </div>
-                            </div>
+                                        class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-02.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
-                                    <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
-                                        <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Dress materials</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Explore
-                                                a variety</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
-                                        </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
-                                    </div>
-                                </div>
-                            </div>
+                                        <img src="{{ asset('uploads/category/' . $collection->image) }}"
+                                            alt="{{ $collection->name }}">
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-03.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
-                                    <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
-                                        <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Western wear</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Traditional
-                                                attires</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
-                                        </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-04.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
-                                    <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
                                         <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Loungewear</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Women
-                                                branded</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
-                                        </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
-                                    </div>
-                                </div>
-                            </div>
+                                            class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-01.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
-                                    <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
-                                        <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Ethnic wear</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Outfits
-                                                matching</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
-                                        </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
-                                    </div>
-                                </div>
-                            </div>
+                                            <div
+                                                class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-02.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
-                                    <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
-                                        <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Dress materials</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Explore
-                                                a variety</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
-                                        </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
-                                    </div>
-                                </div>
-                            </div>
+                                                <span class="text-white fw-500 fs-22">
+                                                    {{ $collection->name }}
+                                                </span>
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-03.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
-                                    <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
-                                        <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Western wear</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Traditional
-                                                attires</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
-                                        </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
-                                    </div>
-                                </div>
-                            </div>
+                                                @if ($collection->description)
+                                                    <span
+                                                        class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">
+                                                        {{ \Illuminate\Support\Str::limit(strip_tags($collection->description), 40) }}
+                                                    </span>
+                                                @endif
 
-                            <div class="swiper-slide">
-                                <div
-                                    class="interactive-banner-style-09 border-radius-6px overflow-hidden position-relative">
-                                    <img src="{{ asset('frontend/images/demo-fashion-store-collection-slider-04.jpg') }}"
-                                        alt />
-                                    <div class="opacity-full bg-gradient-gray-light-dark-transparent"></div>
-                                    <div
-                                        class="image-content h-100 w-100 ps-15 pe-15 pt-11 pb-11 lg-p-11 d-flex justify-content-bottom align-items-start flex-column">
-                                        <div
-                                            class="mt-auto d-flex align-items-start w-100 z-index-1 position-relative overflow-hidden flex-column">
-                                            <span class="text-white fw-500 fs-22">Loungewear</span>
-                                            <span
-                                                class="content-title text-white fs-14 fw-500 opacity-7 text-uppercase ls-05px">Women
-                                                branded</span>
-                                            <a href="shop.html"
-                                                class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">Explore
-                                                collection</a>
-                                            <span
-                                                class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center"><i
-                                                    class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i></span>
+                                                <a href="{{ route('collection.show', $collection->slug) }}"
+                                                    class="content-title-hover fs-14 lh-24 fw-500 ls-05px text-uppercase text-white opacity-6 text-decoration-line-bottom">
+                                                    Explore collection
+                                                </a>
+
+                                                <span
+                                                    class="content-arrow lh-50 rounded-circle bg-base-color w-50px h-50px ms-20px text-center">
+                                                    <i
+                                                        class="bi bi-arrow-right-short text-dark-gray icon-very-medium"></i>
+                                                </span>
+                                            </div>
+
+                                            <div
+                                                class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
+                                            </div>
+
+                                            <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
+
+                                            <a href="{{ route('collection.show', $collection->slug) }}"
+                                                class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
                                         </div>
-                                        <div
-                                            class="position-absolute left-0px top-0px w-100 h-100 bg-gradient-regal-blue-transparent opacity-9">
-                                        </div>
-                                        <div class="box-overlay bg-gradient-gray-light-dark-transparent"></div>
-                                        <a href="shop.html"
-                                            class="position-absolute z-index-1 top-0px left-0px h-100 w-100"></a>
                                     </div>
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
+
                     </div>
                 </div>
             </div>

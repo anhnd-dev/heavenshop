@@ -3,9 +3,20 @@
         <div class="row mb-4 xs-mb-7">
             <div class="col-12 text-center">
                 <h2 class="alt-font text-dark-gray mb-0 ls-minus-2px">
-                    Fashion
-                    <span class="text-highlight fw-600">magazine<span
-                            class="bg-base-color h-5px bottom-2px"></span></span>
+
+                    @if (app()->getLocale() === 'en')
+                        {{ __('frontend.home.blog.title') }}
+                        <span class="text-highlight fw-600">
+                            {{ __('frontend.home.blog.content') }}
+                            <span class="bg-base-color h-5px bottom-2px"></span>
+                        </span>
+                    @else
+                        {{ __('frontend.home.blog.content') }}
+                        <span class="text-highlight fw-600">
+                            {{ __('frontend.home.blog.title') }}
+                            <span class="bg-base-color h-5px bottom-2px"></span>
+                        </span>
+                    @endif
                 </h2>
             </div>
         </div>
@@ -21,15 +32,16 @@
                         <li class="grid-item">
                             <div class="card bg-transparent border-0 h-100">
                                 <div class="blog-image position-relative overflow-hidden">
-                                    <a href="{{ route('blog.details', ['slug' => $blog->slug]) }}"><img
+                                    <a href="{{ route('blog.show', ['slug' => $blog->slug]) }}"><img
                                             src="{{ asset('uploads/blog/' . $blog->image) }}" alt /></a>
                                 </div>
                                 <div class="card-body px-0 pt-30px pb-30px sm-pb-15px">
                                     <span class="mb-5px d-block">By
                                         <a href="#"
                                             class="text-dark-gray fw-500 categories-text">{{ $blog->admin->full_name }}</a><a
-                                            href="#" class="blog-date">{{ (new DateTime($blog->created_at))->format('j F Y') }}</a></span>
-                                    <a href="{{ route('blog.details', ['slug' => $blog->slug]) }}"
+                                            href="#"
+                                            class="blog-date">{{ \Carbon\Carbon::parse($blog->created_at)->format('j F Y') }}</a></span>
+                                    <a href="{{ route('blog.show', ['slug' => $blog->slug]) }}"
                                         class="alt-font card-title fs-20 lh-30 fw-500 text-dark-gray d-inline-block w-75 xl-w-85 lg-w-100">{{ $blog->title }}</a>
                                 </div>
                             </div>

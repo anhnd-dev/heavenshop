@@ -374,18 +374,25 @@
         // CRUD BINDING (reuse services)
         // =========================
         bindCrud() {
-            // add
-            window.setupAddHandler(
-                this.el.addForm,
-                this.el.addBtn,
-                this.el.addModal,
-                window.productConfig.routes.store,
+            /*
+            |--------------------------------------------------------------------------
+            | Add
+            |--------------------------------------------------------------------------
+            */
 
-                () => {
-                    this.reload();
-                },
+            window.setupFormHandler({
+                form: this.el.addForm,
+                button: this.el.addBtn,
+                modal: this.el.addModal,
 
-                (formData) => {
+                route: window.productConfig.routes.store,
+
+                method: "POST",
+
+                buttonLoadingText: "Đang thêm...",
+                buttonDefaultText: "Thêm",
+
+                transformData: (formData) => {
                     formData.append(
                         "description",
                         this.addDescEditor.getData(),
@@ -395,20 +402,28 @@
 
                     return formData;
                 },
-            );
 
-            // edit
-            window.setupEditHandler(
-                this.el.editForm,
-                this.el.editBtn,
-                this.el.editModal,
-                window.productConfig.routes.update,
+                callback: () => this.reload(),
+            });
 
-                () => {
-                    this.reload();
-                },
+            /*
+            |--------------------------------------------------------------------------
+            | Edit
+            |--------------------------------------------------------------------------
+            */
+            window.setupFormHandler({
+                form: this.el.editForm,
+                button: this.el.editBtn,
+                modal: this.el.editModal,
 
-                (formData) => {
+                route: window.productConfig.routes.update,
+
+                method: "PUT",
+
+                buttonLoadingText: "Đang cập nhật...",
+                buttonDefaultText: "Cập nhật",
+
+                transformData: (formData) => {
                     formData.append(
                         "description",
                         this.editDescEditor.getData(),
@@ -421,47 +436,130 @@
 
                     return formData;
                 },
-            );
 
-            // delete
-            window.setupDeleteHandler(
-                this.el.deleteIcon,
-                window.productConfig.routes.delete,
+                callback: () => this.reload(),
+            });
 
-                () => {
-                    this.reload();
-                },
-            );
+            /*
+            |--------------------------------------------------------------------------
+            | Delete One
+            |--------------------------------------------------------------------------
+            */
 
-            window.setupDeleteMultipleHandler(
-                this.el.deleteAll,
-                window.productConfig.routes.deleteAll,
-                () => this.reload(),
-            );
+            window.setupAjaxActionHandler({
+                button: ".deleteIcon",
 
-            window.setupRestoreHandler(
-                this.el.restoreIcon,
-                window.productConfig.routes.restore,
-                () => this.reload(),
-            );
+                route: window.productConfig.routes.delete,
 
-            window.setupRestoreAllHandler(
-                this.el.restoreAll,
-                window.productConfig.routes.restoreAll,
-                () => this.reload(),
-            );
+                method: "DELETE",
 
-            window.setupForceHandler(
-                this.el.forceIcon,
-                window.productConfig.routes.forceDelete,
-                () => this.reload(),
-            );
+                getData: ($btn) => ({
+                    id: $btn.attr("id"),
+                }),
 
-            window.setupForceMultipleHandler(
-                this.el.forceDeleteAll,
-                window.productConfig.routes.forceDeleteAll,
-                () => this.reload(),
-            );
+                confirmText: "Bạn có chắc muốn xóa danh mục này?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Delete Multiple
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupBulkActionHandler({
+                button: this.el.deleteAll,
+
+                route: window.productConfig.routes.deleteAll,
+
+                method: "DELETE",
+
+                confirmText: "Bạn có chắc muốn xóa các danh mục đã chọn?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Restore One
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupAjaxActionHandler({
+                button: ".restoreIcon",
+
+                route: window.productConfig.routes.restore,
+
+                method: "POST",
+
+                getData: ($btn) => ({
+                    id: $btn.attr("id"),
+                }),
+
+                confirmText: "Khôi phục danh mục này?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Restore Multiple
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupBulkActionHandler({
+                button: this.el.restoreAll,
+
+                route: window.productConfig.routes.restoreAll,
+
+                method: "POST",
+
+                confirmText: "Khôi phục các danh mục đã chọn?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Force Delete One
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupAjaxActionHandler({
+                button: ".forceIcon",
+
+                route: window.productConfig.routes.forceDelete,
+
+                method: "DELETE",
+
+                getData: ($btn) => ({
+                    id: $btn.attr("id"),
+                }),
+
+                confirmText: "Bạn có chắc muốn xóa vĩnh viễn danh mục này?",
+
+                callback: () => this.reload(),
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Force Delete Multiple
+            |--------------------------------------------------------------------------
+            */
+
+            window.setupBulkActionHandler({
+                button: this.el.forceDeleteAll,
+
+                route: window.productConfig.routes.forceDeleteAll,
+
+                method: "DELETE",
+
+                confirmText:
+                    "Bạn có chắc muốn xóa vĩnh viễn các danh mục đã chọn?",
+
+                callback: () => this.reload(),
+            });
         },
 
         generateSku(colorText = "", sizeText = "") {
@@ -549,9 +647,8 @@
                     // =========================
                     // CKEDITOR
                     // =========================
-                    this.editDescEditor.setData(product.description ?? "");
-
-                    this.editContentEditor.setData(product.content ?? "");
+                    this.editDescEditor?.setData(product.description ?? "");
+                    this.editContentEditor?.setData(product.content ?? "");
 
                     // =========================
                     // PRODUCT IMAGE
@@ -837,7 +934,7 @@
         // RELOAD
         // =========================
         reload() {
-            this.dataTable?.ajax.reload();
+            this.dataTable?.ajax.reload(null, false);
         },
     };
 

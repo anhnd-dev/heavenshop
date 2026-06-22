@@ -32,8 +32,10 @@ class AppServiceProvider extends ServiceProvider
         View::composer(
             [
                 'frontend.layouts.partials.header',
-                'admin.layouts.partials.header',
                 'frontend.layouts.partials.seo',
+                'frontend.layouts.partials.auth-modal',
+                'frontend.cart.partials.check-auth-modal',
+                'admin.layouts.partials.header',
                 'admin.layouts.partials.seo',
                 'admin.pages.order.invoice',
                 'admin.pages.order.packing-slip'
@@ -56,6 +58,7 @@ class AppServiceProvider extends ServiceProvider
                 $view->with([
                     'seo' => $frontend[Frontend::SEO] ?? null,
                     'logoIcon' => $frontend[Frontend::LOGO_ICON] ?? null,
+                    'favicon' => $frontend[Frontend::LOGO_ICON] ?? null,
                     'menuCategories' => $menuCategories,
                 ]);
             }

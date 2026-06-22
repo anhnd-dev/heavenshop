@@ -89,20 +89,10 @@ class CollectionService
 
             ->withMin([
                 'variants as variants_min_price' => function ($q) {
-
                     $q->where('is_active', true)
                         ->where('stock', '>', 0);
                 }
             ], 'price')
-
-            ->withMin([
-                'variants as variants_min_sale_price' => function ($q) {
-
-                    $q->where('is_active', true)
-                        ->where('stock', '>', 0)
-                        ->whereNotNull('sale_price');
-                }
-            ], 'sale_price')
 
             ->where('is_active', true)
             ->whereIn('category_id', $categoryIds)

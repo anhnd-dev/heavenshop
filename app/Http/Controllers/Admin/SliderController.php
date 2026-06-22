@@ -176,16 +176,18 @@ class SliderController extends BaseAdminController
     /**
      * Khôi phục tất cả
      */
-    public function restoreAll()
+    public function restoreAll(Request $request)
     {
         try {
 
-            return $this->transaction(function () {
+            return $this->transaction(function () use ($request) {
 
-                $this->sliderService->restoreAll();
+                $restoreCount = $this->sliderService->restoreAll(
+                    $request->ids
+                );
 
                 return $this->successResponse(
-                    'Khôi phục tất cả slider thành công'
+                    "{$restoreCount} slide đã được khôi phục thành công"
                 );
             });
         } catch (\Throwable $th) {

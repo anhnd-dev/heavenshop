@@ -14,6 +14,7 @@ class BrandService
     /**
      * Datatable
      */
+
     public function datatable(bool $includeTrashed = false)
     {
         $query = Brand::query()
@@ -98,6 +99,7 @@ class BrandService
     /**
      * Store
      */
+
     public function store(Request $request): void
     {
         Brand::create(
@@ -108,6 +110,7 @@ class BrandService
     /**
      * Find
      */
+
     public function find(int $id): Brand
     {
         return Brand::query()
@@ -117,6 +120,7 @@ class BrandService
     /**
      * Update
      */
+
     public function update(
         Request $request,
         int $id
@@ -132,6 +136,7 @@ class BrandService
     /**
      * Soft Delete
      */
+
     public function delete(int $id): void
     {
         $this->find($id)->delete();
@@ -140,6 +145,7 @@ class BrandService
     /**
      * Soft Delete Multiple
      */
+
     public function deleteAll(array $ids): int
     {
         return Brand::query()
@@ -150,6 +156,7 @@ class BrandService
     /**
      * Restore
      */
+
     public function restore(int $id): void
     {
         Brand::withTrashed()
@@ -160,15 +167,19 @@ class BrandService
     /**
      * Restore All
      */
-    public function restoreAll(): void
-    {
-        Brand::onlyTrashed()
+
+    public function restoreAll(
+        array $ids
+    ): int {
+        return Brand::onlyTrashed()
+            ->whereIn('id', $ids)
             ->restore();
     }
 
     /**
      * Force Delete
      */
+
     public function forceDelete(int $id): void
     {
         $brand = Brand::withTrashed()
@@ -185,6 +196,7 @@ class BrandService
     /**
      * Force Delete Multiple
      */
+
     public function forceDeleteAll(array $ids): int
     {
         $brands = Brand::withTrashed()
@@ -207,6 +219,7 @@ class BrandService
     /**
      * Change Status
      */
+
     public function changeStatus(
         int $id,
         int $status
@@ -222,6 +235,7 @@ class BrandService
     /**
      * Prepare Data
      */
+
     private function prepareData(
         Request $request,
         ?Brand $brand = null

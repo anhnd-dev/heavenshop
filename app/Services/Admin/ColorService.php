@@ -170,9 +170,12 @@ class ColorService
     /**
      * Restore All
      */
-    public function restoreAll(): void
-    {
-        Color::onlyTrashed()
+
+    public function restoreAll(
+        array $ids
+    ): int {
+        return Color::onlyTrashed()
+            ->whereIn('id', $ids)
             ->restore();
     }
 

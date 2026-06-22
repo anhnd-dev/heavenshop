@@ -429,72 +429,90 @@ window.setupFormHandler = function ({
 
     resetForm = true,
 
+    transformData = null,
+
     callback,
 }) {
-    $(document).on("submit", form, function (e) {
-        e.preventDefault();
+    const formSelector =
+        typeof form === "string" ? form : "#" + $(form).attr("id");
 
-        const fd = new FormData(this);
+    $(document)
+        .off("submit", formSelector)
+        .on("submit", formSelector, function (e) {
+            e.preventDefault();
 
-        if (method === "PUT") {
-            fd.append("_method", "PUT");
-        }
+            const formElement = this;
 
-        $(button).prop("disabled", true).text(buttonLoadingText);
+            let fd = new FormData(formElement);
 
-        const url = typeof route === "function" ? route() : route;
+            if (typeof transformData === "function") {
+                fd = transformData(fd) || fd;
+            }
 
-        if (!url) {
-            toastr.error("Không tìm thấy URL xử lý");
-            return;
-        }
+            if (method.toUpperCase() === "PUT") {
+                fd.append("_method", "PUT");
+            }
 
-        $.ajax({
-            url: url,
+            const $button = $(button);
 
-            method: "POST",
+            $button.prop("disabled", true).text(buttonLoadingText);
 
-            data: fd,
+            const url = typeof route === "function" ? route() : route;
 
-            cache: false,
-            processData: false,
-            contentType: false,
+            if (!url) {
+                toastr.error("Không tìm thấy URL xử lý");
 
-            dataType: "json",
-        })
-            .done(function (res) {
-                toastr.success(res.message);
+                $button.prop("disabled", false).text(buttonDefaultText);
 
-                if (resetForm) {
-                    $(form)[0].reset();
-                }
+                return;
+            }
 
-                $(modal).modal("hide");
+            $.ajax({
+                url,
+                method: "POST",
 
-                callback?.(res);
+                data: fd,
+
+                processData: false,
+                contentType: false,
+
+                dataType: "json",
             })
+                .done((res) => {
+                    toastr.success(res.message ?? "Thao tác thành công");
 
-            .fail(function (xhr) {
-                let message =
-                    xhr.responseJSON?.message ?? window.translations.error;
+                    if (resetForm) {
+                        formElement.reset();
+                    }
 
-                if (xhr.status === 422) {
-                    const errors = xhr.responseJSON.errors ?? {};
+                    if (modal) {
+                        $(modal).modal("hide");
+                    }
 
-                    message = Object.values(errors).flat().join("<br>");
-                }
+                    callback?.(res);
+                })
+                .fail((xhr) => {
+                    let message =
+                        xhr.responseJSON?.message ??
+                        window.translations?.error ??
+                        "Đã xảy ra lỗi";
 
-                Swal.fire({
-                    icon: "error",
-                    title: "Lỗi",
-                    html: message,
+                    if (xhr.status === 422) {
+                        const errors = xhr.responseJSON?.errors ?? {};
+
+                        message = Object.values(errors).flat().join("<br>");
+                    }
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi",
+                        html: message,
+                    });
+                })
+                .always(() => {
+                    $button.prop("disabled", false).text(buttonDefaultText);
                 });
-            })
-
-            .always(function () {
-                $(button).prop("disabled", false).text(buttonDefaultText);
-            });
-    });
+        });
 };
 
 window.setupBulkActionHandler = function ({
@@ -512,131 +530,152 @@ window.setupBulkActionHandler = function ({
 
     callback,
 }) {
-    $(document).on("click", button, function (e) {
-        e.preventDefault();
+    $(document)
+        .off("click", button)
+        .on("click", button, function (e) {
+            e.preventDefault();
 
-        const checked = $(checkboxSelector).filter(":checked");
-
-        if (!checked.length) {
-            toastr.error(emptyText ?? window.translations.checkbox_required);
-            return;
-        }
-
-        const ids = checked
-            .map(function () {
-                return $(this).val();
-            })
-            .get();
-
-        const csrfToken = $('meta[name="csrf-token"]').attr("content");
-
-        Swal.fire({
-            title: window.translations.title,
-            text: confirmText ?? window.translations.confirmText,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: window.translations.confirmText,
-            cancelButtonText: window.translations.cancelText,
-            reverseButtons: true,
-        }).then((result) => {
-            if (!result.isConfirmed) return;
-
-            $.ajax({
-                url: typeof route === "function" ? route() : route,
-                method,
-                data: getData?.(ids) ?? { ids },
-                headers: {
-                    "X-CSRF-TOKEN": csrfToken,
-                },
-                dataType: "json",
-            })
-                .done(function (res) {
-                    toastr.success(res.message);
-
-                    $(checkAllSelector).prop("checked", false);
-
-                    // uncheck all selected items
-                    $(checkboxSelector).prop("checked", false);
-
-                    callback?.(res);
+            const ids = $(checkboxSelector)
+                .filter(":checked")
+                .map(function () {
+                    return $(this).val();
                 })
-                .fail(function (xhr) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Lỗi",
-                        html:
-                            xhr.responseJSON?.message ??
-                            window.translations.error,
+                .get();
+
+            if (!ids.length) {
+                toastr.error(
+                    emptyText ??
+                        window.translations?.checkbox_required ??
+                        "Vui lòng chọn dữ liệu",
+                );
+
+                return;
+            }
+
+            Swal.fire({
+                title: window.translations?.title ?? "Xác nhận",
+                text: confirmText ?? window.translations?.confirmText,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: window.translations?.confirmText ?? "Đồng ý",
+                cancelButtonText: window.translations?.cancelText ?? "Hủy",
+                reverseButtons: true,
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: typeof route === "function" ? route() : route,
+
+                    method,
+
+                    data: getData?.(ids) ?? {
+                        ids,
+                    },
+
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                            "content",
+                        ),
+                    },
+
+                    dataType: "json",
+                })
+                    .done((res) => {
+                        toastr.success(res.message ?? "Thao tác thành công");
+
+                        $(checkAllSelector).prop("checked", false);
+
+                        $(checkboxSelector).prop("checked", false);
+
+                        callback?.(res);
+                    })
+                    .fail((xhr) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi",
+                            html:
+                                xhr.responseJSON?.message ??
+                                window.translations?.error ??
+                                "Đã xảy ra lỗi",
+                        });
                     });
-                });
+            });
         });
-    });
 };
 
 window.setupAjaxActionHandler = function ({
     button,
     route,
+
     method = "POST",
+
     confirmText = "Bạn có chắc chắn?",
+
     getData = () => ({}),
+
     callback = null,
 }) {
-    $(document).on("click", button, function (e) {
-        e.preventDefault();
+    $(document)
+        .off("click", button)
+        .on("click", button, function (e) {
+            e.preventDefault();
 
-        const csrfToken = $('meta[name="csrf-token"]').attr("content");
-        const $btn = $(this);
+            const $btn = $(this);
 
-        Swal.fire({
-            title: window.translations.title,
-            text: confirmText,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: window.translations.confirmText,
-            cancelButtonText: window.translations.cancelText,
-            reverseButtons: true,
-        }).then((result) => {
-            if (!result.isConfirmed) return;
+            Swal.fire({
+                title: window.translations?.title ?? "Xác nhận",
+                text: confirmText,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: window.translations?.confirmText ?? "Đồng ý",
+                cancelButtonText: window.translations?.cancelText ?? "Hủy",
+                reverseButtons: true,
+            }).then((result) => {
+                if (!result.isConfirmed) return;
 
-            $btn.prop("disabled", true);
+                $btn.prop("disabled", true);
 
-            $.ajax({
-                url: typeof route === "function" ? route($btn) : route,
-                method,
-                data: getData($btn),
-                headers: {
-                    "X-CSRF-TOKEN": csrfToken,
-                },
-                dataType: "json",
-            })
-                .done(function (res) {
-                    Swal.fire({
-                        title: window.translations.success,
-                        text: res.message,
-                        icon: "success",
-                    });
+                $.ajax({
+                    url: typeof route === "function" ? route($btn) : route,
 
-                    callback?.(res, $btn);
+                    method,
+
+                    data: getData($btn),
+
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                            "content",
+                        ),
+                    },
+
+                    dataType: "json",
                 })
-                .fail(function (xhr) {
-                    let message = window.translations.error;
+                    .done((res) => {
+                        toastr.success(res.message ?? "Thao tác thành công");
 
-                    if (xhr.status === 422) {
-                        const errors = xhr.responseJSON?.errors ?? {};
-                        message = Object.values(errors).flat().join("<br>");
-                    } else if (xhr.responseJSON?.message) {
-                        message = xhr.responseJSON.message;
-                    }
+                        callback?.(res, $btn);
+                    })
+                    .fail((xhr) => {
+                        let message =
+                            xhr.responseJSON?.message ??
+                            window.translations?.error ??
+                            "Đã xảy ra lỗi";
 
-                    Swal.fire({
-                        title: window.translations.errors,
-                        html: message,
-                        icon: "error",
+                        if (xhr.status === 422) {
+                            const errors = xhr.responseJSON?.errors ?? {};
+
+                            message = Object.values(errors).flat().join("<br>");
+                        }
+
+                        Swal.fire({
+                            icon: "error",
+                            title: "Lỗi",
+                            html: message,
+                        });
+                    })
+                    .always(() => {
+                        $btn.prop("disabled", false);
                     });
-                })
-                .always(function () {
-                    $btn.prop("disabled", false);
-                });
+            });
         });
-    });
 };

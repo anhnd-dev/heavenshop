@@ -155,9 +155,11 @@ class SizeService
     /**
      * Restore All
      */
-    public function restoreAll(): void
-    {
-        Size::onlyTrashed()
+    public function restoreAll(
+        array $ids
+    ): int {
+        return Size::onlyTrashed()
+            ->whereIn('id', $ids)
             ->restore();
     }
 

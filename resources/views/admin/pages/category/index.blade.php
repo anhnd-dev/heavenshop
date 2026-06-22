@@ -107,8 +107,6 @@
 
     <!-- Core: Services -->
     <script src="{{ asset('backend/assets/js/core/services/crud.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/core/services/force-delete.js') }}"></script>
-    <script src="{{ asset('backend/assets/js/core/services/restore.js') }}"></script>
     <script src="{{ asset('backend/assets/js/core/services/status.js') }}"></script>
 
     <!-- Page JS -->

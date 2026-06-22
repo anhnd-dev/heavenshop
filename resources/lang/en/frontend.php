@@ -46,11 +46,15 @@ return [
             'title' => 'Secure payment',
             'content' => '100% protected payment'
         ],
+        'blog' => [
+            'title' => 'Fashion',
+            'content' => 'magazine'
+        ],
         'support' => [
             'title' => 'Online support',
             'content' => '24/7 days a week support'
         ],
-        'promotion' => 'Get an additional 25% off on styles dressed in sets or couples. Use code:',
+        'promotion' => 'Get an additional on styles dressed in sets or couples. Use code:',
         'swipe_slide' => [
             'order' => 'Get 20% off for your first order',
             'collection' => 'The fashion core collection',
@@ -83,8 +87,8 @@ return [
         'join_discount' => 'Join now and get 20% extra discount!',
         'reCapcha' => 'This site is protected by reCAPTCHA and the Google',
         'and' => 'and',
-        'copyright' => '© 2024 powered by',
-        'copyright_name' => 'Lifestyle'
+        'copyright' => '© 2026 powered by',
+        'copyright_name' => 'Heavenshop'
     ],
 
     'breadcrumbs' => [

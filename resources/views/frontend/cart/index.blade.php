@@ -290,7 +290,7 @@
 
                                 </div>
 
-                                <div class="payment-item" data-method="zalopay">
+                                {{-- <div class="payment-item" data-method="zalopay">
 
                                     <div class="payment-radio"></div>
 
@@ -306,9 +306,9 @@
 
                                     </div>
 
-                                </div>
+                                </div> --}}
 
-                                <div class="payment-item" data-method="momo">
+                                {{-- <div class="payment-item" data-method="momo">
 
                                     <div class="payment-radio"></div>
 
@@ -324,7 +324,7 @@
 
                                     </div>
 
-                                </div>
+                                </div> --}}
 
                                 <div class="payment-item" data-method="vnpay">
 

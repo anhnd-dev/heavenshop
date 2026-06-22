@@ -13,4 +13,8 @@ Route::prefix('order')->group(function () {
     Route::get('/failed', function () {
         return view('frontend.order.failed');
     })->name('order.failed');
+
+    Route::get('/pending', function () {
+        return view('frontend.order.pending');
+    })->name('order.pending');
 });
